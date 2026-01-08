@@ -23,9 +23,23 @@ class WlkpController extends Controller
         return number_format((int) $n, 0, ',', '.');
     }
 
+// ===============================
+    // HALAMAN UTAMA (INDEX)
+    // ===============================
     public function index(Request $request)
     {
         // $filters = $request->all();
+
+        $listTahun = DB::table('wajiblapor.report_detil_wlkp_binwas')
+            ->selectRaw('EXTRACT(YEAR FROM tanggal_laporan) as tahun')
+            ->whereNotNull('tanggal_laporan')
+            ->distinct()
+            ->orderByDesc('tahun')
+            ->pluck('tahun');
+
+        $totalSemua = $this->formatDetail(
+            DB::table('wajiblapor.report_detil_wlkp_binwas')->count()
+        );
 
         if ($request->filled('kota') && empty($request->provinsi)) {
         
@@ -125,11 +139,54 @@ class WlkpController extends Controller
             'chartProvinsi',
             'chartKota',
             'chartKlasifikasi',
+            'listTahun'
         ), [
             'optTahun' => $dropdowns['tahun'], 
             'optProvinsi'=> $dropdowns['provinsi'],
             'optKota' => $dropdowns ['kota'],
             'optKlasifikasi' => $dropdowns ['klasifikasi'],
         ]);
+    }
+    // ===============================
+    // FILTER CHART (KHUSUS PERUSAHAANKLASIFIKASI)
+    // ===============================
+    public function filterProvinsi(Request $request)
+    {
+        $query = DB::table('wajiblapor.report_detil_wlkp_binwas');
+
+        if ($request->tahun) {
+            $query->whereYear('tanggal_laporan', $request->tahun);
+        }
+
+        if ($request->bulan) {
+            $query->whereMonth('tanggal_laporan', $request->bulan);
+        }
+
+        if ($request->provinsi) {
+            $query->where('provinsi', $request->provinsi);
+        }
+
+        if ($request->klasifikasi) {
+            $query->where('skala_objek_pengawasan', $request->klasifikasi);
+        }
+
+        return $query
+            ->select('provinsi', DB::raw('COUNT(*) as total'))
+            ->groupBy('provinsi')
+            ->orderByDesc('total')
+            ->get();
+    }
+
+    // ===============================
+    // DROPDOWN KABUPATEN
+    // ===============================
+    public function getKabupaten(Request $request)
+    {
+        return DB::table('wajiblapor.report_detil_wlkp_binwas')
+            ->where('provinsi', $request->provinsi)
+            ->whereNotNull('kabupaten_kota')
+            ->distinct()
+            ->orderBy('kabupaten_kota')
+            ->pluck('kabupaten_kota');
     }
 }
