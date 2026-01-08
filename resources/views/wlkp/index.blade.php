@@ -1,13 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 
+
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WLKP - Wajib Lapor Ketenagakerjaan Perusahaan</title>
-
     <link rel="stylesheet" href="{{ asset('css/wlkp.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 </head>
+
 
 <body>
 
@@ -85,26 +90,28 @@
                 <div class="chart-container">
                     <div class="bar-chart" id="barChart">
                         @forelse ($dataProvinsi as $row)
-                        @php
-                        $height = $maxVal > 0
-                        ? ($row->total / $maxVal * 100)
-                        : 0;
-                        @endphp
+                            @php
+                                $height = $maxVal > 0 ? ($row->total / $maxVal) * 100 : 0;
+                            @endphp
 
-                        <div class="bar" style="height: {{ $height }}%" title="{{ $row->provinsi }}">
-                            <span class="bar-value">
-                                {{ number_format($row->total, 0, ',', '.') }}
-                            </span>
-                            <span class="bar-label">
-                                {{ $row->provinsi }}
-                            </span>
-                        </div>
+                            <div class="bar" style="height: {{ $height }}%" title="{{ $row->provinsi }}">
+                                <span class="bar-value">
+                                    {{ number_format($row->total, 0, ',', '.') }}
+                                </span>
+                                <span class="bar-label">
+                                    {{ $row->provinsi }}
+                                </span>
+                            </div>
                         @empty
-                        <p>Tidak ada data</p>
+                            <p>Tidak ada data</p>
                         @endforelse
                     </div>
                 </div>
             </div>
+
+            {{-- GRAFIK TK --}}
+            @include('wlkp.tenagakerja')
+
         </div>
     </section>
 
@@ -181,7 +188,20 @@
         <p>© 2026 Kementerian Ketenagakerjaan Republik Indonesia</p>
     </footer>
 
+
+    <script>
+        window.kabData = @json($rows ?? []);
+        window.chartData = {
+            kota: @json($kota),
+            mikro: @json($mikroChart),
+            kecil: @json($kecilChart),
+            menengah: @json($menengahChart),
+            besar: @json($besarChart),
+            
+        };
+    </script>
     <script src="{{ asset('js/templatemo-graph-script.js') }}"></script>
+
 </body>
 
 </html>
