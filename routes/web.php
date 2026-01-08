@@ -7,4 +7,4 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/wlkp', [WlkpController::class, 'index']);
+Route::get('/wlkp', [WlkpController::class, 'index'])->name('wlkp.index');
