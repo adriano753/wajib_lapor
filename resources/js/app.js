@@ -255,3 +255,5 @@ document.querySelectorAll('.metric-item').forEach(item => {
    item.style.opacity = '0';
    item.style.transition = 'all 0.5s ease';
 });
+
+
