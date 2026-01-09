@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="{{ asset('css/wlkp.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+
 
 </head>
 
@@ -108,7 +110,7 @@
                     </div>
                 </div>
             </div>
-
+            @include('wlkp.perusahaanklasifikasi')
             {{-- GRAFIK TK --}}
             @include('wlkp.tenagakerja')
 
@@ -197,8 +199,12 @@
             kecil: @json($kecilChart),
             menengah: @json($menengahChart),
             besar: @json($besarChart),
-            
+            provinsi: @json($dataProvinsi->pluck('provinsi')),
+            klasifikasi: @json($dataKlasifikasi),
+            totalProvinsi: @json($dataProvinsi->pluck('total')),
         };
+        window.chartMasterData = @json($masterData); 
+        window.listProvinsiLabel = @json($listProvinsi);
     </script>
     <script src="{{ asset('js/templatemo-graph-script.js') }}"></script>
 

@@ -1,9 +1,67 @@
-<section class="dashboard-section">
+<section class="dashboard-section chart-card full-width chart-container">
 
-    <h2 class="dashboard-title">Data Perusahaan</h2>
+    <select id="tahunSelect" class="form-select mb-3">
+        <option value="">-- Periode Tahun --</option>
+        @foreach ($optTahun as $k)
+            <option value="{{ $k }}">{{ $k }}</option>
+        @endforeach
+    </select>
+    <select id="bulanSelect" class="form-select mb-3">
+        <option value="">-- Periode Bulan --</option>
+        @for ($i = 1; $i <= 12; $i++)
+            <option value="{{ $i }}">{{ date('F', mktime(0, 0, 0, $i, 10)) }}</option>
+        @endfor
+    </select>
+    <select id="provinsiSelect" class="form-select mb-3">
+        <option value="">-- Pilih Provinsi --</option>
+        @foreach ($optProvinsi as $k)
+            <option value="{{ $k }}">{{ $k }}</option>
+        @endforeach
+    </select>
+    <select id="kabupatenSelect" class="form-select mb-3">
+        <option value="">-- Pilih Kab/Kota --</option>
+        @foreach ($optKota as $k)
+            <option value="{{ $k }}">{{ $k }}</option>
+        @endforeach
+    </select>
+    <select id="klasifikasiSelect" class="form-select mb-3">
+        <option value="">-- Pilih Klasifikasi --</option>
+        @foreach ($optKlasifikasi as $k)
+            <option value="{{ $k }}">{{ $k }}</option>
+        @endforeach
+    </select>
+    <h2 class="dashboard-title">Data Provinsi</h2>
 
+    <div style="display: flex; flex-wrap: wrap; gap: 20px;">
+
+        <div style="flex: 1; min-width: 0; overflow-x: auto; padding-bottom: 10px;">
+            <div id="provinsiChartContainer" style="width: 2000px; height: 400px;"> <canvas id="provinsiChart"></canvas>
+            </div>
+        </div>
+
+        <div style="flex: 1; min-width: 300px; height: 400px;">
+            <h3 style="color:white; text-align:center; margin-bottom:10px;">Klasifikasi Perusahaan</h3>
+            <canvas id="klasifikasiChart"></canvas>
+        </div>
+    </div>
+    </div> 
+    <div id="kotaChartSection" class="row mt-4" style="display: none;"> 
+        <div class="col-12">
+            <h3 class="text-white text-center mb-3">Data Per Kabupaten/Kota</h3>
+            
+            <div style="width: 100%; overflow-x: auto; padding-bottom: 20px;">
+                <div id="kotaChartContainer" style="width: 100%; height: 400px;">
+                    <canvas id="kotaChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+    {{--
     <!-- ================= FILTER ================= -->
-     <form action="{{ route('wlkp.index') }}" method="GET">
+     <form action="{{ route('wlkp.index') }}#section-klasifikasi" method="GET">
+        <input type="hidden" name="filter_source" value="klasifikasi">
         <div class="filter-bar">
             <select name="tahun" class="form-control" onchange="this.form.submit()">
                 <option value="">Semua Tahun</option>
@@ -144,6 +202,6 @@
 
         </div>
 
-    </div>
+    </div> --}}
 
-</section>
+
