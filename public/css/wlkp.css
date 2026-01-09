@@ -638,6 +638,12 @@ nav.scrolled {
 	gap: 10px;
 }
 
+.chart-wrapper {
+    width: 2500px;        /* PAKSA LEBAR: Semakin besar angka ini, bar semakin gemuk */
+    height: 500px;        /* Tinggi chart tetap */
+    position: relative;
+}
+
 .chart-option {
 	padding: 8px 16px;
 	background: rgba(255, 255, 255, 0.05);

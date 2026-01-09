@@ -3,90 +3,75 @@
 namespace App\Services;
 
 use App\Models\Wlkp;
-use DB;
+use Illuminate\Support\Facades\DB;
 
 class WlkpService {
 
-    // public function getFilteredData(array $filters) {
-    //     return Wlkp::filter($filters)->get();
-    // }
+    /**
+     * FUNGSI UTAMA: Get Master Data Rekapan
+     * Mengambil data jumlah perusahaan yang dikelompokkan berdasarkan:
+     * Waktu (Tahun, Bulan) + Lokasi (Prov, Kota) + Klasifikasi (Skala).
+     * * Data ini nanti dikirim ke JavaScript untuk dijadikan sumber:
+     * 1. Grafik Provinsi
+     * 2. Grafik Kab/Kota
+     * 3. Grafik Klasifikasi
+     */
+    public function getMasterData()
+    {
+        return Wlkp::select(
+            // 1. Dimensi Waktu (Untuk Filter)
+            DB::raw('EXTRACT(YEAR FROM tgl_pendaftaran) as tahun'),
+            DB::raw('EXTRACT(MONTH FROM tgl_pendaftaran) as bulan'),
 
-    public function getDropdowns($requestProvinsi = null)
+            // 2. Dimensi Data (Untuk Chart & Filter)
+            'provinsi',
+            'kota',
+            'skala_objek_pengawasan',
+
+            // 3. Metrik (Hanya Jumlah Perusahaan)
+            DB::raw('COUNT(*) as total') 
+        )
+        // Filter Data Kotor
+        ->whereNotNull('tgl_pendaftaran')
+        ->whereNotNull('provinsi')
+        ->where('provinsi', '!=', '') // Kadang ada string kosong
+        
+        // GROUP BY (Peringkasan Data)
+        ->groupBy('tahun', 'bulan', 'provinsi', 'kota', 'skala_objek_pengawasan')
+        ->get();
+    }
+
+    /**
+     * Helper untuk opsi dropdown awal
+     */
+    public function getDropdowns()
     {
         return [
-            'tahun'       => Wlkp::selectRaw('EXTRACT(YEAR FROM tgl_pendaftaran) as tahun')
-                                ->distinct()->orderByDesc('tahun')->pluck('tahun')->map(fn($i)=>(int)$i),
-                                
-            'provinsi'    => Wlkp::select('provinsi')->distinct()->orderBy('provinsi')->pluck('provinsi'),
+            'tahun' => Wlkp::selectRaw('EXTRACT(YEAR FROM tgl_pendaftaran) as tahun')
+                        ->whereNotNull('tgl_pendaftaran')
+                        ->distinct()
+                        ->orderByDesc('tahun')
+                        ->pluck('tahun')
+                        ->map(fn($i) => (int)$i),
+
+            'provinsi' => Wlkp::select('provinsi')
+                        ->whereNotNull('provinsi')
+                        ->where('provinsi', '!=', '')
+                        ->distinct()
+                        ->orderBy('provinsi')
+                        ->pluck('provinsi'),
             
-            'klasifikasi' => Wlkp::select('skala_objek_pengawasan')->distinct()->pluck('skala_objek_pengawasan'),
-            
-            // Kota menyesuaikan provinsi yang dipilih
-            'kota'        => Wlkp::select('kota')->distinct()
-                                ->when($requestProvinsi, fn($q) => $q->where('provinsi', $requestProvinsi))
-                                ->orderBy('kota')->pluck('kota'),
+            // Kota & Klasifikasi bisa diambil semua dulu
+            'kota' => Wlkp::select('kota')
+                        ->whereNotNull('kota')
+                        ->distinct()
+                        ->orderBy('kota')
+                        ->pluck('kota'),
+
+            'klasifikasi' => Wlkp::select('skala_objek_pengawasan')
+                        ->whereNotNull('skala_objek_pengawasan')
+                        ->distinct()
+                        ->pluck('skala_objek_pengawasan'),
         ];
     }
-
-    public function getChartProvinsi(array $filters)
-    {
-        return Wlkp::filter($filters) 
-            ->select('provinsi', DB::raw('count(*) as total'))
-            ->whereNotNull('provinsi')
-            ->groupBy('provinsi')
-            ->orderByDesc('total')
-            ->get();
-    }
-
-    public function getChartKota(array $filters){
-        return Wlkp::filter($filters)
-            ->select('kota', DB::raw('count(*) as total'))
-            ->whereNotNull('kota')
-            ->groupBy('kota')
-            ->orderByDesc('total')
-            ->get();
-    }
-
-    public function getChartKlasifikasi(array $filters){
-        return Wlkp::filter($filters)
-            ->select('skala_objek_pengawasan', DB::raw('count(*) as total'))
-            ->whereNotNull('skala_objek_pengawasan')
-            ->groupBy('skala_objek_pengawasan')
-            ->orderByDesc('total')
-            ->get();
-    }
-
-    // Function untuk get Filter Tahun
-    // public function getYearOptions()
-    // {
-    //     return Wlkp::selectRaw('EXTRACT(YEAR FROM tgl_pendaftaran) as tahun')
-    //     ->distinct()
-    //     ->orderByDesc('tahun')
-    //     ->pluck('tahun')
-    //     // Karena EXTRACT mengembalikan float/decimal di pgsql, kita integer-kan biar rapi
-    //     ->map(fn($item) => (int) $item);
-    // }
-
-    /**
-     * Ambil Opsi Kota (Smart Dropdown)
-     * Jika Provinsi dipilih, hanya tampilkan kota di provinsi tersebut
-     */
-    // public function getCityOptions($selectedProvinsi = null)
-    // {
-    //     $query = Wlkp::select('kota')->distinct();
-
-    //     if ($selectedProvinsi) {
-    //         $query->where('provinsi', $selectedProvinsi);
-    //     }
-
-    //     return $query->orderBy('kota')->pluck('kota');
-    // }
-
-    /**
-     * Helper simpel untuk ambil kolom unik lain
-     */
-    // public function getDistinctColumn($column)
-    // {
-    //     return Wlkp::select($column)->distinct()->orderBy($column)->pluck($column);
-    // }
 }
