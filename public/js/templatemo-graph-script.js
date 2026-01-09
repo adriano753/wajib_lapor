@@ -1,165 +1,189 @@
-
 // Hamburger menu toggle
-const hamburger = document.getElementById('hamburger');
-const navLinksMobile = document.getElementById('navLinksMobile');
-const mobileLinks = navLinksMobile.querySelectorAll('a');
+const hamburger = document.getElementById("hamburger");
+const navLinksMobile = document.getElementById("navLinksMobile");
+const mobileLinks = navLinksMobile ? navLinksMobile.querySelectorAll("a") : [];
 
-hamburger.addEventListener('click', function () {
-   hamburger.classList.toggle('active');
-   navLinksMobile.classList.toggle('active');
-});
+// const navLinksMobile = document.getElementById('navLinksMobile');
+// const mobileLinks = navLinksMobile.querySelectorAll('a');
+
+// hamburger.addEventListener('click', function () {
+//    hamburger.classList.toggle('active');
+//    navLinksMobile.classList.toggle('active');
+// });
+if (hamburger) {
+    hamburger.addEventListener("click", function () {
+        hamburger.classList.toggle("active");
+        navLinksMobile?.classList.toggle("active");
+    });
+}
 
 // Close mobile menu when a link is clicked
-mobileLinks.forEach(link => {
-   link.addEventListener('click', function () {
-      hamburger.classList.remove('active');
-      navLinksMobile.classList.remove('active');
-   });
+mobileLinks.forEach((link) => {
+    link.addEventListener("click", function () {
+        hamburger.classList.remove("active");
+        navLinksMobile.classList.remove("active");
+    });
 });
 
 // Close mobile menu when scrolling
-window.addEventListener('scroll', function () {
-   hamburger.classList.remove('active');
-   navLinksMobile.classList.remove('active');
+window.addEventListener("scroll", function () {
+    if (hamburger) hamburger.classList.remove("active");
+    if (navLinksMobile) navLinksMobile.classList.remove("active");
 });
+
+// window.addEventListener('scroll', function () {
+//    hamburger.classList.remove('active');
+//    navLinksMobile.classList.remove('active');
+// });
 
 // Navbar scroll effect
-window.addEventListener('scroll', function () {
-   const navbar = document.getElementById('navbar');
-   if (window.scrollY > 50) {
-      navbar.classList.add('scrolled');
-   } else {
-      navbar.classList.remove('scrolled');
-   }
+window.addEventListener("scroll", function () {
+    const navbar = document.getElementById("navbar");
+    if (!navbar) return;
+
+    if (window.scrollY > 50) {
+        navbar.classList.add("scrolled");
+    } else {
+        navbar.classList.remove("scrolled");
+    }
 });
 
+// window.addEventListener('scroll', function () {
+//    const navbar = document.getElementById('navbar');
+//    if (window.scrollY > 50) {
+//       navbar.classList.add('scrolled');
+//    } else {
+//       navbar.classList.remove('scrolled');
+//    }
+// });
+
 // Active navigation highlighting
-const sections = document.querySelectorAll('section[id]');
-const navLinks = document.querySelectorAll('.nav-links a');
-const mobileNavLinks = document.querySelectorAll('.nav-links-mobile a');
+const sections = document.querySelectorAll("section[id]");
+const navLinks = document.querySelectorAll(".nav-links a");
+const mobileNavLinks = document.querySelectorAll(".nav-links-mobile a");
 
 function updateActiveNav() {
-   const scrollY = window.pageYOffset;
+    const scrollY = window.pageYOffset;
 
-   sections.forEach(section => {
-      const sectionHeight = section.offsetHeight;
-      const sectionTop = section.offsetTop - 100;
-      const sectionId = section.getAttribute('id');
+    sections.forEach((section) => {
+        const sectionHeight = section.offsetHeight;
+        const sectionTop = section.offsetTop - 100;
+        const sectionId = section.getAttribute("id");
 
-      if (scrollY > sectionTop && scrollY <= sectionTop + sectionHeight) {
-         navLinks.forEach(link => {
-            link.classList.remove('active');
-            if (link.getAttribute('href') === `#${sectionId}`) {
-               link.classList.add('active');
-            }
-         });
+        if (scrollY > sectionTop && scrollY <= sectionTop + sectionHeight) {
+            navLinks.forEach((link) => {
+                link.classList.remove("active");
+                if (link.getAttribute("href") === `#${sectionId}`) {
+                    link.classList.add("active");
+                }
+            });
 
-         mobileNavLinks.forEach(link => {
-            link.classList.remove('active');
-            if (link.getAttribute('href') === `#${sectionId}`) {
-               link.classList.add('active');
-            }
-         });
-      }
-   });
+            mobileNavLinks.forEach((link) => {
+                link.classList.remove("active");
+                if (link.getAttribute("href") === `#${sectionId}`) {
+                    link.classList.add("active");
+                }
+            });
+        }
+    });
 }
 
-window.addEventListener('scroll', updateActiveNav);
+window.addEventListener("scroll", updateActiveNav);
 
 // Smooth scrolling
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-   anchor.addEventListener('click', function (e) {
-      e.preventDefault();
-      const target = document.querySelector(this.getAttribute('href'));
-      if (target) {
-         target.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
-         });
-      }
-   });
+document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+    anchor.addEventListener("click", function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute("href"));
+        if (target) {
+            target.scrollIntoView({
+                behavior: "smooth",
+                block: "start",
+            });
+        }
+    });
 });
 
 // Mini charts animation
 function drawMiniChart(canvasId, color) {
-   const canvas = document.getElementById(canvasId);
-   if (!canvas) return;
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
 
-   const ctx = canvas.getContext('2d');
-   canvas.width = canvas.offsetWidth;
-   canvas.height = canvas.offsetHeight;
+    const ctx = canvas.getContext("2d");
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
 
-   // Generate random data points
-   const points = [];
-   for (let i = 0; i < 10; i++) {
-      points.push(Math.random() * canvas.height);
-   }
+    // Generate random data points
+    const points = [];
+    for (let i = 0; i < 10; i++) {
+        points.push(Math.random() * canvas.height);
+    }
 
-   // Draw line
-   ctx.beginPath();
-   ctx.strokeStyle = color;
-   ctx.lineWidth = 2;
+    // Draw line
+    ctx.beginPath();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
 
-   points.forEach((point, index) => {
-      const x = (canvas.width / (points.length - 1)) * index;
-      const y = point;
+    points.forEach((point, index) => {
+        const x = (canvas.width / (points.length - 1)) * index;
+        const y = point;
 
-      if (index === 0) {
-         ctx.moveTo(x, y);
-      } else {
-         ctx.lineTo(x, y);
-      }
-   });
+        if (index === 0) {
+            ctx.moveTo(x, y);
+        } else {
+            ctx.lineTo(x, y);
+        }
+    });
 
-   ctx.stroke();
+    ctx.stroke();
 
-   // Draw gradient fill
-   const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-   gradient.addColorStop(0, color + '40');
-   gradient.addColorStop(1, color + '00');
+    // Draw gradient fill
+    const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    gradient.addColorStop(0, color + "40");
+    gradient.addColorStop(1, color + "00");
 
-   ctx.lineTo(canvas.width, canvas.height);
-   ctx.lineTo(0, canvas.height);
-   ctx.closePath();
-   ctx.fillStyle = gradient;
-   ctx.fill();
+    ctx.lineTo(canvas.width, canvas.height);
+    ctx.lineTo(0, canvas.height);
+    ctx.closePath();
+    ctx.fillStyle = gradient;
+    ctx.fill();
 }
 
 // Initialize mini charts
 setTimeout(() => {
-   drawMiniChart('miniChart1', '#00ffcc');
-   drawMiniChart('miniChart2', '#ff0080');
-   drawMiniChart('miniChart3', '#00ccff');
-   drawMiniChart('miniChart4', '#ffcc00');
-   drawMiniChart('miniChart5', '#ff6b6b');
-   drawMiniChart('miniChart6', '#4ecdc4');
+    drawMiniChart("miniChart1", "#00ffcc");
+    drawMiniChart("miniChart2", "#ff0080");
+    drawMiniChart("miniChart3", "#00ccff");
+    drawMiniChart("miniChart4", "#ffcc00");
+    drawMiniChart("miniChart5", "#ff6b6b");
+    drawMiniChart("miniChart6", "#4ecdc4");
 }, 100);
 
 // Animate stats on scroll
 const observerOptions = {
-   threshold: 0.5,
-   rootMargin: '0px'
+    threshold: 0.5,
+    rootMargin: "0px",
 };
 
 const observer = new IntersectionObserver((entries) => {
-   entries.forEach(entry => {
-      if (entry.isIntersecting) {
-         const bars = entry.target.querySelectorAll('.bar');
-         bars.forEach((bar, index) => {
-            setTimeout(() => {
-               bar.style.animation = 'slideUp 0.5s ease-out forwards';
-            }, index * 100);
-         });
-      }
-   });
+    entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+            const bars = entry.target.querySelectorAll(".bar");
+            bars.forEach((bar, index) => {
+                setTimeout(() => {
+                    bar.style.animation = "slideUp 0.5s ease-out forwards";
+                }, index * 100);
+            });
+        }
+    });
 }, observerOptions);
 
-document.querySelectorAll('.bar-chart').forEach(chart => {
-   observer.observe(chart);
+document.querySelectorAll(".bar-chart").forEach((chart) => {
+    observer.observe(chart);
 });
 
 // Add slide up animation
-const style = document.createElement('style');
+const style = document.createElement("style");
 style.textContent = `
             @keyframes slideUp {
                 from {
@@ -175,83 +199,303 @@ style.textContent = `
 document.head.appendChild(style);
 
 // Chart options interaction
-document.querySelectorAll('.chart-options').forEach(optionGroup => {
-   const options = optionGroup.querySelectorAll('.chart-option');
-   options.forEach(option => {
-      option.addEventListener('click', function () {
-         options.forEach(opt => opt.classList.remove('active'));
-         this.classList.add('active');
-      });
-   });
+document.querySelectorAll(".chart-options").forEach((optionGroup) => {
+    const options = optionGroup.querySelectorAll(".chart-option");
+    options.forEach((option) => {
+        option.addEventListener("click", function () {
+            options.forEach((opt) => opt.classList.remove("active"));
+            this.classList.add("active");
+        });
+    });
 });
 
 // Form submission handler
-document.getElementById('contactForm').addEventListener('submit', function (e) {
-   e.preventDefault();
+// ===== CONTACT FORM (SAFE) =====
+const contactForm = document.getElementById("contactForm");
 
-   // Get form data
-   const formData = {
-      name: document.getElementById('name').value,
-      email: document.getElementById('email').value,
-      subject: document.getElementById('subject').value,
-      message: document.getElementById('message').value
-   };
+if (contactForm) {
+    contactForm.addEventListener("submit", function (e) {
+        e.preventDefault();
 
-   // Show success message
-   const submitBtn = this.querySelector('button[type="submit"]');
-   const originalText = submitBtn.textContent;
-   submitBtn.textContent = 'Message Sent! ✓';
-   submitBtn.style.background = 'linear-gradient(135deg, #4ade80, #22c55e)';
+        const submitBtn = this.querySelector('button[type="submit"]');
+        if (!submitBtn) return;
 
-   // Reset form
-   this.reset();
+        const originalText = submitBtn.textContent;
+        submitBtn.textContent = "Message Sent! ✓";
+        submitBtn.style.background =
+            "linear-gradient(135deg, #4ade80, #22c55e)";
 
-   // Reset button after 3 seconds
-   setTimeout(() => {
-      submitBtn.textContent = originalText;
-      submitBtn.style.background = 'linear-gradient(135deg, #ff6b6b, #ff8e53)';
-   }, 3000);
-});
+        this.reset();
+
+        setTimeout(() => {
+            submitBtn.textContent = originalText;
+            submitBtn.style.background =
+                "linear-gradient(135deg, #ff6b6b, #ff8e53)";
+        }, 3000);
+    });
+
+    // Hover effect inputs
+    contactForm.querySelectorAll("input, textarea").forEach((input) => {
+        input.addEventListener("focus", function () {
+            this.style.borderColor = "rgba(0, 255, 204, 0.5)";
+            this.style.background = "rgba(255, 255, 255, 0.08)";
+        });
+
+        input.addEventListener("blur", function () {
+            this.style.borderColor = "rgba(255, 255, 255, 0.1)";
+            this.style.background = "rgba(255, 255, 255, 0.05)";
+        });
+    });
+}
+
+// document.getElementById('contactForm').addEventListener('submit', function (e) {
+//    e.preventDefault();
+
+//    // Get form data
+//    const formData = {
+//       name: document.getElementById('name').value,
+//       email: document.getElementById('email').value,
+//       subject: document.getElementById('subject').value,
+//       message: document.getElementById('message').value
+//    };
+
+//    // Show success message
+//    const submitBtn = this.querySelector('button[type="submit"]');
+//    const originalText = submitBtn.textContent;
+//    submitBtn.textContent = 'Message Sent! ✓';
+//    submitBtn.style.background = 'linear-gradient(135deg, #4ade80, #22c55e)';
+
+//    // Reset form
+//    this.reset();
+
+//    // Reset button after 3 seconds
+//    setTimeout(() => {
+//       submitBtn.textContent = originalText;
+//       submitBtn.style.background = 'linear-gradient(135deg, #ff6b6b, #ff8e53)';
+//    }, 3000);
+// });
 
 // Add hover effect to contact form inputs
-document.querySelectorAll('#contactForm input, #contactForm textarea').forEach(input => {
-   input.addEventListener('focus', function () {
-      this.style.borderColor = 'rgba(0, 255, 204, 0.5)';
-      this.style.background = 'rgba(255, 255, 255, 0.08)';
-      this.style.boxShadow = '0 0 20px rgba(0, 255, 204, 0.1)';
-   });
+document
+    .querySelectorAll("#contactForm input, #contactForm textarea")
+    .forEach((input) => {
+        input.addEventListener("focus", function () {
+            this.style.borderColor = "rgba(0, 255, 204, 0.5)";
+            this.style.background = "rgba(255, 255, 255, 0.08)";
+            this.style.boxShadow = "0 0 20px rgba(0, 255, 204, 0.1)";
+        });
 
-   input.addEventListener('blur', function () {
-      this.style.borderColor = 'rgba(255, 255, 255, 0.1)';
-      this.style.background = 'rgba(255, 255, 255, 0.05)';
-      this.style.boxShadow = 'none';
-   });
-});
+        input.addEventListener("blur", function () {
+            this.style.borderColor = "rgba(255, 255, 255, 0.1)";
+            this.style.background = "rgba(255, 255, 255, 0.05)";
+            this.style.boxShadow = "none";
+        });
+    });
 
 // Metrics animation on scroll
-const metricsObserver = new IntersectionObserver((entries) => {
-   entries.forEach(entry => {
-      if (entry.isIntersecting) {
-         const metrics = entry.target.querySelectorAll('.metric-item');
-         metrics.forEach((metric, index) => {
-            setTimeout(() => {
-               metric.style.transform = 'translateY(0)';
-               metric.style.opacity = '1';
-            }, index * 100);
-         });
-      }
-   });
-}, {
-   threshold: 0.3
-});
+const metricsObserver = new IntersectionObserver(
+    (entries) => {
+        entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+                const metrics = entry.target.querySelectorAll(".metric-item");
+                metrics.forEach((metric, index) => {
+                    setTimeout(() => {
+                        metric.style.transform = "translateY(0)";
+                        metric.style.opacity = "1";
+                    }, index * 100);
+                });
+            }
+        });
+    },
+    {
+        threshold: 0.3,
+    }
+);
 
-document.querySelectorAll('.metrics-grid').forEach(grid => {
-   metricsObserver.observe(grid);
+document.querySelectorAll(".metrics-grid").forEach((grid) => {
+    metricsObserver.observe(grid);
 });
 
 // Initialize metrics animation state
-document.querySelectorAll('.metric-item').forEach(item => {
-   item.style.transform = 'translateY(20px)';
-   item.style.opacity = '0';
-   item.style.transition = 'all 0.5s ease';
+document.querySelectorAll(".metric-item").forEach((item) => {
+    item.style.transform = "translateY(20px)";
+    item.style.opacity = "0";
+    item.style.transition = "all 0.5s ease";
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+    if (typeof Chart === "undefined") {
+        console.error("Chart.js belum ke-load");
+        return;
+    }
+
+    if (!window.chartData || !window.kabData) {
+        console.error("Data chart tidak lengkap");
+        return;
+    }
+
+    /* ===============================
+       1️⃣ LINE CHART UTAMA (SEMUA KOTA)
+    =============================== */
+    const mainChart = new Chart(document.getElementById("tenagaKerjaChart"), {
+        type: "line",
+        data: {
+            labels: window.chartData.kota,
+            datasets: [
+                { label: "Mikro", data: window.chartData.mikro, tension: 0.4 },
+                { label: "Kecil", data: window.chartData.kecil, tension: 0.4 },
+                {
+                    label: "Menengah",
+                    data: window.chartData.menengah,
+                    tension: 0.4,
+                },
+                { label: "Besar", data: window.chartData.besar, tension: 0.4 },
+            ],
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+        },
+    });
+
+    /* ===============================
+       2️⃣ BAR CHART FULL (KANAN)
+    =============================== */
+    const fullChart = new Chart(
+        document.getElementById("tenagaKerjaFullChart"),
+        {
+            type: "line",
+            data: {
+                labels: window.chartData.kota,
+                datasets: [
+                    {
+                        label: "Mikro",
+                        data: window.chartData.mikro,
+                        tension: 0.4,
+                    },
+                    {
+                        label: "Kecil",
+                        data: window.chartData.kecil,
+                        tension: 0.4,
+                    },
+                    {
+                        label: "Menengah",
+                        data: window.chartData.menengah,
+                        tension: 0.4,
+                    },
+                    {
+                        label: "Besar",
+                        data: window.chartData.besar,
+                        tension: 0.4,
+                    },
+                ],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+            },
+        }
+    );
+
+    /* ===============================
+   3️⃣ LINE CHART FILTER (KIRI)
+=============================== */
+    const kabChart = new Chart(document.getElementById("tenagaKerjaKabChart"), {
+        type: "line",
+        data: {
+            labels: ["Mikro", "Besar", "Menengah", "Kecil"],
+            datasets: [
+                {
+                    label: "Pilih Kab/Kota",
+                    data: [0, 0, 0, 0],
+                    tension: 0.4,
+                    borderWidth: 3,
+                    pointRadius: 5,
+                    pointHoverRadius: 7,
+                },
+            ],
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+
+            interaction: {
+                mode: "nearest",
+                intersect: false,
+            },
+
+            plugins: {
+                tooltip: {
+                    enabled: true,
+                    mode: "nearest",
+                    intersect: false,
+                },
+                legend: {
+                    display: true,
+                },
+            },
+
+            elements: {
+                point: {
+                    radius: 5,
+                    hoverRadius: 8,
+                    hitRadius: 20, // 👈 bikin area hover lebih luas
+                },
+                line: {
+                    borderWidth: 3,
+                },
+            },
+
+            scales: {
+                y: {
+                    beginAtZero: true,
+                },
+            },
+        },
+    });
+
+    /* ===============================
+       4️⃣ FILTER DROPDOWN
+    =============================== */
+    document
+        .getElementById("kabupatenSelect")
+        .addEventListener("change", function () {
+            const kota = this.value;
+            if (!kota) return;
+
+            const mikro = sumBySkala("Mikro", kota);
+            const besar = sumBySkala("Besar", kota);
+            const menengah = sumBySkala("Menengah", kota);
+            const kecil = sumBySkala("Kecil", kota);
+
+            kabChart.data.datasets[0].label = kota;
+            kabChart.data.datasets[0].data = [mikro, besar, menengah, kecil];
+
+            kabChart.update();
+        });
+
+    /* ===============================
+       HELPER FUNCTION
+    =============================== */
+    function sumBySkala(skala, kota = null) {
+        return window.kabData
+            .filter(
+                (d) =>
+                    d.skala_objek_pengawasan === skala &&
+                    (!kota || d.kota === kota)
+            )
+            .reduce((sum, d) => sum + Number(d.total), 0);
+    }
+
+    function lineFilter(skala, kota) {
+        return window.chartData.kota.map((k) => {
+            if (k !== kota) return 0;
+
+            return window.kabData
+                .filter(
+                    (d) => d.kota === kota && d.skala_objek_pengawasan === skala
+                )
+                .reduce((sum, d) => sum + Number(d.total), 0);
+        });
+    }
 });

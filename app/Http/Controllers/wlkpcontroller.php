@@ -64,10 +64,75 @@ class WlkpController extends Controller
         =============================== */
         $totalRaw = DB::table('wajiblapor.report_detil_wlkp_binwas')->count();
         $totalSemua = $this->formatDetail($totalRaw);
-        $dropdowns = $this->service->getDropdowns($request->provinsi);
-        $chartProvinsi    = $this->service->getChartProvinsi($request->all());
-        $chartKota        = $this->service->getChartKota($request->all());
-        $chartKlasifikasi = $this->service->getChartKlasifikasi($request->all());
+
+
+        /* ===============================
+           TOTAL TENAGAKERJA
+        =============================== */
+        $totalTkRaw = DB::table('wajiblapor.report_detil_wlkp_binwas')
+            ->selectRaw('SUM(CAST(jumlah_karyawan_masih_bekerja AS INTEGER)) as total')
+            ->value('total');
+
+        $totalTk = $this->formatDetail($totalTkRaw ?? 0);
+
+        // TOTAL LAKI-LAKI MASIH BEKERJA
+        $totalLlmb = DB::table('wajiblapor.report_detil_wlkp_binwas')
+            ->selectRaw('SUM(CAST(laki_laki_masih_bekerja AS INTEGER)) as total')
+            ->value('total');
+
+        $totalLlmb = $this->formatDetail($totalLlmb ?? 0);
+
+        // TOTAL PEREMPUAN MASIH BEKERJA
+        $totalPmb = DB::table('wajiblapor.report_detil_wlkp_binwas')
+            ->selectRaw('SUM(CAST(perempuan_masih_bekerja AS INTEGER)) as total')
+            ->value('total');
+
+        $totalPmb = $this->formatDetail($totalPmb ?? 0);
+
+        $totalJaksel = $this->formatDetail(
+            DB::table('wajiblapor.report_detil_wlkp_binwas')
+                ->where('kota', 'ILIKE', 'KOTA ADM. JAKARTA SELATAN')
+                ->where('skala_objek_pengawasan', 'Besar')
+                ->sum(DB::raw('CAST(jumlah_karyawan_masih_bekerja AS INTEGER)'))
+        );
+
+
+        /* ===============================
+           DATA GRAFIK TENAGA KERJA PER KABUPATEN
+        =============================== */
+        $rows = DB::table('wajiblapor.report_detil_wlkp_binwas')
+            ->select(
+                'kota',
+                'skala_objek_pengawasan',
+                DB::raw('SUM(CAST(jumlah_karyawan_masih_bekerja AS INTEGER)) as total')
+            )
+            ->whereNotNull('kota')
+            ->groupBy('kota', 'skala_objek_pengawasan')
+            ->orderBy('kota')
+            ->get();
+
+
+        // Label X (kota)
+        $kota = $rows->pluck('kota')->unique()->values();
+
+        // Helper mapping data chart
+        $mapData = function ($skala) use ($rows, $kota) {
+            return $kota->map(function ($kot) use ($rows, $skala) {
+                return (int) ($rows
+                    ->where('kota', $kot)
+                    ->where('skala_objek_pengawasan', $skala)
+                    ->first()->total ?? 0);
+            });
+        };
+
+        $mikroChart     = $mapData('Mikro');
+        $kecilChart     = $mapData('Kecil');
+        $menengahChart  = $mapData('Menengah');
+        $besarChart     = $mapData('Besar');
+
+        /* ===============================
+           END TOTAL TENAGA KERJA
+        =============================== */
 
         /* ===============================
            SKALA OBJEK PENGAWASAN
@@ -133,60 +198,17 @@ class WlkpController extends Controller
             'tidak_terident',
             'dataProvinsi',
             'maxVal',
-            'maxProvinsi',
-            'maxKlasifikasi',
-            'maxKota',
-            'chartProvinsi',
-            'chartKota',
-            'chartKlasifikasi',
-            'listTahun'
-        ), [
-            'optTahun' => $dropdowns['tahun'], 
-            'optProvinsi'=> $dropdowns['provinsi'],
-            'optKota' => $dropdowns ['kota'],
-            'optKlasifikasi' => $dropdowns ['klasifikasi'],
-        ]);
-    }
-    // ===============================
-    // FILTER CHART (KHUSUS PERUSAHAANKLASIFIKASI)
-    // ===============================
-    public function filterProvinsi(Request $request)
-    {
-        $query = DB::table('wajiblapor.report_detil_wlkp_binwas');
-
-        if ($request->tahun) {
-            $query->whereYear('tanggal_laporan', $request->tahun);
-        }
-
-        if ($request->bulan) {
-            $query->whereMonth('tanggal_laporan', $request->bulan);
-        }
-
-        if ($request->provinsi) {
-            $query->where('provinsi', $request->provinsi);
-        }
-
-        if ($request->klasifikasi) {
-            $query->where('skala_objek_pengawasan', $request->klasifikasi);
-        }
-
-        return $query
-            ->select('provinsi', DB::raw('COUNT(*) as total'))
-            ->groupBy('provinsi')
-            ->orderByDesc('total')
-            ->get();
-    }
-
-    // ===============================
-    // DROPDOWN KABUPATEN
-    // ===============================
-    public function getKabupaten(Request $request)
-    {
-        return DB::table('wajiblapor.report_detil_wlkp_binwas')
-            ->where('provinsi', $request->provinsi)
-            ->whereNotNull('kabupaten_kota')
-            ->distinct()
-            ->orderBy('kabupaten_kota')
-            ->pluck('kabupaten_kota');
+            'totalTk',
+            'totalLlmb',
+            'totalPmb',
+            'totalJaksel',
+            'rows',
+            // tenaga kerja chart
+            'kota',
+            'mikroChart',
+            'kecilChart',
+            'menengahChart',
+            'besarChart',
+        ));
     }
 }
