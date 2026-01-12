@@ -1253,3 +1253,88 @@ footer {
     height: 320px !important;
 }
 
+/* Container provinsi */
+.container-provinsi-fluid {
+    width: 100%;
+    padding-left: 24px;
+    padding-right: 24px;
+}
+
+/* Card */
+.card-provinsi {
+    border-radius: 14px;
+    background: #0b1229;
+    color: #fff;
+}
+
+/* Wrapper scroll horizontal */
+.chart-scroll-provinsi {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+/* Lebar chart mengikuti jumlah provinsi */
+.chart-container-wide-provinsi {
+    position: relative;
+    height: 450px;
+    min-width: 1800px;   /* ini kuncinya */
+    padding-bottom: 10px;
+}
+
+/* Canvas full */
+.chart-container-wide-provinsi canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.filter-bar {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
+.filter-item {
+    width: 300px;
+}
+.filter-panel {
+    display: flex;
+    gap: 24px;
+    align-items: flex-end;
+    padding: 20px;
+    background: linear-gradient(135deg, #0f172a, #020617);
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.08);
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.filter-group label {
+    font-size: 13px;
+    color: #94a3b8;
+    font-weight: 500;
+}
+
+.filter-select {
+    width: 280px;
+    background-color: #020617;
+    border: 1px solid rgba(255,255,255,0.15);
+    color: #e5e7eb;
+    border-radius: 8px;
+    padding: 10px 14px;
+}
+
+.filter-select:focus {
+    border-color: #38bdf8;
+    box-shadow: 0 0 0 2px rgba(56,189,248,.25);
+}
+.filter-select:hover {
+    border-color: #38bdf8;
+}
+
+
+

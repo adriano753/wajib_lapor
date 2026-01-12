@@ -8,3 +8,5 @@ Route::get('/', function () {
 });
 
 Route::get('/wlkp', [WlkpController::class, 'index']);
+Route::get('/wlkp/tenagakerja', [WlkpController::class, 'tenagaKerja']);
+

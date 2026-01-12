@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WLKP - Wajib Lapor Ketenagakerjaan Perusahaan</title>
     <link rel="stylesheet" href="{{ asset('css/wlkp.css') }}">
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
+    {{-- <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script> --}}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 </head>
@@ -191,13 +191,19 @@
 
     <script>
         window.kabData = @json($rows ?? []);
+        window.provData = @json($rowsProvinsi ?? []);
         window.chartData = {
             kota: @json($kota),
             mikro: @json($mikroChart),
             kecil: @json($kecilChart),
             menengah: @json($menengahChart),
             besar: @json($besarChart),
-            
+            provinsi: @json($provinsi),
+            mikroProv: @json($mikroProv),
+            kecilProv: @json($kecilProv),
+            menengahProv: @json($menengahProv),
+            besarProv: @json($besarProv)
+
         };
     </script>
     <script src="{{ asset('js/templatemo-graph-script.js') }}"></script>
