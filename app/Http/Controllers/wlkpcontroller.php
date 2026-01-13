@@ -203,6 +203,31 @@ class WlkpController extends Controller
         $maxVal = $dataProvinsi->max('total');
 
         /* ===============================
+            END DATA PROVINSI (GRAFIK)
+        =============================== */
+
+        /* ========================================================
+           START DATA SEBARAN TK BERDASARKAN KBLI 2 DIGIT (GRAFIK)
+        =========================================================== */
+        $rowsKodeTk = DB::table('wajiblapor.report_detil_wlkp_binwas')
+            ->select(
+                'kode_2_digit',
+                'nama_2_digit',
+                DB::raw('COUNT(*) as total')
+            )
+            ->groupBy('kode_2_digit', 'nama_2_digit')
+            ->orderBy('kode_2_digit')
+            ->get();
+
+        // Ambil nilai terbesar untuk tinggi grafik
+        $maxValTk = $rowsKodeTk->max('total');
+
+
+        /* ========================================================
+           START DATA SEBARAN TK BERDASARKAN KBLI 2 DIGIT (GRAFIK)
+        =========================================================== */
+
+        /* ===============================
            KIRIM KE BLADE
         =============================== */
         return view('wlkp.index', compact(
@@ -214,6 +239,8 @@ class WlkpController extends Controller
             'tidak_terident',
             'dataProvinsi',
             'maxVal',
+            'maxValTk',
+            'rowsKodeTk',
             'totalTk',
             'totalLlmb',
             'totalPmb',
