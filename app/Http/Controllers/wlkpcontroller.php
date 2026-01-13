@@ -213,18 +213,19 @@ class WlkpController extends Controller
             ->select(
                 'kode_2_digit',
                 'nama_2_digit',
+                'provinsi',
                 DB::raw('COUNT(*) as total')
             )
-            ->groupBy('kode_2_digit', 'nama_2_digit')
+            ->groupBy('kode_2_digit', 'nama_2_digit', 'provinsi')
             ->orderBy('kode_2_digit')
             ->get();
 
-        // Ambil nilai terbesar untuk tinggi grafik
         $maxValTk = $rowsKodeTk->max('total');
 
 
+
         /* ========================================================
-           START DATA SEBARAN TK BERDASARKAN KBLI 2 DIGIT (GRAFIK)
+           END DATA SEBARAN TK BERDASARKAN KBLI 2 DIGIT (GRAFIK)
         =========================================================== */
 
         /* ===============================

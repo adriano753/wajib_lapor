@@ -1,4 +1,4 @@
-<!-- Data -->
+{{-- <!-- Data -->
 <div class="metrics-grid">
     <div class="metric-item">
         <div class="metric-value">{{ $totalTk ?? 0 }}</div>
@@ -29,10 +29,10 @@
         <div class="metric-value">{{ $tidak_terident ?? 0 }}</div>
         <div class="metric-label">Tidak Teridentifikasi</div>
     </div>
-</div>
+</div> --}}
 
 <section class="container-provinsi-fluid py-4">
-    <hr>
+    <br>
     <h2 class="mb-3">DATA TENAGA KERJA</h2>
 
 
@@ -93,9 +93,11 @@
     </div>
 
     <!-- Filter Kabupaten -->
-    <div class="row mb-3">
-        <div class="col-md-4">
-            <select id="kabupatenSelect" class="form-select">
+    <br>
+    <div class="filter-panel mb-4">
+        <div class="filter-group">
+            <label>KABUPATEN / KOTA</label>
+            <select id="kabupatenSelect" class="form-select filter-select">
                 <option value="">-- Pilih Kab/Kota --</option>
                 @foreach ($kota as $k)
                     <option value="{{ $k }}">{{ $k }}</option>

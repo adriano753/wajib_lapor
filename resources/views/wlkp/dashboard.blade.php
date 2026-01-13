@@ -111,8 +111,6 @@
 
             {{-- GRAFIK TK --}}
             @include('wlkp.tenagakerja')
-            {{-- GRAFIK SEBARAN TENAGA KERJA BERDASARKAN 2 DIGIT KBLI --}}
-            @include('wlkp.sebarantkkbli')
 
         </div>
     </section>
@@ -207,7 +205,6 @@
             besarProv: @json($besarProv)
 
         };
-        window.kbliData = @json($rowsKodeTk);
     </script>
     <script src="{{ asset('js/templatemo-graph-script.js') }}"></script>
 

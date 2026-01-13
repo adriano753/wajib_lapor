@@ -327,6 +327,7 @@ document.querySelectorAll(".metric-item").forEach((item) => {
        START GRAFIK TENAGA KERJA 
     ==================================== */
 document.addEventListener("DOMContentLoaded", function () {
+    renderKBLIChart();
     console.log("ProvData:", window.provData);
     console.log("KabData:", window.kabData);
 
@@ -534,6 +535,7 @@ document.addEventListener("DOMContentLoaded", function () {
         .getElementById("provinsiSelect")
         .addEventListener("change", function () {
             const provinsi = this.value;
+            renderKBLIChart();
             const labelJenis = getLabelJenis();
 
             // update dropdown kabupaten
@@ -601,6 +603,36 @@ document.addEventListener("DOMContentLoaded", function () {
                 .getElementById("provinsiSelect")
                 .dispatchEvent(new Event("change"));
         });
+    /* ===================================================================
+       START DISABLE JENIS TENAGA & JENIS KELAMIN SAAT MEMILIH PERJANJIAN KERJA
+    ============================================================================ */
+    document
+        .getElementById("perjanjianKerja")
+        .addEventListener("change", function () {
+            const perjanjianValue = this.value.toLowerCase(); 
+            const jenisTenaga = document.getElementById("jenisTenagaKerja");
+            const jenisKelamin = document.getElementById("jenisKelamin");
+
+            if (perjanjianValue === "pkwt" || perjanjianValue === "pkwtt") {
+                // Set otomatis
+                jenisTenaga.value = "wni"; // otomatis WNI
+                jenisTenaga.disabled = true; // disable pilihan
+                jenisKelamin.value = "all"; // semua gender
+                jenisKelamin.disabled = true; // disable pilihan
+            } else {
+                // Kembalikan normal
+                jenisTenaga.disabled = false;
+                jenisKelamin.disabled = false;
+            }
+
+            // Trigger update chart / data
+            document
+                .getElementById("provinsiSelect")
+                .dispatchEvent(new Event("change"));
+        });
+    /* ===================================================================
+       END DISABLE JENIS TENAGA & JENIS KELAMIN SAAT MEMILIH PERJANJIAN KERJA
+    ============================================================================ */
 
     /* ===============================
         START FUNCTION TOTAL  PROVINSI
@@ -903,6 +935,78 @@ document.addEventListener("DOMContentLoaded", function () {
 
         return total;
     }
+
+    /* ===============================
+       END FUNCTION LABEL JENIS
+    =============================== */
+
+    /* ===============================
+       START FUNCTION KBLI PROVINSI
+    =============================== */
+    function getKBLIByProvinsi(provinsi) {
+        const map = {};
+
+        window.kbliData.forEach((d) => {
+            if (provinsi && d.provinsi !== provinsi) return;
+
+            if (!map[d.kode_2_digit]) {
+                map[d.kode_2_digit] = {
+                    nama: d.nama_2_digit,
+                    total: 0,
+                };
+            }
+
+            map[d.kode_2_digit].total += Number(d.total);
+        });
+
+        return Object.values(map);
+    }
+
+    function renderKBLIChart() {
+        const provinsi = document.getElementById("provinsiSelect").value;
+        const barChart = document.getElementById("barChartKbli");
+        const title = document.getElementById("kbliChartTitle");
+
+        barChart.innerHTML = "";
+
+        // update judul
+        if (!provinsi) {
+            title.innerText =
+                "Laporan Sebaran Tenaga Kerja Berdasarkan 2 Digit KBLI (Semua Provinsi)";
+        } else {
+            title.innerText =
+                "Laporan Sebaran Tenaga Kerja Berdasarkan 2 Digit KBLI (" +
+                provinsi +
+                ")";
+        }
+
+        const data = getKBLIByProvinsi(provinsi);
+        if (!data.length) {
+            barChart.innerHTML = "<p>Tidak ada data</p>";
+            return;
+        }
+
+        const maxVal = Math.max(...data.map((d) => d.total), 1);
+
+        data.forEach((row) => {
+            const height = (row.total / maxVal) * 100;
+
+            const bar = document.createElement("div");
+            bar.className = "bar";
+            bar.style.height = height + "%";
+            bar.title = row.nama;
+
+            bar.innerHTML = `
+            <span class="bar-value">${row.total.toLocaleString("id-ID")}</span>
+            <span class="bar-label">${row.nama}</span>
+        `;
+
+            barChart.appendChild(bar);
+        });
+    }
+    /* ===============================
+       END FUNCTION KBLI PROVINSI
+    =============================== */
 });
 /* =================================
        END GRAFIK TENAGA KERJA 
