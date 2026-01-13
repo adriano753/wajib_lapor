@@ -216,11 +216,10 @@ class WlkpController extends Controller
             'menengahChart',
             'besarChart',
         ), [
-            // --- Dropdowns dari Service ---
-            'optTahun'       => $dropdowns['tahun'], 
-            'optProvinsi'    => $dropdowns['provinsi'],
-            'optKota'        => $dropdowns['kota'],
-            'optKlasifikasi' => $dropdowns['klasifikasi'],
+            'optTahun' => $dropdowns['tahun'], 
+            'optProvinsi'=> $dropdowns['provinsi'],
+            'optKota' => $dropdowns ['kota'],
+            'optKlasifikasi' => $dropdowns ['klasifikasi'],
         ]);
     }
 }

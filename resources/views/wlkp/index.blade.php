@@ -117,6 +117,9 @@
         </div>
     </section>
 
+    <section>@include('wlkp.perusahaanklasifikasi')</section>
+    <section>@include('wlkp.linechart')</section>
+
     <!-- LAYANAN
     <section class="layanan-section" id="layanan">
         <h2 class="section-title">Layanan</h2>
@@ -207,7 +210,10 @@
         window.listProvinsiLabel = @json($listProvinsi);
     </script>
     <script src="{{ asset('js/templatemo-graph-script.js') }}"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{{ asset('js/wlkp-line-chart.js') }}"></script>
+    
+    @stack('scripts')
 </body>
 
 </html>
