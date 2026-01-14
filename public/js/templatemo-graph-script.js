@@ -431,8 +431,8 @@ document.addEventListener("DOMContentLoaded", function () {
             labels: [
                 "Tidak Teridentifikasi",
                 "Mikro",
-                "Menengah",
                 "Kecil",
+                "Menengah",
                 "Besar",
             ],
             datasets: [
@@ -495,7 +495,15 @@ document.addEventListener("DOMContentLoaded", function () {
         .getElementById("kabupatenSelect")
         .addEventListener("change", function () {
             const kota = this.value;
-            if (!kota) return;
+            // if (!kota) return;
+            if (!kota || kota === "") {
+                updateKabChartSummary(null); // kosongkan summary
+                kabChart.data.datasets[0].label =
+                    "Tenaga Kerja - Pilih Kab/Kota";
+                kabChart.data.datasets[0].data = [0, 0, 0, 0, 0];
+                kabChart.update();
+                return;
+            }
 
             const mikro = sumBySkalaKab("Mikro", kota);
             const besar = sumBySkalaKab("Besar", kota);
@@ -506,12 +514,25 @@ document.addEventListener("DOMContentLoaded", function () {
             const total =
                 mikro + besar + menengah + kecil + tidakTeridentifikasi;
 
-            kabChart.data.datasets[0].label =
-                "Tenaga Kerja - " +
-                kota +
-                " (" +
-                total.toLocaleString("id-ID") +
-                " Orang)";
+            kabChart.data.datasets[0].label = "Tenaga Kerja - " + kota;
+            // " (" +
+            // total.toLocaleString("id-ID") +
+            // " Orang)" +
+            // " | Tidak Teridentifikasi: (" +
+            // tidakTeridentifikasi.toLocaleString("id-ID") +
+            // " Orang)" +
+            // " | Mikro: (" +
+            // mikro.toLocaleString("id-ID") +
+            // " Orang)" +
+            // " | Kecil: (" +
+            // kecil.toLocaleString("id-ID") +
+            // " Orang)" +
+            // " | Menengah: (" +
+            // menengah.toLocaleString("id-ID") +
+            // " Orang)" +
+            // " | Besar: (" +
+            // besar.toLocaleString("id-ID") +
+            // " Orang)";
 
             kabChart.data.datasets[0].data = [
                 tidakTeridentifikasi,
@@ -522,6 +543,15 @@ document.addEventListener("DOMContentLoaded", function () {
             ];
 
             kabChart.update();
+            updateKabChartSummary(
+                kota,
+                total,
+                tidakTeridentifikasi,
+                mikro,
+                kecil,
+                menengah,
+                besar
+            );
         });
 
     /* ===============================
@@ -537,6 +567,9 @@ document.addEventListener("DOMContentLoaded", function () {
             const provinsi = this.value;
             renderKBLIChart();
             const labelJenis = getLabelJenis();
+            document
+                .getElementById("tableFilter")
+                .dispatchEvent(new Event("change"));
 
             // update dropdown kabupaten
             updateKabupatenDropdown(provinsi);
@@ -545,6 +578,8 @@ document.addEventListener("DOMContentLoaded", function () {
             kabChart.data.datasets[0].label = "Pilih Kab/Kota";
             kabChart.data.datasets[0].data = [0, 0, 0, 0, 0];
             kabChart.update();
+
+            updateKabChartSummary(null);
 
             // reset → tampil provinsi lagi
             if (!provinsi) {
@@ -583,6 +618,29 @@ document.addEventListener("DOMContentLoaded", function () {
        4️⃣ END FILTER DROPDOWN PROVINSI
     =============================== */
     document
+        .getElementById("tableFilter")
+        .addEventListener("change", function () {
+            const val = this.value;
+
+            document.getElementById("tableProvinsiWrapper").style.display =
+                "none";
+            document.getElementById("tableKabupatenWrapper").style.display =
+                "none";
+
+            if (val === "provinsi") {
+                renderTableProvinsi();
+                document.getElementById("tableProvinsiWrapper").style.display =
+                    "block";
+            }
+
+            if (val === "kabupaten") {
+                renderTableKabupaten();
+                document.getElementById("tableKabupatenWrapper").style.display =
+                    "block";
+            }
+        });
+
+    document
         .getElementById("jenisTenagaKerja")
         .addEventListener("change", function () {
             document
@@ -603,13 +661,15 @@ document.addEventListener("DOMContentLoaded", function () {
                 .getElementById("provinsiSelect")
                 .dispatchEvent(new Event("change"));
         });
+    document.getElementById("tableFilter").dispatchEvent(new Event("change"));
+
     /* ===================================================================
        START DISABLE JENIS TENAGA & JENIS KELAMIN SAAT MEMILIH PERJANJIAN KERJA
     ============================================================================ */
     document
         .getElementById("perjanjianKerja")
         .addEventListener("change", function () {
-            const perjanjianValue = this.value.toLowerCase(); 
+            const perjanjianValue = this.value.toLowerCase();
             const jenisTenaga = document.getElementById("jenisTenagaKerja");
             const jenisKelamin = document.getElementById("jenisKelamin");
 
@@ -784,6 +844,40 @@ document.addEventListener("DOMContentLoaded", function () {
     =============================== */
 
     /* ===============================
+   START DATA RINGKAS DI SAMPING CHART KABUPATEN
+=============================== */
+    function updateKabChartSummary(
+        kota,
+        total = 0,
+        tidakTeridentifikasi = 0,
+        mikro = 0,
+        kecil = 0,
+        menengah = 0,
+        besar = 0
+    ) {
+        const summaryDiv = document.getElementById("dataSummary");
+        if (!summaryDiv) return;
+
+        // Jika kota null atau kosong, kosongkan div
+        if (!kota) {
+            summaryDiv.innerHTML = "";
+            return;
+        }
+
+        summaryDiv.innerHTML = `
+        <h3>Rincian Tenaga Kerja - ${kota}</h3>
+        <div>Tenaga Kerja Total: ${total.toLocaleString("id-ID")}</div>
+        <div>Tidak Teridentifikasi: ${tidakTeridentifikasi.toLocaleString(
+            "id-ID"
+        )}</div>
+        <div>Mikro: ${mikro.toLocaleString("id-ID")}</div>
+        <div>Kecil: ${kecil.toLocaleString("id-ID")}</div>
+        <div>Menengah: ${menengah.toLocaleString("id-ID")}</div>
+        <div>Besar: ${besar.toLocaleString("id-ID")}</div>
+    `;
+    }
+
+    /* ===============================
         START HELPER FUNCTION KABUPATEN
     =============================== */
     function sumBySkalaKab(skala, kota = null) {
@@ -949,17 +1043,27 @@ document.addEventListener("DOMContentLoaded", function () {
         window.kbliData.forEach((d) => {
             if (provinsi && d.provinsi !== provinsi) return;
 
-            if (!map[d.kode_2_digit]) {
-                map[d.kode_2_digit] = {
-                    nama: d.nama_2_digit,
+            const kode = d.kode_2_digit;
+            const nama = d.nama_2_digit || "Tidak Teridentifikasi"; // ganti null
+
+            if (!map[kode]) {
+                map[kode] = {
+                    nama: nama,
                     total: 0,
                 };
             }
 
-            map[d.kode_2_digit].total += Number(d.total);
+            map[kode].total += Number(d.total);
         });
 
-        return Object.values(map);
+        // ubah ke array dan urutkan berdasarkan nama A-Z
+        return Object.values(map).sort((a, b) => {
+            const nameA = a.nama.toUpperCase();
+            const nameB = b.nama.toUpperCase();
+            if (nameA < nameB) return -1;
+            if (nameA > nameB) return 1;
+            return 0;
+        });
     }
 
     function renderKBLIChart() {
@@ -1004,6 +1108,83 @@ document.addEventListener("DOMContentLoaded", function () {
             barChart.appendChild(bar);
         });
     }
+
+    function renderTableProvinsi() {
+    const tbody = document.getElementById("tableProvinsiBody");
+    tbody.innerHTML = "";
+
+    const provinsiSelected = document.getElementById("provinsiSelect").value;
+    const provMap = totalProvinsi();
+
+    // Jika provinsi dipilih → tampilkan hanya 1 baris
+    if (provinsiSelected) {
+        const total = provMap[provinsiSelected] || 0;
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td>${provinsiSelected}</td>
+            <td>${total.toLocaleString("id-ID")}</td>
+        `;
+
+        tbody.appendChild(tr);
+        return;
+    }
+
+    // Jika belum pilih provinsi → tampilkan semua
+    Object.keys(provMap).forEach((prov) => {
+        const total = provMap[prov];
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td>${prov}</td>
+            <td>${total.toLocaleString("id-ID")}</td>
+        `;
+
+        tbody.appendChild(tr);
+    });
+}
+
+    function renderTableKabupaten() {
+        const tbody = document.getElementById("tableKabupatenBody");
+        tbody.innerHTML = "";
+
+        const provinsi = document.getElementById("provinsiSelect").value;
+
+        let kotaList = window.kabData;
+
+        // Jika provinsi dipilih, filter kabupaten dalam provinsi itu saja
+        if (provinsi) {
+            kotaList = kotaList.filter((d) => d.provinsi === provinsi);
+        }
+
+        // Ambil kota unik
+        const kotaUnik = [...new Set(kotaList.map((d) => d.kota))];
+
+        kotaUnik.forEach((kota) => {
+            const mikro = sumBySkalaKab("Mikro", kota);
+            const kecil = sumBySkalaKab("Kecil", kota);
+            const menengah = sumBySkalaKab("Menengah", kota);
+            const besar = sumBySkalaKab("Besar", kota);
+            const tidakTeridentifikasi = sumTidakTeridentifikasiKab(kota);
+
+            const total =
+                mikro + kecil + menengah + besar + tidakTeridentifikasi;
+
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+            <td>${kota}</td>
+            <td>${total.toLocaleString("id-ID")}</td>
+            <td>${tidakTeridentifikasi.toLocaleString("id-ID")}</td>
+            <td>${mikro.toLocaleString("id-ID")}</td>
+            <td>${kecil.toLocaleString("id-ID")}</td>
+            <td>${menengah.toLocaleString("id-ID")}</td>
+            <td>${besar.toLocaleString("id-ID")}</td>
+        `;
+
+            tbody.appendChild(tr);
+        });
+    }
+
     /* ===============================
        END FUNCTION KBLI PROVINSI
     =============================== */
