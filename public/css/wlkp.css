@@ -1391,5 +1391,52 @@ footer {
 }
 
 
+.kab-chart-wrapper {
+    display: flex;
+    gap: 16px;
+    align-items: stretch;
+}
+
+/* 25% */
+.kab-summary {
+    flex: 0 0 25%;
+    background: #020617;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 12px;
+    font-size: 0.85rem;
+}
+
+/* 75% */
+.kab-chart {
+    flex: 1;
+}
+
+/* Tabel summary */
+.summary-table {
+    width: 100%;
+    border-collapse: collapse;
+    color: #e5e7eb;
+}
+
+.summary-table th,
+.summary-table td {
+    border: 1px solid rgba(255,255,255,0.15);
+    padding: 6px 8px;
+    text-align: left;
+}
+
+.summary-table th {
+    background: rgba(56,189,248,0.15);
+    text-align: center;
+    font-weight: 600;
+}
+
+.summary-title {
+    text-align: center;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #38bdf8;
+}
 
 

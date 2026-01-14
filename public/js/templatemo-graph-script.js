@@ -847,35 +847,58 @@ document.addEventListener("DOMContentLoaded", function () {
    START DATA RINGKAS DI SAMPING CHART KABUPATEN
 =============================== */
     function updateKabChartSummary(
-        kota,
-        total = 0,
-        tidakTeridentifikasi = 0,
-        mikro = 0,
-        kecil = 0,
-        menengah = 0,
-        besar = 0
-    ) {
-        const summaryDiv = document.getElementById("dataSummary");
-        if (!summaryDiv) return;
+    kota,
+    total = 0,
+    tidakTeridentifikasi = 0,
+    mikro = 0,
+    kecil = 0,
+    menengah = 0,
+    besar = 0
+) {
+    const summaryDiv = document.getElementById("dataSummary");
+    if (!summaryDiv) return;
 
-        // Jika kota null atau kosong, kosongkan div
-        if (!kota) {
-            summaryDiv.innerHTML = "";
-            return;
-        }
-
-        summaryDiv.innerHTML = `
-        <h3>Rincian Tenaga Kerja - ${kota}</h3>
-        <div>Tenaga Kerja Total: ${total.toLocaleString("id-ID")}</div>
-        <div>Tidak Teridentifikasi: ${tidakTeridentifikasi.toLocaleString(
-            "id-ID"
-        )}</div>
-        <div>Mikro: ${mikro.toLocaleString("id-ID")}</div>
-        <div>Kecil: ${kecil.toLocaleString("id-ID")}</div>
-        <div>Menengah: ${menengah.toLocaleString("id-ID")}</div>
-        <div>Besar: ${besar.toLocaleString("id-ID")}</div>
-    `;
+    // Jika belum pilih kabupaten
+    if (!kota) {
+        summaryDiv.innerHTML = "";
+        return;
     }
+
+    summaryDiv.innerHTML = `
+        <div class="summary-title">Rincian Tenaga Kerja<br>${kota}</div>
+
+        <table class="summary-table">
+            <tr>
+                <th colspan="2">Ringkasan</th>
+            </tr>
+            <tr>
+                <td>Total Tenaga Kerja</td>
+                <td>${total.toLocaleString("id-ID")}</td>
+            </tr>
+            <tr>
+                <td>Tidak Teridentifikasi</td>
+                <td>${tidakTeridentifikasi.toLocaleString("id-ID")}</td>
+            </tr>
+            <tr>
+                <td>Mikro</td>
+                <td>${mikro.toLocaleString("id-ID")}</td>
+            </tr>
+            <tr>
+                <td>Kecil</td>
+                <td>${kecil.toLocaleString("id-ID")}</td>
+            </tr>
+            <tr>
+                <td>Menengah</td>
+                <td>${menengah.toLocaleString("id-ID")}</td>
+            </tr>
+            <tr>
+                <td>Besar</td>
+                <td>${besar.toLocaleString("id-ID")}</td>
+            </tr>
+        </table>
+    `;
+}
+
 
     /* ===============================
         START HELPER FUNCTION KABUPATEN
@@ -1108,6 +1131,11 @@ document.addEventListener("DOMContentLoaded", function () {
             barChart.appendChild(bar);
         });
     }
+
+    
+    /* ===============================
+       END FUNCTION KBLI PROVINSI
+    =============================== */
 
     function renderTableProvinsi() {
     const tbody = document.getElementById("tableProvinsiBody");

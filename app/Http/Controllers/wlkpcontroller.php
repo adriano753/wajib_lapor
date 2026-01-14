@@ -214,7 +214,7 @@ class WlkpController extends Controller
                 'kode_2_digit',
                 'nama_2_digit',
                 'provinsi',
-                DB::raw('COUNT(*) as total')
+                DB::raw('SUM(COALESCE(jumlah_karyawan_masih_bekerja,0)) as total')
             )
             ->groupBy('kode_2_digit', 'nama_2_digit', 'provinsi')
             ->orderBy('kode_2_digit')

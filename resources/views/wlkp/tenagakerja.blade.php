@@ -148,22 +148,24 @@
     </div>
 
     <!-- Chart Kabupaten -->
-    <div class="card shadow-sm">
-        <div class="card-body">
-            <h5 class="mb-3">Tenaga Kerja Kab/Kota Tertentu</h5>
-            <div class="chart-data-summary" style="flex: 1; font-size: 0.9rem;">
-                {{-- <h6>Rincian Tenaga Kerja</h6> --}}
-                <div id="dataSummary">
-                    <!-- Data akan diisi JS -->
-                </div>
+   <div class="card shadow-sm">
+    <div class="card-body">
+        <h5 class="mb-3">Tenaga Kerja Kab/Kota Tertentu</h5>
+
+        <div class="kab-chart-wrapper">
+            <!-- TABEL SUMMARY (1/4) -->
+            <div class="kab-summary">
+                <div id="dataSummary"></div>
             </div>
 
-            <div class="chart-container">
+            <!-- CHART (3/4) -->
+            <div class="kab-chart">
                 <canvas id="tenagaKerjaKabChart"></canvas>
             </div>
-            <!-- Data Ringkas -->
         </div>
     </div>
+</div>
+
 
 </section>
 
