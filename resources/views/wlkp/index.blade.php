@@ -114,6 +114,7 @@
             @include('wlkp.perusahaanklasifikasi')
             {{-- GRAFIK TK --}}
             @include('wlkp.tenagakerja')
+            @include('wlkp.jaminansosial')
             {{-- GRAFIK SEBARAN TENAGA KERJA BERDASARKAN 2 DIGIT KBLI --}}
             @include('wlkp.sebarantkkbli')
 
@@ -213,14 +214,17 @@
             besarProv: @json($besarProv)
         };
         window.kbliData = @json($rowsKodeTk);
-        window.chartMasterData = @json($masterData);
+        window.chartMasterData = @json($masterData); 
         window.listProvinsiLabel = @json($listProvinsi);
+        window.chartJaminanData = {
+            labels: @json($rowsBpjs->pluck('provinsi')),
+            jkk: @json($rowsBpjs->pluck('jkk')),
+            jht: @json($rowsBpjs->pluck('jht')),
+            jkm: @json($rowsBpjs->pluck('jkm')),
+            jp:  @json($rowsBpjs->pluck('jp')),
+        };
     </script>
     <script src="{{ asset('js/templatemo-graph-script.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="{{ asset('js/wlkp-line-chart.js') }}"></script>
-    
-    @stack('scripts')
 </body>
 
 </html>
