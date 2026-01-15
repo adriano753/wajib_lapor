@@ -10,8 +10,6 @@
     <link rel="stylesheet" href="{{ asset('css/wlkp.css') }}">
     {{-- <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script> --}}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
-
 
 </head>
 
@@ -110,11 +108,9 @@
                     </div>
                 </div>
             </div>
-            @include('wlkp.perusahaanklasifikasi')
+
             {{-- GRAFIK TK --}}
             @include('wlkp.tenagakerja')
-            {{-- GRAFIK SEBARAN TENAGA KERJA BERDASARKAN 2 DIGIT KBLI --}}
-            @include('wlkp.sebarantkkbli')
 
         </div>
     </section>
@@ -202,9 +198,6 @@
             kecil: @json($kecilChart),
             menengah: @json($menengahChart),
             besar: @json($besarChart),
-            provinsi: @json($dataProvinsi->pluck('provinsi')),
-            klasifikasi: @json($dataKlasifikasi),
-            totalProvinsi: @json($dataProvinsi->pluck('total')),
             provinsi: @json($provinsi),
             mikroProv: @json($mikroProv),
             kecilProv: @json($kecilProv),
@@ -212,7 +205,6 @@
             besarProv: @json($besarProv)
 
         };
-        window.kbliData = @json($rowsKodeTk);
     </script>
     <script src="{{ asset('js/templatemo-graph-script.js') }}"></script>
 

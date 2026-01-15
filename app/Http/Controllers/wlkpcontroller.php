@@ -81,13 +81,21 @@ class WlkpController extends Controller
            DATA GRAFIK TENAGA KERJA PER KABUPATEN
         =============================== */
         $rows = DB::table('wajiblapor.report_detil_wlkp_binwas')
-            ->select(
-                'kota',
-                'skala_objek_pengawasan',
-                DB::raw('SUM(CAST(jumlah_karyawan_masih_bekerja AS INTEGER)) as total')
-            )
-            ->whereNotNull('kota')
-            ->groupBy('kota', 'skala_objek_pengawasan')
+            ->selectRaw("
+        COALESCE(NULLIF(TRIM(provinsi), ''), 'Tidak Diketahui') AS provinsi,
+        COALESCE(NULLIF(TRIM(kota), ''), 'Tidak Diketahui') AS kota,
+        skala_objek_pengawasan,
+        SUM(CAST(jumlah_karyawan_masih_bekerja AS INTEGER)) AS total_wni,
+        SUM(CAST(tka_masih_bekerja AS INTEGER)) AS total_wna,
+        SUM(CAST(laki_laki_masih_bekerja AS INTEGER)) AS total_laki,
+        SUM(CAST(perempuan_masih_bekerja AS INTEGER)) AS total_perempuan,
+        SUM(CAST(laki_laki_tka_masih_bekerja AS INTEGER)) AS total_tka_laki,
+        SUM(CAST(perempuan_tka_masih_bekerja AS INTEGER)) AS total_tka_perempuan,
+        SUM(CAST(pkwtt_masih_bekerja AS INTEGER)) AS total_pkwtt,
+        SUM(CAST(pkwt_masih_bekerja AS INTEGER)) total_pkwt
+    ")
+            ->groupBy('provinsi', 'kota', 'skala_objek_pengawasan')
+            ->orderBy('provinsi')
             ->orderBy('kota')
             ->get();
 
@@ -95,13 +103,70 @@ class WlkpController extends Controller
         // Label X (kota)
         $kota = $rows->pluck('kota')->unique()->values();
 
+
+        /* ===============================
+        DATA GRAFIK TENAGA KERJA PER PROVINSI
+        =============================== */
+        $rowsProvinsi = DB::table('wajiblapor.report_detil_wlkp_binwas')
+            ->selectRaw("
+        COALESCE(NULLIF(TRIM(provinsi), ''), 'Tidak Diketahui') AS provinsi,
+        skala_objek_pengawasan,
+        SUM(CAST(jumlah_karyawan_masih_bekerja AS INTEGER)) AS total_wni,
+        SUM(CAST(tka_masih_bekerja AS INTEGER)) AS total_wna,
+        SUM(CAST(jumlah_karyawan_masih_bekerja AS INTEGER)) +
+        SUM(CAST(tka_masih_bekerja AS INTEGER)) AS total_all,
+        SUM(CAST(laki_laki_masih_bekerja AS INTEGER)) AS total_laki,
+        SUM(CAST(perempuan_masih_bekerja AS INTEGER)) AS total_perempuan,
+        SUM(CAST(laki_laki_tka_masih_bekerja AS INTEGER)) AS total_tka_laki,
+        SUM(CAST(perempuan_tka_masih_bekerja AS INTEGER)) AS total_tka_perempuan,
+        SUM(CAST(pkwtt_masih_bekerja AS INTEGER)) AS total_pkwtt,
+        SUM(CAST(pkwt_masih_bekerja AS INTEGER)) total_pkwt
+    ")
+            ->groupBy('provinsi', 'skala_objek_pengawasan')
+            ->orderBy('provinsi')
+            ->get();
+
+
+        // Label X (kota)
+        $provinsi = $rowsProvinsi->pluck('provinsi')->unique()->values();
+        $provinsi = $rowsProvinsi->pluck('provinsi')->unique()->values();
+
+        $mikroProv = [];
+        $kecilProv = [];
+        $menengahProv = [];
+        $besarProv = [];
+
+        foreach ($provinsi as $p) {
+            $mikroProv[] = $rowsProvinsi
+                ->where('provinsi', $p)
+                ->where('skala_objek_pengawasan', 'Mikro')
+                ->sum('total_wni');
+
+            $kecilProv[] = $rowsProvinsi
+                ->where('provinsi', $p)
+                ->where('skala_objek_pengawasan', 'Kecil')
+                ->sum('total_wni');
+
+            $menengahProv[] = $rowsProvinsi
+                ->where('provinsi', $p)
+                ->where('skala_objek_pengawasan', 'Menengah')
+                ->sum('total_wni');
+
+            $besarProv[] = $rowsProvinsi
+                ->where('provinsi', $p)
+                ->where('skala_objek_pengawasan', 'Besar')
+                ->sum('total_wni');
+        }
+
+
+
         // Helper mapping data chart
         $mapData = function ($skala) use ($rows, $kota) {
             return $kota->map(function ($kot) use ($rows, $skala) {
                 return (int) ($rows
                     ->where('kota', $kot)
                     ->where('skala_objek_pengawasan', $skala)
-                    ->first()->total ?? 0);
+                    ->first()->total_wni ?? 0);
             });
         };
 
@@ -190,6 +255,32 @@ class WlkpController extends Controller
         $maxVal = $dataProvinsi->max('total');
 
         /* ===============================
+            END DATA PROVINSI (GRAFIK)
+        =============================== */
+
+        /* ========================================================
+           START DATA SEBARAN TK BERDASARKAN KBLI 2 DIGIT (GRAFIK)
+        =========================================================== */
+        $rowsKodeTk = DB::table('wajiblapor.report_detil_wlkp_binwas')
+            ->select(
+                'kode_2_digit',
+                'nama_2_digit',
+                'provinsi',
+                DB::raw('SUM(COALESCE(jumlah_karyawan_masih_bekerja,0)) as total')
+            )
+            ->groupBy('kode_2_digit', 'nama_2_digit', 'provinsi')
+            ->orderBy('kode_2_digit')
+            ->get();
+
+        $maxValTk = $rowsKodeTk->max('total');
+
+
+
+        /* ========================================================
+           END DATA SEBARAN TK BERDASARKAN KBLI 2 DIGIT (GRAFIK)
+        =========================================================== */
+
+        /* ===============================
            KIRIM KE BLADE
         =============================== */
         return view('wlkp.index', compact(
@@ -204,17 +295,25 @@ class WlkpController extends Controller
             'dataKlasifikasi',
             'listProvinsi',
             'maxVal',
+            'maxValTk',
+            'rowsKodeTk',
             'totalTk',
             'totalLlmb',
             'totalPmb',
             'totalJaksel',
             'rows',
+            'rowsProvinsi',
+            'provinsi',
             // tenaga kerja chart
             'kota',
             'mikroChart',
             'kecilChart',
             'menengahChart',
             'besarChart',
+            'mikroProv',
+            'kecilProv',
+            'menengahProv',
+            'besarProv'
         ), [
             // --- Dropdowns dari Service ---
             'optTahun'       => $dropdowns['tahun'], 

@@ -1271,3 +1271,190 @@ footer {
     height: 320px !important;
 }
 
+/* Container provinsi */
+.container-provinsi-fluid {
+    width: 100%;
+    padding-left: 24px;
+    padding-right: 24px;
+}
+
+/* Card */
+.card-provinsi {
+    border-radius: 14px;
+    background: #0b1229;
+    color: #fff;
+}
+
+/* Wrapper scroll horizontal */
+.chart-scroll-provinsi {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+/* Lebar chart mengikuti jumlah provinsi */
+.chart-container-wide-provinsi {
+    position: relative;
+    height: 450px;
+    min-width: 1800px;   /* ini kuncinya */
+    padding-bottom: 10px;
+}
+
+/* Canvas full */
+.chart-container-wide-provinsi canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.filter-bar {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
+.filter-item {
+    width: 300px;
+}
+.filter-panel {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: flex-end;
+    padding: 20px;
+    background: linear-gradient(135deg, #0f172a, #020617);
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.08);
+}
+
+.filter-group {
+    min-width: 180px;
+    flex: 1 1 180px;
+    display: flex;
+    flex-direction: column;
+}
+
+.filter-group label {
+    font-size: 13px;
+    color: #94a3b8;
+    font-weight: 500;
+    margin-bottom: 6px;
+}
+
+.filter-select {
+    width: 100%;
+    max-width: 280px;
+    background-color: #020617;
+    border: 1px solid rgba(255,255,255,0.15);
+    color: #e5e7eb;
+    border-radius: 8px;
+    padding: 10px 14px;
+}
+
+.filter-select:focus {
+    border-color: #38bdf8;
+    box-shadow: 0 0 0 2px rgba(56,189,248,.25);
+}
+
+.filter-select:hover {
+    border-color: #38bdf8;
+}
+
+/* Wrapper tabel */
+#tableProvinsiWrapper,
+#tableKabupatenWrapper {
+    margin-top: 20px;
+    padding: 16px;
+    background: #020617;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+/* Judul tabel */
+#tableProvinsiWrapper h6,
+#tableKabupatenWrapper h6 {
+    margin-bottom: 12px;
+    color: #38bdf8;
+    font-weight: 600;
+}
+
+/* Table styling */
+.table {
+    border-collapse: collapse;
+    text-align: center;   /* CENTER DATA */
+}
+
+/* Border semua cell */
+.table th,
+.table td {
+    border: 1px solid rgba(255,255,255,0.15) !important;
+    padding: 10px;
+    vertical-align: middle;
+}
+
+/* Header */
+.table thead th {
+    background: rgba(56,189,248,0.15);
+    color: #e5e7eb;
+    font-weight: 600;
+}
+
+/* Body */
+.table tbody td {
+    color: #e5e7eb;
+}
+
+/* Hover row */
+.table tbody tr:hover {
+    background: rgba(56,189,248,0.08);
+}
+
+
+.kab-chart-wrapper {
+    display: flex;
+    gap: 16px;
+    align-items: stretch;
+}
+
+/* 25% */
+.kab-summary {
+    flex: 0 0 25%;
+    background: #020617;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 12px;
+    font-size: 0.85rem;
+}
+
+/* 75% */
+.kab-chart {
+    flex: 1;
+}
+
+/* Tabel summary */
+.summary-table {
+    width: 100%;
+    border-collapse: collapse;
+    color: #e5e7eb;
+}
+
+.summary-table th,
+.summary-table td {
+    border: 1px solid rgba(255,255,255,0.15);
+    padding: 6px 8px;
+    text-align: left;
+}
+
+.summary-table th {
+    background: rgba(56,189,248,0.15);
+    text-align: center;
+    font-weight: 600;
+}
+
+.summary-title {
+    text-align: center;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #38bdf8;
+}
+
+
