@@ -213,9 +213,12 @@ class WlkpController extends Controller
            DATA PROVINSI (GRAFIK STATIS)
         =============================== */
         $dataProvinsi = DB::table('wajiblapor.report_detil_wlkp_binwas')
-            ->select('provinsi', DB::raw('COUNT(*) as total'))
+            ->select(
+                DB::raw("COALESCE(provinsi, 'TIDAK TERINDENTIFIKASI') as provinsi"), 
+                DB::raw('COUNT(*) as total')
+            )
+            ->groupBy(DB::raw("COALESCE(provinsi, 'TIDAK TERINDENTIFIKASI')")) 
             ->orderByDesc('total')
-            ->groupBy('provinsi')
             ->get();
         
         // 1. Ambil data mentah (Group By boleh, tapi JANGAN langsung dikirim ke view)

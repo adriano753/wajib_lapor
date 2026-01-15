@@ -24,7 +24,10 @@ class WlkpService {
             DB::raw('EXTRACT(MONTH FROM tgl_pendaftaran) as bulan'),
 
             // 2. Dimensi Data (Untuk Chart & Filter)
-            'provinsi',
+            DB::raw("CASE 
+            WHEN provinsi IS NULL OR provinsi = '' THEN 'TIDAK TERINDENTIFIKASI' 
+                ELSE provinsi 
+                END as provinsi"),
             'kota',
             'skala_objek_pengawasan',
 
@@ -33,11 +36,11 @@ class WlkpService {
         )
         // Filter Data Kotor
         ->whereNotNull('tgl_pendaftaran')
-        ->whereNotNull('provinsi')
-        ->where('provinsi', '!=', '') // Kadang ada string kosong
         
         // GROUP BY (Peringkasan Data)
-        ->groupBy('tahun', 'bulan', 'provinsi', 'kota', 'skala_objek_pengawasan')
+        ->groupBy('tahun', 'bulan', DB::raw("CASE 
+            WHEN provinsi IS NULL OR provinsi = '' THEN 'TIDAK TERINDENTIFIKASI' 
+            ELSE provinsi END"), 'kota', 'skala_objek_pengawasan')
         ->get();
     }
 

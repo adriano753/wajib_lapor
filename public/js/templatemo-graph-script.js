@@ -1309,7 +1309,13 @@ const chartKlasifikasi = new Chart(
                 {
                     data: 
                     window.chartData.klasifikasi,
-                    backgroundColor: '#42A5F5', // ✅ WARNA: Sama dengan chart provinsi
+                    backgroundColor: [
+                        '#ab0728', // Mikro (Merah)
+                        '#FFA726', // Kecil (Orange)
+                        '#42A5F5', // Menengah (Biru)
+                        '#AB47BC', // Besar (Ungu)
+                        '#BDBDBD'  // Tidak Teridentifikasi (Abu)
+                    ],
                     barPercentage: 0.6,         // Sedikit lebih kurus karena datanya dikit, biar rapi
                     categoryPercentage: 0.8,
                 },

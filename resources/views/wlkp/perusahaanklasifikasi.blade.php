@@ -1,36 +1,68 @@
-<section class="dashboard-section chart-card full-width chart-container">
+<section class="container-provinsi-fluid py-4">
+    <br>
+    <h2 class="mb-3">DATA KLASIFIKASI PERUSAHAAN</h2>
 
-    <select id="tahunSelect" class="form-select mb-3">
-        <option value="">-- Periode Tahun --</option>
-        @foreach ($optTahun as $k)
-            <option value="{{ $k }}">{{ $k }}</option>
-        @endforeach
-    </select>
-    <select id="bulanSelect" class="form-select mb-3">
-        <option value="">-- Periode Bulan --</option>
-        @for ($i = 1; $i <= 12; $i++)
-            <option value="{{ $i }}">{{ date('F', mktime(0, 0, 0, $i, 10)) }}</option>
-        @endfor
-    </select>
-    <select id="provinsiSelectKlasif" class="form-select mb-3">
-        <option value="">-- Pilih Provinsi --</option>
-        @foreach ($optProvinsi as $k)
-            <option value="{{ $k }}">{{ $k }}</option>
-        @endforeach
-    </select>
-    <select id="kabupatenSelectKlasif" class="form-select mb-3">
-        <option value="">-- Pilih Kab/Kota --</option>
-        @foreach ($optKota as $k)
-            <option value="{{ $k }}">{{ $k }}</option>
-        @endforeach
-    </select>
-    <select id="klasifikasiSelect" class="form-select mb-3">
-        <option value="">-- Pilih Klasifikasi --</option>
-        @foreach ($optKlasifikasi as $k)
-            <option value="{{ $k }}">{{ $k }}</option>
-        @endforeach
-    </select>
-    <h2 class="dashboard-title">Data Provinsi</h2>
+    <div class="filter-panel mb-4">
+        <div class="filter-group">
+            <label>Tahun</label>
+            <select id="tahunSelect" class="form-select filter-select">
+                <option value="">-- Periode Tahun --</option>
+                @foreach ($optTahun as $k)
+                    <option value="{{ $k }}">{{ $k }}</option>
+                @endforeach
+            </select>
+        </div>
+    
+        <div class="filter-group">
+            <label>Bulan</label>
+            <select id="bulanSelect" class="form-select filter-select">
+                <option value="">-- Periode Bulan --</option>
+                
+                @php
+                    $bulanIndo = [
+                        1 => 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+                        'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+                    ];
+                @endphp
+
+                @foreach ($bulanIndo as $key => $namaBulan)
+                    <option value="{{ $key }}">{{ $namaBulan }}</option>
+                @endforeach
+            </select>
+        </div>
+        
+        <div class="filter-group">
+            <label>Provinsi</label>
+            <select id="provinsiSelectKlasif" class="form-select filter-select">
+                <option value="">-- Pilih Provinsi --</option>
+                @foreach ($optProvinsi as $k)
+                    <option value="{{ $k }}">{{ $k }}</option>
+                @endforeach
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label>Kabupaten / Kota </label>
+            <select id="kabupatenSelectKlasif" class="form-select filter-select">
+                <option value="">-- Pilih Kab/Kota --</option>
+                @foreach ($optKota as $k)
+                    <option value="{{ $k }}">{{ $k }}</option>
+                @endforeach
+            </select>
+        </div>
+        
+        <div class="filter-group">
+            <label>Klasifikasi</label>
+            <select id="klasifikasiSelect" class="form-select filter-select">
+                <option value="">-- Pilih Klasifikasi --</option>
+                @foreach ($optKlasifikasi as $k)
+                    <option value="{{ $k }}">{{ $k }}</option>
+                @endforeach
+            </select>
+        </div>
+    </div>
+
+    <h3 class="dashboard-title">Provinsi</h3>
 
     <div style="display: flex; flex-wrap: wrap; gap: 20px;">
 
@@ -40,7 +72,7 @@
         </div>
 
         <div style="flex: 1; min-width: 300px; height: 400px;">
-            <h3 style="color:white; text-align:center; margin-bottom:10px;">Klasifikasi Perusahaan</h3>
+            <h3 style="color:white; text-align:center; margin-bottom:10px;">Klasifikasi</h3>
             <canvas id="klasifikasiChart"></canvas>
         </div>
     </div>
