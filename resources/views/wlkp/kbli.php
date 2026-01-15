@@ -1,98 +1,58 @@
-<div class="card mb-3">
-    <div class="card-body">
-        <form method="GET">
-            <div class="row">
-                <div class="col-md-2">
-                    <select name="bulan" class="form-control">
-                        <option value="">Bulan</option>
-                        @foreach($bulanList as $b)
-                            <option value="{{ $b }}" {{ request('bulan') == $b ? 'selected' : '' }}>
-                                {{ $b }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
+<section class="dashboard-section">
+    <h2 class="dashboard-title">Filter Data KBLI (Nama 2 Digit)</h2>
 
-                <div class="col-md-2">
-                    <select name="tahun" class="form-control">
-                        <option value="">Tahun</option>
-                        @foreach($tahunList as $t)
-                            <option value="{{ $t }}" {{ request('tahun') == $t ? 'selected' : '' }}>
-                                {{ $t }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
+    <form action="{{ url()->current() }}" method="GET">
+        <div class="filter-bar">
+            <select name="tahun" class="form-control" onchange="this.form.submit()">
+                <option value="">Semua Tahun</option>
+                @foreach ($optTahun as $thn)
+                    <option value="{{ $thn }}" {{ request('tahun') == $thn ? 'selected' : '' }}>{{ $thn }}</option>
+                @endforeach
+            </select>
 
-                <div class="col-md-3">
-                    <select name="kbli" class="form-control">
-                        <option value="">KBLI</option>
-                        @foreach($kbliList as $k)
-                            <option value="{{ $k }}" {{ request('kbli') == $k ? 'selected' : '' }}>
-                                {{ $k }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
+            <select name="bulan" class="form-control" onchange="this.form.submit()">
+                <option value="">Semua Bulan</option>
+                @for ($i = 1; $i <= 12; $i++)
+                    <option value="{{ $i }}" {{ request('bulan') == $i ? 'selected' : '' }}>
+                        {{ date("F", mktime(0, 0, 0, $i, 10)) }}
+                    </option>
+                @endfor
+            </select>
 
-                <div class="col-md-2">
-                    <select name="provinsi" class="form-control">
-                        <option value="">Provinsi</option>
-                        @foreach($provinsiList as $p)
-                            <option value="{{ $p }}" {{ request('provinsi') == $p ? 'selected' : '' }}>
-                                {{ $p }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
+            <select name="provinsi" class="form-control" onchange="this.form.submit()">
+                <option value="">Semua Provinsi</option>
+                @foreach ($optProvinsi as $prov)
+                    <option value="{{ $prov }}" {{ request('provinsi') == $prov ? 'selected' : '' }}>{{ $prov }}</option>
+                @endforeach
+            </select>
 
-                <div class="col-md-3">
-                    <select name="kabupaten" class="form-control">
-                        <option value="">Kab/Kota</option>
-                        @foreach($kabupatenList as $k)
-                            <option value="{{ $k }}" {{ request('kabupaten') == $k ? 'selected' : '' }}>
-                                {{ $k }}
-                            </option>
-                        @endforeach
-                    </select>
+            <select name="kota" class="form-control" onchange="this.form.submit()">
+                <option value="">Semua Kota</option>
+                @foreach($optKota as $k)
+                    <option value="{{ $k }}" {{ request('kota') == $k ? 'selected' : '' }}>{{ $k }}</option>
+                @endforeach
+            </select>
+        </div>
+    </form>
+
+    <div class="chart-grid">
+        <div class="chart-card full-width">
+            <div class="chart-header">
+                <h3 class="chart-title">Berdasarkan KBLI (Nama 2 Digit)</h3>
+            </div>
+            <div class="chart-container">
+                <div class="bar-chart">
+                    @forelse ($chartKbli as $row)
+                        @php $height = $maxKbli > 0 ? ($row->total / $maxKbli * 100) : 0; @endphp
+                        <div class="bar" style="height: {{ $height }}%" title="{{ $row->nama_2_digit }}">
+                            <span class="bar-value">{{ number_format($row->total, 0, ',', '.') }}</span>
+                            <span class="bar-label">{{ $row->nama_2_digit }}</span>
+                        </div>
+                    @empty
+                        <p>Data tidak tersedia.</p>
+                    @endforelse
                 </div>
             </div>
-
-            <div class="mt-3">
-                <button class="btn btn-primary">Filter</button>
-                <a href="{{ url()->current() }}" class="btn btn-secondary">Reset</a>
-            </div>
-        </form>
+        </div>
     </div>
-</div>
-
-<div class="card">
-    <div class="card-body">
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>No</th>
-                    <th>Tanggal Daftar</th>
-                    <th>KBLI</th>
-                    <th>Provinsi</th>
-                    <th>Kab/Kota</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($data as $i => $row)
-                <tr>
-                    <td>{{ $i + 1 }}</td>
-                    <td>{{ $row->tgl_pendaftaran }}</td>
-                    <td>{{ $row->nama_5_digit }}</td>
-                    <td>{{ $row->provinsi }}</td>
-                    <td>{{ $row->kabupaten_kota }}</td>
-                </tr>
-                @empty
-                <tr>
-                    <td colspan="5" class="text-center">Data tidak ditemukan</td>
-                </tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
-</div>
+</section>

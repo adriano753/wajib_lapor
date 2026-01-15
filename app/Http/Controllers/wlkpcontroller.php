@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 
@@ -216,14 +215,9 @@ class WlkpController extends Controller
            DATA PROVINSI (GRAFIK STATIS)
         =============================== */
         $dataProvinsi = DB::table('wajiblapor.report_detil_wlkp_binwas')
-            ->select(
-                'provinsi',
-                DB::raw('COUNT(*) as total')
-            )
-            ->whereNotNull('provinsi')
-            ->where('provinsi', '!=', '')
-            ->groupBy('provinsi')
+            ->select('provinsi', DB::raw('COUNT(*) as total'))
             ->orderByDesc('total')
+            ->groupBy('provinsi')
             ->get();
         
         // 1. Ambil data mentah (Group By boleh, tapi JANGAN langsung dikirim ke view)
@@ -254,6 +248,11 @@ class WlkpController extends Controller
 
         $listProvinsi = $dataProvinsi->pluck('provinsi');
         $maxVal = $dataProvinsi->max('total');
+
+        $dataProvinsi = $dataProvinsi->map(function ($row) use ($maxVal) {
+            $row->height = $maxVal > 0 ? ($row->total / $maxVal * 100) : 0;
+            return $row;
+        });
 
         /* ===============================
             END DATA PROVINSI (GRAFIK)

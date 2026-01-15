@@ -127,7 +127,7 @@
         <h2 class="section-title">Layanan</h2>
 
         <div class="info-grid">
-            <div class="info-card image-card"
+            <div class="info-card image-card">
                 data-bg="{{ asset('images/pelanggaran.jpg') }}">
                 <div class="card-overlay">
                     <h3>Pelanggaran Ketenagakerjaan</h3>
@@ -194,7 +194,6 @@
     <footer>
         <p>© 2026 Kementerian Ketenagakerjaan Republik Indonesia</p>
     </footer>
-
 
     <script>
         window.kabData = @json($rows ?? []);

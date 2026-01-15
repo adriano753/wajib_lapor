@@ -1,6 +1,6 @@
 <?php
-
 namespace App\Services;
+ini_set('memory_limit', '512M');
 
 use App\Models\Wlkp;
 use Illuminate\Support\Facades\DB;
