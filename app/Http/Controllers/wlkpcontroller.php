@@ -23,7 +23,7 @@ class WlkpController extends Controller
         return number_format((int) $n, 0, ',', '.');
     }
 
-// ===============================
+    // ===============================
     // HALAMAN UTAMA (INDEX)
     // ===============================
     public function index(Request $request)
@@ -160,7 +160,9 @@ class WlkpController extends Controller
             ->groupBy('provinsi')
             ->orderByDesc('total')
             ->get();
-        
+
+
+
         // 1. Ambil data mentah (Group By boleh, tapi JANGAN langsung dikirim ke view)
         $rawKlasifikasi = DB::table('wajiblapor.report_detil_wlkp_binwas')
             ->select('skala_objek_pengawasan', DB::raw('COUNT(*) as total'))
@@ -189,6 +191,21 @@ class WlkpController extends Controller
         $listProvinsi = $dataProvinsi->pluck('provinsi');
         $maxVal = $dataProvinsi->max('total');
 
+        // DATA JAMINAN SOSIAL PER PROVINSI
+
+        $rowsBpjs = DB::table('wajiblapor.report_detil_wlkp_binwas')
+            ->select(
+                'provinsi',
+                DB::raw("SUM(CASE WHEN jkk = 'Ada' THEN 1 ELSE 0 END) as jkk"),
+                DB::raw("SUM(CASE WHEN jht = 'Ada' THEN 1 ELSE 0 END) as jht"),
+                DB::raw("SUM(CASE WHEN jkm = 'Ada' THEN 1 ELSE 0 END) as jkm"),
+                DB::raw("SUM(CASE WHEN jp  = 'Ada' THEN 1 ELSE 0 END) as jp")
+            )
+            ->groupBy('provinsi')
+            ->orderBy('provinsi')
+            ->get();
+
+
         /* ===============================
            KIRIM KE BLADE
         =============================== */
@@ -209,17 +226,13 @@ class WlkpController extends Controller
             'totalPmb',
             'totalJaksel',
             'rows',
+            'rowsBpjs',
             // tenaga kerja chart
             'kota',
             'mikroChart',
             'kecilChart',
             'menengahChart',
             'besarChart',
-        ), [
-            'optTahun' => $dropdowns['tahun'], 
-            'optProvinsi'=> $dropdowns['provinsi'],
-            'optKota' => $dropdowns ['kota'],
-            'optKlasifikasi' => $dropdowns ['klasifikasi'],
-        ]);
+        ));
     }
 }
