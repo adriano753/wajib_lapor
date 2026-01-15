@@ -1429,13 +1429,31 @@ function updateDashboard() {
     const valKab = filterKabupaten.value;
     const valKlas = filterKlasifikasi.value;
 
-    // B. Filter Data
+// B. Filter Data
     const filteredData = masterData.filter(row => {
+        // Normalisasi value klasifikasi dari row data (null jadi string kosong)
+        const rowKlas = (row.skala_objek_pengawasan || "").toLowerCase();
+        const searchKlas = valKlas.toLowerCase();
+
+        // Cek Logika Khusus Klasifikasi
+        let isKlasifikasiMatch = false;
+
+        if (searchKlas === "") {
+            // Jika dropdown "Semua", ambil semua
+            isKlasifikasiMatch = true; 
+        } else if (searchKlas === "tidak teridentifikasi") {
+            // Jika dropdown "Tidak Teridentifikasi", ambil yang kosong ATAU yang teksnya memang "tidak teridentifikasi"
+            isKlasifikasiMatch = (rowKlas === "" || rowKlas === "tidak teridentifikasi");
+        } else {
+            // Selain itu, cocokkan teks biasa (Mikro, Kecil, Besar, dll)
+            isKlasifikasiMatch = rowKlas === searchKlas;
+        }
+
         return (valTahun === "" || String(row.tahun) === valTahun) &&
                (valBulan === "" || String(row.bulan) === valBulan) &&
                (valProv  === "" || row.provinsi === valProv) &&
                (valKab   === "" || row.kota === valKab) &&
-               (valKlas  === "" || (row.skala_objek_pengawasan || "").toLowerCase() === valKlas.toLowerCase());
+               isKlasifikasiMatch; // <--- Gunakan logika baru di sini
     });
 
     // C. Hitung Ulang Data (SUM Total)

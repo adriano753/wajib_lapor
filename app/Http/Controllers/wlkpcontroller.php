@@ -244,6 +244,7 @@ class WlkpController extends Controller
             $mapped['kecil'] ?? 0,
             $mapped['menengah'] ?? 0,
             $mapped['besar'] ?? 0,
+            $mapped['tidak terindentifikasi'] ?? 0,
             // Hitung yang null/tidak teridentifikasi manual atau ambil dari sisa
             DB::table('wajiblapor.report_detil_wlkp_binwas')
                 ->whereNull('skala_objek_pengawasan')

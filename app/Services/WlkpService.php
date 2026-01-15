@@ -68,10 +68,10 @@ class WlkpService {
                         ->orderBy('kota')
                         ->pluck('kota'),
 
-            'klasifikasi' => Wlkp::select('skala_objek_pengawasan')
-                        ->whereNotNull('skala_objek_pengawasan')
-                        ->distinct()
-                        ->pluck('skala_objek_pengawasan'),
+            'klasifikasi' => Wlkp::selectRaw("COALESCE(skala_objek_pengawasan, 'Tidak Teridentifikasi') as skala")
+                ->distinct()
+                ->orderBy('skala')
+                ->pluck('skala'),
         ];
     }
 }
