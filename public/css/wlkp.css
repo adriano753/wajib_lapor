@@ -1293,7 +1293,8 @@ footer {
 /* ===============================
    METRIC CARD
 ================================ */
-.metric-item {
+
+.metric-item-OFF {
     min-width: 220px;     /* 👈 penting agar bisa scroll */
     flex-shrink: 0;       /* 👈 WAJIB */
     background: #0f172a;  /* sesuaikan tema */
@@ -1302,17 +1303,6 @@ footer {
     text-align: center;
 }
 
-.metric-value {
-    font-size: 24px;
-    font-weight: bold;
-    color: #ffffff;
-}
-
-.metric-label {
-    font-size: 14px;
-    color: #cbd5f5;
-    margin-top: 6px;
-}
 
 /* Container provinsi */
 .container-provinsi-fluid {

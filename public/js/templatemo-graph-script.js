@@ -393,48 +393,6 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
     }
 
-    const canvas = document.getElementById('provinsiLineChartJaminan');
-    if (!canvas) return;
-
-    new Chart(canvas, {
-        type: 'line',
-        data: {
-            labels: window.chartJaminanData.labels,
-            datasets: [
-                {
-                    label: 'JKK',
-                    data: window.chartJaminanData.jkk,
-                    tension: 0.3
-                },
-                {
-                    label: 'JHT',
-                    data: window.chartJaminanData.jht,
-                    tension: 0.3
-                },
-                {
-                    label: 'JKM',
-                    data: window.chartJaminanData.jkm,
-                    tension: 0.3
-                },
-                {
-                    label: 'JP',
-                    data: window.chartJaminanData.jp,
-                    tension: 0.3
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: { precision: 0 }
-                }
-            }
-        }
-    });
-
     if (!window.chartData || !window.provData) {
         console.error("Data chart tidak lengkap");
         return;
