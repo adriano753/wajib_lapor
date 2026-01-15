@@ -315,11 +315,10 @@ class WlkpController extends Controller
             'menengahProv',
             'besarProv'
         ), [
-            // --- Dropdowns dari Service ---
-            'optTahun'       => $dropdowns['tahun'], 
-            'optProvinsi'    => $dropdowns['provinsi'],
-            'optKota'        => $dropdowns['kota'],
-            'optKlasifikasi' => $dropdowns['klasifikasi'],
+            'optTahun' => $dropdowns['tahun'], 
+            'optProvinsi'=> $dropdowns['provinsi'],
+            'optKota' => $dropdowns ['kota'],
+            'optKlasifikasi' => $dropdowns ['klasifikasi'],
         ]);
     }
 }
