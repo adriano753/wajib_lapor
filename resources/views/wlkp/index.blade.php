@@ -110,6 +110,7 @@
                     </div>
                 </div>
             </div>
+            {{-- GRAFIK KLASIFIKASI --}}
             @include('wlkp.perusahaanklasifikasi')
             {{-- GRAFIK TK --}}
             @include('wlkp.tenagakerja')
@@ -119,8 +120,6 @@
         </div>
     </section>
 
-    <section>@include('wlkp.perusahaanklasifikasi')</section>
-    <section>@include('wlkp.linechart')</section>
 
     <!-- LAYANAN
     <section class="layanan-section" id="layanan">
@@ -212,9 +211,10 @@
             kecilProv: @json($kecilProv),
             menengahProv: @json($menengahProv),
             besarProv: @json($besarProv)
-
         };
         window.kbliData = @json($rowsKodeTk);
+        window.chartMasterData = @json($masterData);
+        window.listProvinsiLabel = @json($listProvinsi);
     </script>
     <script src="{{ asset('js/templatemo-graph-script.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

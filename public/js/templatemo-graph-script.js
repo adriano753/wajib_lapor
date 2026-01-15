@@ -1416,8 +1416,8 @@ const listProvinsiLabel = window.listProvinsiLabel;
 // 2. AMBIL ELEMENT DOM
 const filterTahun = document.getElementById('tahunSelect');
 const filterBulan = document.getElementById('bulanSelect');
-const filterProvinsi = document.getElementById('provinsiSelect');
-const filterKabupaten = document.getElementById('kabupatenSelect');
+const filterProvinsi = document.getElementById('provinsiSelectKlasif');
+const filterKabupaten = document.getElementById('kabupatenSelectKlasif');
 const filterKlasifikasi = document.getElementById('klasifikasiSelect');
 
 // 3. FUNGSI UTAMA: UPDATE DASHBOARD

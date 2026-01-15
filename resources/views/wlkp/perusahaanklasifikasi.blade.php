@@ -12,13 +12,13 @@
             <option value="{{ $i }}">{{ date('F', mktime(0, 0, 0, $i, 10)) }}</option>
         @endfor
     </select>
-    <select id="provinsiSelect" class="form-select mb-3">
+    <select id="provinsiSelectKlasif" class="form-select mb-3">
         <option value="">-- Pilih Provinsi --</option>
         @foreach ($optProvinsi as $k)
             <option value="{{ $k }}">{{ $k }}</option>
         @endforeach
     </select>
-    <select id="kabupatenSelect" class="form-select mb-3">
+    <select id="kabupatenSelectKlasif" class="form-select mb-3">
         <option value="">-- Pilih Kab/Kota --</option>
         @foreach ($optKota as $k)
             <option value="{{ $k }}">{{ $k }}</option>

@@ -27,7 +27,6 @@ class WlkpController extends Controller
     // ===============================
     public function index(Request $request)
     {
-        // $filters = $request->all();
 
         $masterData = $this->service->getMasterData();
 
@@ -127,7 +126,6 @@ class WlkpController extends Controller
 
 
         // Label X (kota)
-        $provinsi = $rowsProvinsi->pluck('provinsi')->unique()->values();
         $provinsi = $rowsProvinsi->pluck('provinsi')->unique()->values();
 
         $mikroProv = [];
