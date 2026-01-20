@@ -1266,6 +1266,16 @@ footer {
     height: 400px;
 }
 
+.chart-provinsi {
+    overflow-x: auto;      /* scroll horizontal */
+    padding-bottom: 10px;
+}
+
+.chart-provinsi canvas {
+    min-width: 1800px;     /* ⬅️ perbesar lebar chart */
+    height: 460px;         /* ⬅️ perbesar tinggi chart */
+}
+
 .tk-box canvas {
     width: 100% !important;
     height: 320px !important;

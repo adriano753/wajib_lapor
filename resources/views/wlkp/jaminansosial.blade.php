@@ -3,7 +3,7 @@
     <div class="chart-header">
         <h3 class="chart-title">Jumlah Perusahaan yang Mengikutsertakan BPJS</h3>
     </div>
-    <div class="chart-container small-chart">
+    <div class="chart-container small-chart chart-provinsi">
         <canvas id="provinsiLineChartJaminan" width="600" height="300"></canvas>
     </div>
 </div>

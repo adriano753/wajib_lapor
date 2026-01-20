@@ -309,7 +309,7 @@ const metricsObserver = new IntersectionObserver(
     },
     {
         threshold: 0.3,
-    }
+    },
 );
 
 document.querySelectorAll(".metrics-grid").forEach((grid) => {
@@ -333,53 +333,118 @@ document.addEventListener("DOMContentLoaded", function () {
         console.error("Data chart tidak lengkap");
         return;
     }
-
-     if (!window.chartJaminanData) {
-        console.warn('chartJaminanData kosong');
+    if (!window.chartJaminanData) {
+        console.warn("chartJaminanData kosong");
         return;
     }
 
-    const canvas = document.getElementById('provinsiLineChartJaminan');
+    const canvas = document.getElementById("provinsiLineChartJaminan");
     if (!canvas) return;
 
     new Chart(canvas, {
-        type: 'line',
+        type: "bar",
         data: {
-            labels: window.chartJaminanData.labels,
+            labels: window.chartJaminanData.labels, // PROVINSI
             datasets: [
                 {
-                    label: 'JKK',
+                    label: "JKK",
                     data: window.chartJaminanData.jkk,
-                    tension: 0.3
+                    backgroundColor: "#3B82F6",
                 },
                 {
-                    label: 'JHT',
+                    label: "JHT",
                     data: window.chartJaminanData.jht,
-                    tension: 0.3
+                    backgroundColor: "#22C55E",
                 },
                 {
-                    label: 'JKM',
+                    label: "JKM",
                     data: window.chartJaminanData.jkm,
-                    tension: 0.3
+                    backgroundColor: "#F97316",
                 },
                 {
-                    label: 'JP',
+                    label: "JP",
                     data: window.chartJaminanData.jp,
-                    tension: 0.3
-                }
-            ]
+                    backgroundColor: "#A855F7",
+                },
+            ],
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
             scales: {
+                x: {
+                    categoryPercentage: 0.55, // ⬅️ JARAK ANTAR PROVINSI
+                    barPercentage: 0.9, // bar tetap gede
+                    ticks: {
+                        maxRotation: 45,
+                        minRotation: 45,
+                    },
+                },
                 y: {
                     beginAtZero: true,
-                    ticks: { precision: 0 }
-                }
-            }
-        }
+                    ticks: {
+                        precision: 0,
+                    },
+                },
+            },
+            plugins: {
+                legend: {
+                    position: "top",
+                },
+                tooltip: {
+                    mode: "index",
+                    intersect: false,
+                },
+            },
+        },
     });
+
+    //  if (!window.chartJaminanData) {
+    //     console.warn('chartJaminanData kosong');
+    //     return;
+    // }
+
+    // const canvas = document.getElementById('provinsiLineChartJaminan');
+    // if (!canvas) return;
+
+    // new Chart(canvas, {
+    //     type: 'line',
+    //     data: {
+    //         labels: window.chartJaminanData.labels,
+    //         datasets: [
+    //             {
+    //                 label: 'JKK',
+    //                 data: window.chartJaminanData.jkk,
+    //                 tension: 0.3
+    //             },
+    //             {
+    //                 label: 'JHT',
+    //                 data: window.chartJaminanData.jht,
+    //                 tension: 0.3
+    //             },
+    //             {
+    //                 label: 'JKM',
+    //                 data: window.chartJaminanData.jkm,
+    //                 tension: 0.3
+    //             },
+    //             {
+    //                 label: 'JP',
+    //                 data: window.chartJaminanData.jp,
+    //                 tension: 0.3
+    //             }
+    //         ]
+    //     },
+    //     options: {
+    //         responsive: true,
+    //         maintainAspectRatio: false,
+    //         scales: {
+    //             y: {
+    //                 beginAtZero: true,
+    //                 ticks: { precision: 0 }
+    //             }
+    //         }
+    //     }
+    // });
 
     /* ===============================
        1️⃣ LINE CHART UTAMA (SEMUA KOTA)
@@ -441,7 +506,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 responsive: true,
                 maintainAspectRatio: false,
             },
-        }
+        },
     );
 
     /* ===============================
@@ -521,8 +586,6 @@ document.addEventListener("DOMContentLoaded", function () {
             kabChart.update();
         });
 
-
-
     /* ===============================
        HELPER FUNCTION
     =============================== */
@@ -531,7 +594,7 @@ document.addEventListener("DOMContentLoaded", function () {
             .filter(
                 (d) =>
                     d.skala_objek_pengawasan === skala &&
-                    (!kota || d.kota === kota)
+                    (!kota || d.kota === kota),
             )
             .reduce((sum, d) => sum + Number(d.total), 0);
     }
@@ -542,13 +605,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
             return window.kabData
                 .filter(
-                    (d) => d.kota === kota && d.skala_objek_pengawasan === skala
+                    (d) =>
+                        d.kota === kota && d.skala_objek_pengawasan === skala,
                 )
                 .reduce((sum, d) => sum + Number(d.total), 0);
         });
     }
-
-    
 });
 
 /* ===============================
@@ -695,7 +757,7 @@ const chartKlasifikasi = new Chart(
             },
         },
         plugins: [ChartDataLabels], // Jangan lupa plugin ini harus sudah di-load
-    }
+    },
 );
 
 const chartKota = new Chart(document.getElementById("kotaChart"), {
@@ -800,7 +862,7 @@ function updateDashboard() {
         chartProvinsiLabels = [valProv];
         const totalOneProv = filteredData.reduce(
             (sum, row) => sum + parseInt(row.total),
-            0
+            0,
         );
         chartProvinsiData = [totalOneProv];
     } else {
@@ -814,7 +876,7 @@ function updateDashboard() {
         chartProvinsiLabels = listProvinsiLabel;
         chartProvinsiData = listProvinsiLabel.map((namaProv) => {
             const dataProv = filteredData.filter(
-                (r) => r.provinsi === namaProv
+                (r) => r.provinsi === namaProv,
             );
             return dataProv.reduce((sum, row) => sum + parseInt(row.total), 0);
         });
@@ -827,7 +889,7 @@ function updateDashboard() {
             .filter(
                 (r) =>
                     (r.skala_objek_pengawasan || "").toLowerCase() ===
-                    namaKategori
+                    namaKategori,
             )
             .reduce((sum, row) => sum + parseInt(row.total), 0);
     };
@@ -880,7 +942,7 @@ function updateDashboard() {
                 filteredData
                     .map((r) => r.kota)
                     .filter((k) => k) // hapus null
-                    .sort()
+                    .sort(),
             ),
         ];
 
@@ -924,7 +986,7 @@ function updateKabupatenOptions(selectedProv) {
             sourceData
                 .map((r) => r.kota)
                 .filter((k) => k) // Hapus null
-                .sort()
+                .sort(),
         ),
     ];
 
@@ -979,7 +1041,7 @@ if (filterKabupaten) {
         if (selectedCity !== "") {
             // 1. Cari data baris pertama yang kotanya sama dengan yang dipilih
             const matchedRow = masterData.find(
-                (row) => row.kota === selectedCity
+                (row) => row.kota === selectedCity,
             );
 
             // 2. Jika ketemu dan provinsinya beda dengan yang sekarang dipilih
