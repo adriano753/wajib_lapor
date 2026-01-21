@@ -191,30 +191,32 @@
     </footer>
 
     <script>
-window.kabData = @json($rows ?? []);
+        window.kabData = @json($rows ?? []);
 
-window.chartData = {
-    kota: @json($kota),
-    mikro: @json($mikroChart),
-    kecil: @json($kecilChart),
-    menengah: @json($menengahChart),
-    besar: @json($besarChart),
-    provinsi: @json($dataProvinsi->pluck('provinsi')),
-    klasifikasi: @json($dataKlasifikasi),
-    totalProvinsi: @json($dataProvinsi->pluck('total')),
-};
+        window.chartData = {
+            kota: @json($kota),
+            mikro: @json($mikroChart),
+            kecil: @json($kecilChart),
+            menengah: @json($menengahChart),
+            besar: @json($besarChart),
+            provinsi: @json($dataProvinsi->pluck('provinsi')),
+            klasifikasi: @json($dataKlasifikasi),
+            totalProvinsi: @json($dataProvinsi->pluck('total')),
+        };
 
-window.chartJaminanData = {
-    labels: @json($rowsBpjs->pluck('provinsi')),
-    jkk: @json($rowsBpjs->pluck('jkk')),
-    jht: @json($rowsBpjs->pluck('jht')),
-    jkm: @json($rowsBpjs->pluck('jkm')),
-    jp:  @json($rowsBpjs->pluck('jp')),
-};
-</script>
+        window.chartJaminanData = {
+            labels: @json($rowsBpjs->pluck('provinsi')),
+            jkk: @json($rowsBpjs->pluck('jkk')),
+            jht: @json($rowsBpjs->pluck('jht')),
+            jkm: @json($rowsBpjs->pluck('jkm')),
+            jp: @json($rowsBpjs->pluck('jp')),
+        };
+    </script>
 
-
-
+    {{-- <script>
+        const BPJS_FILTER_URL = "{{ route('filter.bpjs') }}";
+    </script>
+    <script src="{{ asset('js/bpjs-filter.js') }}"></script> --}}
     <script src="{{ asset('js/templatemo-graph-script.js') }}"></script>
 </body>
 

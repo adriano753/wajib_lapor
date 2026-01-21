@@ -1271,9 +1271,54 @@ footer {
     padding-bottom: 10px;
 }
 
+.chart-provinsi .chart-inner {
+    width: 100%;
+    min-width: 1200px;
+    height: 460px;
+}
+
 .chart-provinsi canvas {
-    min-width: 1800px;     /* ⬅️ perbesar lebar chart */
-    height: 460px;         /* ⬅️ perbesar tinggi chart */
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* LABEL DATA */
+.provinsi-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.provinsi-item {
+    background: rgba(255,255,255,0.04);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 13px;
+}
+
+.provinsi-name {
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.provinsi-values span {
+    display: block;
+    line-height: 1.4;
+}
+
+/* WARNA KONSISTEN */
+.provinsi-values .jkk { color: #3B82F6; }
+.provinsi-values .jht { color: #22C55E; }
+.provinsi-values .jkm { color: #F97316; }
+.provinsi-values .jp  { color: #A855F7; }
+
+/* MOBILE */
+@media (max-width: 768px) {
+    .chart-provinsi .chart-inner {
+        min-width: 900px;
+        height: 380px;
+    }
 }
 
 .tk-box canvas {

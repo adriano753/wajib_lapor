@@ -371,10 +371,17 @@ document.addEventListener("DOMContentLoaded", function () {
         options: {
             responsive: true,
             maintainAspectRatio: false,
+
+            interaction: {
+                mode: "index", // ⬅️ KUNCI PER PROVINSI
+                axis: "x",
+                intersect: false, // ⬅️ cursor bebas, tetap sesuai provinsi
+            },
+
             scales: {
                 x: {
-                    categoryPercentage: 0.55, // ⬅️ JARAK ANTAR PROVINSI
-                    barPercentage: 0.9, // bar tetap gede
+                    categoryPercentage: 0.55,
+                    barPercentage: 0.9,
                     ticks: {
                         maxRotation: 45,
                         minRotation: 45,
@@ -382,69 +389,27 @@ document.addEventListener("DOMContentLoaded", function () {
                 },
                 y: {
                     beginAtZero: true,
-                    ticks: {
-                        precision: 0,
-                    },
                 },
             },
+
             plugins: {
-                legend: {
-                    position: "top",
-                },
                 tooltip: {
+                    enabled: true,
                     mode: "index",
                     intersect: false,
+                    callbacks: {
+                        title: function (tooltipItems) {
+                            // ⬅️ INI KUNCI UTAMA
+                            return tooltipItems[0].label;
+                        },
+                    },
+                },
+                legend: {
+                    position: "top",
                 },
             },
         },
     });
-
-    //  if (!window.chartJaminanData) {
-    //     console.warn('chartJaminanData kosong');
-    //     return;
-    // }
-
-    // const canvas = document.getElementById('provinsiLineChartJaminan');
-    // if (!canvas) return;
-
-    // new Chart(canvas, {
-    //     type: 'line',
-    //     data: {
-    //         labels: window.chartJaminanData.labels,
-    //         datasets: [
-    //             {
-    //                 label: 'JKK',
-    //                 data: window.chartJaminanData.jkk,
-    //                 tension: 0.3
-    //             },
-    //             {
-    //                 label: 'JHT',
-    //                 data: window.chartJaminanData.jht,
-    //                 tension: 0.3
-    //             },
-    //             {
-    //                 label: 'JKM',
-    //                 data: window.chartJaminanData.jkm,
-    //                 tension: 0.3
-    //             },
-    //             {
-    //                 label: 'JP',
-    //                 data: window.chartJaminanData.jp,
-    //                 tension: 0.3
-    //             }
-    //         ]
-    //     },
-    //     options: {
-    //         responsive: true,
-    //         maintainAspectRatio: false,
-    //         scales: {
-    //             y: {
-    //                 beginAtZero: true,
-    //                 ticks: { precision: 0 }
-    //             }
-    //         }
-    //     }
-    // });
 
     /* ===============================
        1️⃣ LINE CHART UTAMA (SEMUA KOTA)

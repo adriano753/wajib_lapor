@@ -161,8 +161,6 @@ class WlkpController extends Controller
             ->orderByDesc('total')
             ->get();
 
-
-
         // 1. Ambil data mentah (Group By boleh, tapi JANGAN langsung dikirim ke view)
         $rawKlasifikasi = DB::table('wajiblapor.report_detil_wlkp_binwas')
             ->select('skala_objek_pengawasan', DB::raw('COUNT(*) as total'))
@@ -203,7 +201,17 @@ class WlkpController extends Controller
             )
             ->groupBy('provinsi')
             ->orderBy('provinsi')
-            ->get();
+            ->get();    
+        
+        // $rowsupahminimum = DB::table('wajiblapor.report_detil_wlkp_binwas')
+        //     ->select(
+        //         'provinsi',
+        //         DB::raw("AVG(CAST(upah_minimum AS INTEGER)) as upah_minimum")
+        //     )
+        //     ->whereNotNull('upah_minimum')
+        //     ->groupBy('provinsi')
+        //     ->orderBy('provinsi')
+        //     ->get();
 
 
         /* ===============================
