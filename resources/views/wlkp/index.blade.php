@@ -26,6 +26,10 @@
                 <li><a href="#laporan">Laporan</a></li>
                 <!-- <li><a href="#layanan">Layanan</a></li> -->
                 <li><a href="#kontak">Tentang Kami</a></li>
+                <button id="themeToggle" class="cta-button" style="padding:8px 20px;font-size:14px;">
+                    🌙 Dark
+                </button>
+
             </ul>
         </div>
     </nav>

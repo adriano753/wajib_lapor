@@ -57,6 +57,57 @@ window.addEventListener("scroll", function () {
 //    }
 // });
 
+// BUTTON LIGHT MODE
+// const toggleBtn = document.getElementById("themeToggle");
+
+// toggleBtn.addEventListener("click", () => {
+//     document.body.classList.toggle("light-mode");
+
+//     if (document.body.classList.contains("light-mode")) {
+//         toggleBtn.innerHTML = "☀ Light";
+//         localStorage.setItem("theme", "light");
+//     } else {
+//         toggleBtn.innerHTML = "🌙 Dark";
+//         localStorage.setItem("theme", "dark");
+//     }
+
+//     // 🔥 UPDATE CHART SETELAH TOGGLE
+//     applyChartTheme(kabChart);     // ganti sesuai nama chart kamu
+//     applyChartTheme(mainChart);    // kalau ada chart lain
+// });
+
+// function applyChartTheme(chart) {
+//     const isLight = document.body.classList.contains("light-mode");
+
+//     const textColor = isLight ? "#020617" : "#e5e7eb";
+//     const gridColor = isLight
+//         ? "rgba(15,23,42,0.12)"
+//         : "rgba(255,255,255,0.15)";
+
+//     chart.options.scales.x.ticks.color = textColor;
+//     chart.options.scales.y.ticks.color = textColor;
+
+//     chart.options.scales.x.grid.color = gridColor;
+//     chart.options.scales.y.grid.color = gridColor;
+
+//     if (chart.options.plugins?.legend?.labels) {
+//         chart.options.plugins.legend.labels.color = textColor;
+//     }
+
+//     chart.update();
+// }
+
+// if (localStorage.getItem("theme") === "light") {
+//     document.body.classList.add("light-mode");
+//     toggleBtn.innerHTML = "☀ Light";
+// }
+
+// // 🔥 sinkronkan chart saat pertama load
+// applyChartTheme(kabChart);
+// applyChartTheme(mainChart);
+
+// END LIGT MODE
+
 // Active navigation highlighting
 const sections = document.querySelectorAll("section[id]");
 const navLinks = document.querySelectorAll(".nav-links a");
@@ -309,7 +360,7 @@ const metricsObserver = new IntersectionObserver(
     },
     {
         threshold: 0.3,
-    }
+    },
 );
 
 document.querySelectorAll(".metrics-grid").forEach((grid) => {
@@ -377,11 +428,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: {
-                        labels: {
-                            color: "#fff",
-                        },
-                    },
+                    legend: {},
                     tooltip: {
                         callbacks: {
                             // Judul tooltip (Mikro / Besar / Menengah / Kecil)
@@ -404,19 +451,16 @@ document.addEventListener("DOMContentLoaded", function () {
                 scales: {
                     x: {
                         ticks: {
-                            color: "#fff",
                             maxRotation: 45,
                             minRotation: 45,
                         },
                     },
                     y: {
-                        ticks: {
-                            color: "#fff",
-                        },
+                        ticks: {},
                     },
                 },
             },
-        }
+        },
     );
     /* =================================
         END GRAFIK UTAMA → DEFAULT PROVINSI
@@ -449,9 +493,7 @@ document.addEventListener("DOMContentLoaded", function () {
             maintainAspectRatio: false,
 
             plugins: {
-                legend: {
-                    labels: { color: "#fff" },
-                },
+                legend: {},
 
                 tooltip: {
                     callbacks: {
@@ -475,10 +517,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
             scales: {
                 x: {
-                    ticks: { color: "#fff" },
+                    ticks: {
+                        maxRotation: 45,
+                        minRotation: 45,
+                    },
                 },
                 y: {
-                    ticks: { color: "#fff" },
+                    ticks: {},
                 },
             },
         },
@@ -486,6 +531,63 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /* ===============================
    END CHART KABUPATEN (DEFAULT KOSONG)
+=============================== */
+
+    /* ===============================
+   START BUTTON LIGHT MODE
+=============================== */
+    const toggleBtn = document.getElementById("themeToggle");
+
+    if (!toggleBtn) return;
+
+    toggleBtn.addEventListener("click", () => {
+        document.body.classList.toggle("light-mode");
+
+        if (document.body.classList.contains("light-mode")) {
+            toggleBtn.innerHTML = "☀ Light";
+            localStorage.setItem("theme", "light");
+        } else {
+            toggleBtn.innerHTML = "🌙 Dark";
+            localStorage.setItem("theme", "dark");
+        }
+
+        if (window.kabChart) applyChartTheme(kabChart);
+        if (window.mainChart) applyChartTheme(mainChart);
+    });
+
+    function applyChartTheme(chart) {
+        if (!chart) return;
+
+        const isLight = document.body.classList.contains("light-mode");
+
+        const textColor = isLight ? "#020617" : "#e5e7eb";
+        const gridColor = isLight
+            ? "rgba(15,23,42,0.15)"
+            : "rgba(255,255,255,0.15)";
+
+        chart.options.scales.x.ticks.color = textColor;
+        chart.options.scales.y.ticks.color = textColor;
+
+        chart.options.scales.x.grid.color = gridColor;
+        chart.options.scales.y.grid.color = gridColor;
+
+        if (chart.options.plugins?.title) {
+            chart.options.plugins.title.color = textColor;
+        }
+
+        if (chart.options.plugins?.legend?.labels) {
+            chart.options.plugins.legend.labels.color = textColor;
+        }
+
+        if (chart.options.plugins?.tooltip) {
+            chart.options.plugins.tooltip.titleColor = textColor;
+            chart.options.plugins.tooltip.bodyColor = textColor;
+        }
+
+        chart.update();
+    }
+    /* ===============================
+   END BUTTON LIGHT
 =============================== */
 
     /* ===============================
@@ -550,7 +652,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 mikro,
                 kecil,
                 menengah,
-                besar
+                besar,
             );
         });
 
@@ -803,7 +905,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 (d) =>
                     (!d.skala_objek_pengawasan ||
                         d.skala_objek_pengawasan.trim() === "") &&
-                    (!kota || d.kota === kota)
+                    (!kota || d.kota === kota),
             )
             .reduce((sum, d) => sum + getTotalByJenis(d), 0);
     }
@@ -828,7 +930,7 @@ document.addEventListener("DOMContentLoaded", function () {
             ...new Set(
                 window.kabData
                     .filter((d) => d.provinsi === provinsi)
-                    .map((d) => d.kota)
+                    .map((d) => d.kota),
             ),
         ];
 
@@ -847,24 +949,24 @@ document.addEventListener("DOMContentLoaded", function () {
    START DATA RINGKAS DI SAMPING CHART KABUPATEN
 =============================== */
     function updateKabChartSummary(
-    kota,
-    total = 0,
-    tidakTeridentifikasi = 0,
-    mikro = 0,
-    kecil = 0,
-    menengah = 0,
-    besar = 0
-) {
-    const summaryDiv = document.getElementById("dataSummary");
-    if (!summaryDiv) return;
+        kota,
+        total = 0,
+        tidakTeridentifikasi = 0,
+        mikro = 0,
+        kecil = 0,
+        menengah = 0,
+        besar = 0,
+    ) {
+        const summaryDiv = document.getElementById("dataSummary");
+        if (!summaryDiv) return;
 
-    // Jika belum pilih kabupaten
-    if (!kota) {
-        summaryDiv.innerHTML = "";
-        return;
-    }
+        // Jika belum pilih kabupaten
+        if (!kota) {
+            summaryDiv.innerHTML = "";
+            return;
+        }
 
-    summaryDiv.innerHTML = `
+        summaryDiv.innerHTML = `
         <div class="summary-title">Rincian Tenaga Kerja<br>${kota}</div>
 
         <table class="summary-table">
@@ -897,8 +999,7 @@ document.addEventListener("DOMContentLoaded", function () {
             </tr>
         </table>
     `;
-}
-
+    }
 
     /* ===============================
         START HELPER FUNCTION KABUPATEN
@@ -908,7 +1009,7 @@ document.addEventListener("DOMContentLoaded", function () {
             .filter(
                 (d) =>
                     d.skala_objek_pengawasan === skala &&
-                    (!kota || d.kota === kota)
+                    (!kota || d.kota === kota),
             )
             .reduce((sum, d) => sum + getTotalByJenis(d), 0);
     }
@@ -919,7 +1020,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
             return window.kabData
                 .filter(
-                    (d) => d.kota === kota && d.skala_objek_pengawasan === skala
+                    (d) =>
+                        d.kota === kota && d.skala_objek_pengawasan === skala,
                 )
                 .reduce((sum, d) => sum + getTotalByJenis(d), 0);
         });
@@ -938,7 +1040,7 @@ document.addEventListener("DOMContentLoaded", function () {
             .filter(
                 (d) =>
                     d.skala_objek_pengawasan === skala &&
-                    (!provinsi || d.provinsi === provinsi)
+                    (!provinsi || d.provinsi === provinsi),
             )
             .reduce((sum, d) => sum + getTotalByJenis(d), 0);
     }
@@ -951,7 +1053,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 .filter(
                     (d) =>
                         d.provinsi === provinsi &&
-                        d.skala_objek_pengawasan === skala
+                        d.skala_objek_pengawasan === skala,
                 )
                 .reduce((sum, d) => sum + getTotalByJenis(d), 0);
         });
@@ -1099,10 +1201,10 @@ document.addEventListener("DOMContentLoaded", function () {
         // update judul
         if (!provinsi) {
             title.innerText =
-                "Laporan Sebaran Tenaga Kerja Berdasarkan 2 Digit KBLI (Semua Provinsi)";
+                "Laporan Sebaran Tenaga Kerja Berdasarkan  KBLI (Semua Provinsi)";
         } else {
             title.innerText =
-                "Laporan Sebaran Tenaga Kerja Berdasarkan 2 Digit KBLI (" +
+                "Laporan Sebaran Tenaga Kerja Berdasarkan KBLI (" +
                 provinsi +
                 ")";
         }
@@ -1132,45 +1234,45 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    
     /* ===============================
        END FUNCTION KBLI PROVINSI
     =============================== */
 
     function renderTableProvinsi() {
-    const tbody = document.getElementById("tableProvinsiBody");
-    tbody.innerHTML = "";
+        const tbody = document.getElementById("tableProvinsiBody");
+        tbody.innerHTML = "";
 
-    const provinsiSelected = document.getElementById("provinsiSelect").value;
-    const provMap = totalProvinsi();
+        const provinsiSelected =
+            document.getElementById("provinsiSelect").value;
+        const provMap = totalProvinsi();
 
-    // Jika provinsi dipilih → tampilkan hanya 1 baris
-    if (provinsiSelected) {
-        const total = provMap[provinsiSelected] || 0;
+        // Jika provinsi dipilih → tampilkan hanya 1 baris
+        if (provinsiSelected) {
+            const total = provMap[provinsiSelected] || 0;
 
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
             <td>${provinsiSelected}</td>
             <td>${total.toLocaleString("id-ID")}</td>
         `;
 
-        tbody.appendChild(tr);
-        return;
-    }
+            tbody.appendChild(tr);
+            return;
+        }
 
-    // Jika belum pilih provinsi → tampilkan semua
-    Object.keys(provMap).forEach((prov) => {
-        const total = provMap[prov];
+        // Jika belum pilih provinsi → tampilkan semua
+        Object.keys(provMap).forEach((prov) => {
+            const total = provMap[prov];
 
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
             <td>${prov}</td>
             <td>${total.toLocaleString("id-ID")}</td>
         `;
 
-        tbody.appendChild(tr);
-    });
-}
+            tbody.appendChild(tr);
+        });
+    }
 
     function renderTableKabupaten() {
         const tbody = document.getElementById("tableKabupatenBody");
