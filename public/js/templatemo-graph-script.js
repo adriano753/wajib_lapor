@@ -1714,6 +1714,72 @@ if (filterProvinsi) {
     });
 }
 
+// ====================
+// KBLI FILTER + CHART 
+// ====================
+console.log(window.chartData.kbliLabels)
+console.log(window.chartData.kbliValues)
+document.addEventListener("DOMContentLoaded", function () {
+
+    if (typeof Chart === "undefined") {
+        console.error("Chart.js belum ke-load");
+        return;
+    }
+
+    if (!window.chartData) {
+        console.error("chartData kosong");
+        return;
+    }
+
+    /* ===============================
+       CHART PROVINSI
+    =============================== */
+    const provCanvas = document.getElementById("provinsiChart");
+    if (provCanvas) {
+        window.chartProvinsi = new Chart(provCanvas, {
+            type: "bar",
+            data: {
+                labels: window.chartData.provinsi,
+                datasets: [{
+                    data: window.chartData.totalProvinsi
+                }]
+            },
+            options: { responsive: true }
+        });
+    }
+
+    /* ===============================
+       CHART KBLI (FIX FINAL)
+    =============================== */
+    console.log('KBLI Labels:', window.chartData.kbliLabels);
+    console.log('KBLI Values:', window.chartData.kbliValues);
+
+    if (window.chartData.kbliLabels?.length) {
+        const ctxKBLI = document.getElementById("kbliList");
+
+        if (ctxKBLI) {
+            new Chart(ctxKBLI, {
+                type: "bar",
+                data: {
+                    labels: window.chartData.kbliLabels,
+                    datasets: [{
+                        label: "Jumlah Perusahaan",
+                        data: window.chartData.kbliValues
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        } else {
+            console.warn("Canvas KBLI tidak ditemukan");
+        }
+    }
+
+});
+
+
 // C. Event Listener: KABUPATEN (Auto-Select Provinsi)
 if (filterKabupaten) {
     filterKabupaten.addEventListener("change", () => {

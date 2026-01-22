@@ -1,6 +1,6 @@
 <?php
-namespace App\Http\Controllers;
 
+namespace App\Http\Controllers;
 
 use App\Services\WlkpService;
 use Illuminate\Http\Request;
@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\DB;
 
 class WlkpController extends Controller
 {
-
     protected $service;
 
     // Inject Service
@@ -17,6 +16,9 @@ class WlkpController extends Controller
         $this->service = $service;
     }
 
+    /**
+     * Helper untuk format angka
+     */
     private function formatDetail($n)
     {
         return number_format((int) $n, 0, ',', '.');
@@ -27,22 +29,36 @@ class WlkpController extends Controller
     // ===============================
     public function index(Request $request)
     {
+        // 1. Definisikan Filters
+        $filters = $request->only(['tahun', 'bulan', 'kota', 'provinsi', 'kbli']);
 
-        $masterData = $this->service->getMasterData();
+        // 2. Ambil Data dari Service
+        $masterData   = $this->service->getMasterData();
+        $dropdowns    = $this->service->getDropdowns();
+        $dropdownKBLI = $this->service->getDropdownsKBLI();
+        $kbliChart = $this->service->getRekapKBLI($filters);
+        $kbliLabels = $kbliChart->pluck('nama_2_digit')->values();
+        $kbliValues = $kbliChart->pluck('total')->values();
 
-        $dropdowns = $this->service->getDropdowns();
-        // $optTahun = $this->service->getYearOptions();
-        // $optProvinsi = $this->service->getDistinctColumn('provinsi');
-        // $optKlasifikasi = $this->service->getDistinctColumn('skala_objek_pengawasan');
-        // // Dropdown Kota pintar (berubah sesuai provinsi)
-        // $optKota = $this->service->getCityOptions($request->provinsi);
+
+        /* ===============================
+   DROPDOWN KAB/KOTA DINAMIS
+=============================== */
+        $optKota = DB::table('wajiblapor.report_detil_wlkp_binwas')
+            ->when($request->provinsi, function ($q) use ($request) {
+                $q->where('provinsi', $request->provinsi);
+            })
+            ->select('kota')
+            ->whereNotNull('kota')
+            ->distinct()
+            ->orderBy('kota')
+            ->pluck('kota');
 
         /* ===============================
            TOTAL KESELURUHAN
         =============================== */
         $totalRaw = DB::table('wajiblapor.report_detil_wlkp_binwas')->count();
         $totalSemua = $this->formatDetail($totalRaw);
-
 
         /* ===============================
            TOTAL TENAGAKERJA
@@ -74,7 +90,6 @@ class WlkpController extends Controller
                 ->sum(DB::raw('CAST(jumlah_karyawan_masih_bekerja AS INTEGER)'))
         );
 
-
         /* ===============================
            DATA GRAFIK TENAGA KERJA PER KABUPATEN
         =============================== */
@@ -96,7 +111,6 @@ class WlkpController extends Controller
             ->orderBy('provinsi')
             ->orderBy('kota')
             ->get();
-
 
         // Label X (kota)
         $kota = $rows->pluck('kota')->unique()->values();
@@ -173,10 +187,6 @@ class WlkpController extends Controller
         $besarChart     = $mapData('Besar');
 
         /* ===============================
-           END TOTAL TENAGA KERJA
-        =============================== */
-
-        /* ===============================
            SKALA OBJEK PENGAWASAN
         =============================== */
         $mikro = $this->formatDetail(
@@ -220,9 +230,7 @@ class WlkpController extends Controller
             ->groupBy(DB::raw("COALESCE(provinsi, 'TIDAK TERINDENTIFIKASI')")) 
             ->orderByDesc('total')
             ->get();
-
-
-
+        
         // 1. Ambil data mentah (Group By boleh, tapi JANGAN langsung dikirim ke view)
         $rawKlasifikasi = DB::table('wajiblapor.report_detil_wlkp_binwas')
             ->select('skala_objek_pengawasan', DB::raw('COUNT(*) as total'))
@@ -230,12 +238,11 @@ class WlkpController extends Controller
             ->get();
 
         // 2. Mapping agar urutan SESUAI LABEL CHART
-        // Kita ubah jadi key-value pair dulu: ['mikro' => 100, 'besar' => 500]
         $mapped = $rawKlasifikasi->mapWithKeys(function ($item) {
             return [strtolower($item->skala_objek_pengawasan) => $item->total];
         });
 
-        // 3. Susun Array Final (Urutan Wajib: Mikro -> Kecil -> Menengah -> Besar -> Lainnya)
+        // 3. Susun Array Final
         $dataKlasifikasi = [
             $mapped['mikro'] ?? 0,
             $mapped['kecil'] ?? 0,
@@ -299,10 +306,11 @@ class WlkpController extends Controller
         =========================================================== */
 
         /* ===============================
-           KIRIM KE BLADE
+           KIRIM KE BLADE (Return Final)
         =============================== */
         return view('wlkp.index', compact(
             'masterData',
+            'kbliChart',
             'totalSemua',
             'mikro',
             'kecil',
@@ -328,16 +336,17 @@ class WlkpController extends Controller
             'mikroChart',
             'kecilChart',
             'menengahChart',
-            'besarChart',
-            'mikroProv',
-            'kecilProv',
-            'menengahProv',
-            'besarProv'
+            'kbliChart',
+            'kbliLabels',
+            'kbliValues',
+            'besarChart'
         ), [
-            'optTahun' => $dropdowns['tahun'], 
-            'optProvinsi'=> $dropdowns['provinsi'],
-            'optKota' => $dropdowns ['kota'],
-            'optKlasifikasi' => $dropdowns ['klasifikasi'],
+            'optTahun'       => $dropdowns['tahun'],
+            'optProvinsi'    => $dropdowns['provinsi'],
+            'optKota'        => $dropdowns['kota'],
+            'optKlasifikasi' => $dropdowns['klasifikasi'],
+            'optBulan'       => $dropdownKBLI['bulan'],
+            'optKBLI'     => $dropdownKBLI['kbli'],
         ]);
     }
 }
