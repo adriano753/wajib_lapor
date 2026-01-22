@@ -338,10 +338,35 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
     }
 
+    /* ===============================
+       FILTER PROVINSI JAMINAN SOSIAL
+    =============================== */
+    document
+        .getElementById("provinsiUpahSelect")
+        .addEventListener("change", function () {
+            const provinsi = this.value;
+
+            if (provinsi === "all") {
+                upahChart.data.labels = window.chartUpahData.labels;
+                upahChart.data.datasets[0].data = window.chartUpahData.values;
+            } else {
+                const idx = window.chartUpahData.labels.indexOf(provinsi);
+
+                if (idx !== -1) {
+                    upahChart.data.labels = [provinsi];
+                    upahChart.data.datasets[0].data = [
+                        window.chartUpahData.values[idx],
+                    ];
+                }
+            }
+
+            upahChart.update();
+        });
+
     const canvas = document.getElementById("provinsiLineChartJaminan");
     if (!canvas) return;
 
-    new Chart(canvas, {
+    const bpjsMainChart = new Chart(canvas, {
         type: "bar",
         data: {
             labels: window.chartJaminanData.labels, // PROVINSI
@@ -409,6 +434,74 @@ document.addEventListener("DOMContentLoaded", function () {
                 },
             },
         },
+    });
+
+    /* ===============================
+       1️⃣ START FILTER BPJS TABLE PROVINSI
+    =============================== */
+
+    const provinsiSelect = document.getElementById("provinsiBpjsSelect");
+    const tableRows = document.querySelectorAll("#bpjsTable .bpjs-row");
+
+    provinsiSelect.addEventListener("change", function () {
+        const provinsi = this.value;
+
+        // ================= CHART =================
+        fetch(`/filter/bpjs?provinsi=${provinsi}`)
+            .then((res) => res.json())
+            .then((data) => {
+                if (provinsi === "all") {
+                    bpjsMainChart.data.labels = window.chartJaminanData.labels;
+
+                    bpjsMainChart.data.datasets[0].data =
+                        window.chartJaminanData.jkk;
+                    bpjsMainChart.data.datasets[1].data =
+                        window.chartJaminanData.jht;
+                    bpjsMainChart.data.datasets[2].data =
+                        window.chartJaminanData.jkm;
+                    bpjsMainChart.data.datasets[3].data =
+                        window.chartJaminanData.jp;
+                } else {
+                    const r = data[0];
+
+                    bpjsMainChart.data.labels = [r.provinsi];
+                    bpjsMainChart.data.datasets[0].data = [r.jkk];
+                    bpjsMainChart.data.datasets[1].data = [r.jht];
+                    bpjsMainChart.data.datasets[2].data = [r.jkm];
+                    bpjsMainChart.data.datasets[3].data = [r.jp];
+                }
+
+                bpjsMainChart.update();
+            });
+
+        // ================= TABLE =================
+        tableRows.forEach((row) => {
+            const rowProv = row.dataset.provinsi;
+
+            if (provinsi === "all" || rowProv === provinsi) {
+                row.style.display = "block";
+            } else {
+                row.style.display = "none";
+            }
+        });
+    });
+
+    /* ===============================
+    TOGGLE LABEL BPJS (TABLE)
+    =============================== */
+    const toggleBtn = document.getElementById("toggleBpjsLabel");
+    const bpjsTable = document.getElementById("bpjsTable");
+
+    let isVisible = true;
+
+    toggleBtn.addEventListener("click", function () {
+        isVisible = !isVisible;
+
+        bpjsTable.classList.toggle("hidden", !isVisible);
+
+        toggleBtn.innerText = isVisible
+            ? "Sembunyikan Detail Provinsi"
+            : "Tampilkan Detail Provinsi";
     });
 
     /* ===============================
@@ -577,6 +670,72 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 });
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    if (typeof Chart === "undefined") {
+        console.error("Chart.js belum ke-load");
+        return;
+    }
+
+    /* ===============================
+       UPAH MINIMUM CHART
+    =============================== */
+    let upahChart = null;
+
+    const upahCanvas = document.getElementById("upahMinimumChart");
+
+    if (upahCanvas && window.chartUpahMinimumData) {
+        upahChart = new Chart(upahCanvas, {
+            type: "bar",
+            data: {
+                labels: window.chartUpahMinimumData.labels,
+                datasets: [{
+                    label: "Upah Minimum",
+                    data: window.chartUpahMinimumData.values,
+                    backgroundColor: "#0d6efd"
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+    } else {
+        console.warn("Canvas atau data upah minimum tidak ditemukan");
+    }
+
+    /* ===============================
+       FILTER PROVINSI UPAH MINIMUM
+    =============================== */
+    const upahSelect = document.getElementById("provinsiUpahSelect");
+
+    if (upahSelect && upahChart) {
+        upahSelect.addEventListener("change", function () {
+            const provinsi = this.value;
+
+            fetch(`/filter/upah-minimum?provinsi=${provinsi}`)
+                .then(res => res.json())
+                .then(data => {
+
+                    if (provinsi === "all") {
+                        upahChart.data.labels = window.chartUpahMinimumData.labels;
+                        upahChart.data.datasets[0].data = window.chartUpahMinimumData.values;
+                    } else if (data.length) {
+                        upahChart.data.labels = [data[0].provinsi];
+                        upahChart.data.datasets[0].data = [data[0].total];
+                    }
+
+                    upahChart.update();
+                });
+        });
+    }
+
+});
+
 
 /* ===============================
        1️⃣ CHART PROVINSI

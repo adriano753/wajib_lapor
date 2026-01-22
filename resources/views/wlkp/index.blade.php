@@ -113,6 +113,7 @@
             {{-- GRAFIK TK --}}
             @include('wlkp.tenagakerja')
             @include('wlkp.jaminansosial')
+            @include('wlkp.upahminimum')
 
         </div>
     </section>
@@ -211,13 +212,18 @@
             jkm: @json($rowsBpjs->pluck('jkm')),
             jp: @json($rowsBpjs->pluck('jp')),
         };
+
+        window.chartUpahMinimumData = {
+            labels: @json($listProvinsi),
+            values: @json($listUpah)
+        };
     </script>
 
-    {{-- <script>
+    <script src="{{ asset('js/templatemo-graph-script.js') }}"></script>
+
+    <script>
         const BPJS_FILTER_URL = "{{ route('filter.bpjs') }}";
     </script>
-    <script src="{{ asset('js/bpjs-filter.js') }}"></script> --}}
-    <script src="{{ asset('js/templatemo-graph-script.js') }}"></script>
 </body>
 
 </html>

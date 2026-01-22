@@ -201,17 +201,19 @@ class WlkpController extends Controller
             )
             ->groupBy('provinsi')
             ->orderBy('provinsi')
-            ->get();    
-        
-        // $rowsupahminimum = DB::table('wajiblapor.report_detil_wlkp_binwas')
-        //     ->select(
-        //         'provinsi',
-        //         DB::raw("AVG(CAST(upah_minimum AS INTEGER)) as upah_minimum")
-        //     )
-        //     ->whereNotNull('upah_minimum')
-        //     ->groupBy('provinsi')
-        //     ->orderBy('provinsi')
-        //     ->get();
+            ->get();
+
+        $rowsUpah = DB::table('wajiblapor.report_detil_wlkp_binwas')
+            ->select(
+                'provinsi',
+                DB::raw("SUM(CASE WHEN upah_minimum = 'Ada' THEN 1 ELSE 0 END) as total_upah_minimum")
+            )
+            ->groupBy('provinsi')
+            ->orderBy('provinsi')
+            ->get();
+
+        $listProvinsi = $rowsUpah->pluck('provinsi');
+        $listUpah     = $rowsUpah->pluck('total_upah_minimum');
 
 
         /* ===============================
@@ -228,11 +230,13 @@ class WlkpController extends Controller
             'dataProvinsi',
             'dataKlasifikasi',
             'listProvinsi',
+            'listUpah',
             'maxVal',
             'totalTk',
             'totalLlmb',
             'totalPmb',
             'totalJaksel',
+            'rowsUpah',
             'rows',
             'rowsBpjs',
             // tenaga kerja chart

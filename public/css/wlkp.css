@@ -1369,3 +1369,15 @@ footer {
     margin-top: 6px;
 }
 
+#bpjsTable {
+    transition: max-height 0.3s ease, opacity 0.3s ease;
+    overflow: hidden;
+}
+
+#bpjsTable.hidden {
+    max-height: 0;
+    opacity: 0;
+    pointer-events: none;
+}
+
+
