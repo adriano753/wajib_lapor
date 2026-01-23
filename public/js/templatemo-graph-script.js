@@ -896,66 +896,257 @@ if (filterProvinsi) {
 // ====================
 console.log(window.chartData.kbliLabels)
 console.log(window.chartData.kbliValues)
+// document.addEventListener("DOMContentLoaded", function () {
+
+//     if (typeof Chart === "undefined") {
+//         console.error("Chart.js belum ke-load");
+//         return;
+//     }
+
+//     if (!window.chartData) {
+//         console.error("chartData kosong");
+//         return;
+//     }
+
+//     /* ===============================
+//        CHART PROVINSI
+//     =============================== */
+//     const provCanvas = document.getElementById("provinsiChart");
+//     if (provCanvas) {
+//         window.chartProvinsi = new Chart(provCanvas, {
+//             type: "bar",
+//             data: {
+//                 labels: window.chartData.provinsi,
+//                 datasets: [{
+//                     data: window.chartData.totalProvinsi
+//                 }]
+//             },
+//             options: { responsive: true }
+//         });
+//     }
+
+//     /* ===============================
+//        CHART KBLI (FIX FINAL)
+//     =============================== */
+//     console.log('KBLI Labels:', window.chartData.kbliLabels);
+//     console.log('KBLI Values:', window.chartData.kbliValues);
+
+//     if (window.chartData.kbliLabels?.length) {
+//         const ctxKBLI = document.getElementById("kbliList");
+
+//         if (ctxKBLI) {
+//             new Chart(ctxKBLI, {
+//                 type: "bar",
+//                 data: {
+//                     labels: window.chartData.kbliLabels,
+//                     datasets: [{
+//                         label: "Jumlah Perusahaan",
+//                         data: window.chartData.kbliValues
+//                     }]
+//                 },
+//                 options: {
+//                     responsive: true,
+//                     maintainAspectRatio: false
+//                 }
+//             });
+//         } else {
+//             console.warn("Canvas KBLI tidak ditemukan");
+//         }
+//     }
+
+// });
+// document.addEventListener("DOMContentLoaded", function () {
+//     const allLabels = window.chartData.kbliLabels || [];
+//     const allValues = window.chartData.kbliValues || [];
+    
+//     if (allLabels.length === 0) return;
+
+//     let currentPage = 0;
+//     const itemsPerPage = 10;
+//     const totalPages = Math.ceil(allLabels.length / itemsPerPage);
+
+//     const ctx = document.getElementById("kbliList").getContext("2d");
+//     let kbliChart;
+
+//     function updateChart(page) {
+//         const start = page * itemsPerPage;
+//         const end = start + itemsPerPage;
+        
+//         const labelsSubset = allLabels.slice(start, end);
+//         const valuesSubset = allValues.slice(start, end);
+
+//         if (kbliChart) {
+//             kbliChart.destroy(); // Hapus chart lama sebelum membuat yang baru
+//         }
+
+//         kbliChart = new Chart(ctx, {
+//             type: "bar",
+//             data: {
+//                 labels: labelsSubset,
+//                 datasets: [{
+//                     label: "Jumlah Perusahaan per Lapangan Usaha",
+//                     data: valuesSubset,
+//                     backgroundColor: '#42A5F5',
+//                     borderRadius: 5
+//                 }]
+//             },
+//             options: {
+//                 responsive: true,
+//                 maintainAspectRatio: false,
+//                 plugins: {
+//                     legend: { display: true, labels: { color: 'white' } },
+//                     // Menampilkan angka di atas bar agar jelas
+//                     datalabels: {
+//                         anchor: 'end',
+//                         align: 'top',
+//                         color: 'white',
+//                         formatter: (val) => val.toLocaleString('id-ID')
+//                     }
+//                 },
+//                 scales: {
+//                     y: { 
+//                         beginAtZero: true, 
+//                         ticks: { color: 'white' },
+//                         grid: { color: 'rgba(255,255,255,0.1)' }
+//                     },
+//                     x: { 
+//                         ticks: { 
+//                             color: 'white',
+//                             autoSkip: false,
+//                             maxRotation: 45,
+//                             minRotation: 45
+//                         },
+//                         grid: { display: false }
+//                     }
+//                 }
+//             },
+//             plugins: [ChartDataLabels]
+//         });
+
+//         // Update keterangan halaman
+//         document.getElementById("pageInfo").innerText = `Halaman ${page + 1} dari ${totalPages}`;
+//         document.getElementById("prevBtn").disabled = page === 0;
+//         document.getElementById("nextBtn").disabled = page === totalPages - 1;
+//     }
+
+//     // Inisialisasi awal
+//     updateChart(currentPage);
+
+//     // Event Listeners Tombol
+//     document.getElementById("prevBtn").addEventListener("click", () => {
+//         if (currentPage > 0) {
+//             currentPage--;
+//             updateChart(currentPage);
+//         }
+//     });
+
+//     document.getElementById("nextBtn").addEventListener("click", () => {
+//         if (currentPage < totalPages - 1) {
+//             currentPage++;
+//             updateChart(currentPage);
+//         }
+//     });
+// });
 document.addEventListener("DOMContentLoaded", function () {
+    // 1. Ambil data mentah dari window object yang sudah di-json-kan di index.blade.php
+    const fullLabels = window.chartData.kbliLabels || [];
+    const fullValues = window.chartData.kbliValues || [];
 
-    if (typeof Chart === "undefined") {
-        console.error("Chart.js belum ke-load");
+    if (fullLabels.length === 0) {
+        console.warn("Data KBLI tidak ditemukan");
         return;
     }
 
-    if (!window.chartData) {
-        console.error("chartData kosong");
-        return;
-    }
+    // 2. Variabel Kontrol Pagination
+    let currentPage = 0;
+    const itemsPerPage = 10;
+    const totalPages = Math.ceil(fullLabels.length / itemsPerPage);
+    
+    let kbliChartInstance = null;
+    const ctx = document.getElementById("kbliList").getContext("2d");
 
-    /* ===============================
-       CHART PROVINSI
-    =============================== */
-    const provCanvas = document.getElementById("provinsiChart");
-    if (provCanvas) {
-        window.chartProvinsi = new Chart(provCanvas, {
+    // 3. Fungsi untuk Render Chart per Halaman
+    function renderKBLIPage(page) {
+        const start = page * itemsPerPage;
+        const end = start + itemsPerPage;
+
+        // Memotong data hanya 10 item untuk halaman ini
+        const labelsSubset = fullLabels.slice(start, end);
+        const valuesSubset = fullValues.slice(start, end);
+
+        // Hancurkan instance lama jika ada (agar tidak tumpang tindih)
+        if (kbliChartInstance) {
+            kbliChartInstance.destroy();
+        }
+
+        kbliChartInstance = new Chart(ctx, {
             type: "bar",
             data: {
-                labels: window.chartData.provinsi,
+                labels: labelsSubset,
                 datasets: [{
-                    data: window.chartData.totalProvinsi
+                    label: "Jumlah Perusahaan",
+                    data: valuesSubset,
+                    backgroundColor: '#42A5F5',
+                    barPercentage: 0.6
                 }]
             },
-            options: { responsive: true }
-        });
-    }
-
-    /* ===============================
-       CHART KBLI (FIX FINAL)
-    =============================== */
-    console.log('KBLI Labels:', window.chartData.kbliLabels);
-    console.log('KBLI Values:', window.chartData.kbliValues);
-
-    if (window.chartData.kbliLabels?.length) {
-        const ctxKBLI = document.getElementById("kbliList");
-
-        if (ctxKBLI) {
-            new Chart(ctxKBLI, {
-                type: "bar",
-                data: {
-                    labels: window.chartData.kbliLabels,
-                    datasets: [{
-                        label: "Jumlah Perusahaan",
-                        data: window.chartData.kbliValues
-                    }]
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: true, labels: { color: 'white' } },
+                    datalabels: {
+                        anchor: "end",
+                        align: "top",
+                        color: "white",
+                        formatter: (val) => val.toLocaleString("id-ID")
+                    }
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false
+                scales: {
+                    y: { 
+                        beginAtZero: true,
+                        ticks: { color: 'white' },
+                        grid: { color: 'rgba(255,255,255,0.1)' }
+                    },
+                    x: { 
+                        ticks: { color: 'white', autoSkip: false, maxRotation: 45 },
+                        grid: { display: false }
+                    }
                 }
-            });
-        } else {
-            console.warn("Canvas KBLI tidak ditemukan");
-        }
+            },
+            plugins: [ChartDataLabels]
+        });
+
+        // Update indikator teks
+        document.getElementById("pageIndicatorKBLI").innerText = `Halaman ${page + 1} dari ${totalPages}`;
+        
+        // Atur status tombol
+        document.getElementById("prevBtnKBLI").disabled = (page === 0);
+        document.getElementById("nextBtnKBLI").disabled = (page === totalPages - 1);
+        
+        // Styling tombol disabled agar terlihat jelas
+        document.getElementById("prevBtnKBLI").style.opacity = (page === 0) ? "0.5" : "1";
+        document.getElementById("nextBtnKBLI").style.opacity = (page === totalPages - 1) ? "0.5" : "1";
     }
 
-});
+    // 4. Inisialisasi Pemuatan Pertama
+    renderKBLIPage(currentPage);
 
+    // 5. Event Listener Tombol Navigasi
+    document.getElementById("nextBtnKBLI").addEventListener("click", function() {
+        if (currentPage < totalPages - 1) {
+            currentPage++;
+            renderKBLIPage(currentPage);
+        }
+    });
+
+    document.getElementById("prevBtnKBLI").addEventListener("click", function() {
+        if (currentPage > 0) {
+            currentPage--;
+            renderKBLIPage(currentPage);
+        }
+    });
+});
 
 // C. Event Listener: KABUPATEN (Auto-Select Provinsi)
 if (filterKabupaten) {

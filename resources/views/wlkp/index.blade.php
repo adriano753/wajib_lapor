@@ -262,51 +262,69 @@
     <!-- ============================
      Ini untuk memanggil data dan menampilkan data KBLI
      ================================ -->
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const labels = window.chartData?.kbliLabels || [];
+    const values = window.chartData?.kbliValues || [];
 
-            if (!window.chartData?.kbliLabels?.length) {
-                console.warn("Data KBLI kosong");
-                return;
-            }
+    if (labels.length === 0) return;
 
-            const canvas = document.getElementById("kbliList");
+    const canvas = document.getElementById("kbliList");
+    const chartStage = document.getElementById("chartStage");
 
-            if (!canvas) {
-                console.error("Canvas kbliList tidak ditemukan");
-                return;
-            }
+    // --- KUNCI KONSISTENSI UKURAN ---
+    const barWidth = 80; 
+    const totalWidth = labels.length * barWidth;
 
-            new Chart(canvas, {
-                type: "bar",
-                data: {
-                    labels: window.chartData.kbliLabels,
-                    datasets: [{
-                        label: "Jumlah Perusahaan",
-                        data: window.chartData.kbliValues
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: true
-                        }
-                    },
-                    scales: {
-                        x: {
-                            ticks: {
-                                autoSkip: false,
-                                maxRotation: 90,
-                                minRotation: 60
-                            }
-                        }
-                    }
+    chartStage.style.width = totalWidth > chartStage.parentElement.offsetWidth 
+                             ? totalWidth + "px" 
+                             : "100%";
+
+    new Chart(canvas, {
+        type: "bar",
+        data: {
+            labels: labels,
+            datasets: [{
+                label: "Jumlah Perusahaan",
+                data: values,
+                backgroundColor: '#42A5F5',
+                barThickness: 40, // Lebar batang tetap 40px
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                datalabels: {
+                    anchor: 'end',
+                    align: 'top',
+                    color: 'white',
+                    font: { weight: 'bold' },
+                    formatter: (value) => value.toLocaleString('id-ID')
                 }
-            });
-        });
-    </script>
+            },
+            scales: {
+                x: {
+                    grid: { display: false },
+                    ticks: {
+                        color: 'white',
+                        maxRotation: 45,
+                        minRotation: 45,
+                        autoSkip: false // Tampilkan semua label karena sudah bisa di-scroll
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    ticks: { color: 'white' },
+                    grid: { color: 'rgba(255,255,255,0.1)' }
+                }
+            }
+        },
+        plugins: [ChartDataLabels]
+    });
+});
+</script>
 
     <script src="{{ asset('js/templatemo-graph-script.js') }}"></script>
 
