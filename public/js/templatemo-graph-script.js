@@ -1275,3 +1275,103 @@ document.addEventListener("DOMContentLoaded", function () {
        END GRAFIK TENAGA KERJA 
     ==================================== */
 
+document.addEventListener("DOMContentLoaded", function () {
+    // 1. Ambil data mentah dari window object yang sudah di-json-kan di index.blade.php
+    const fullLabels = window.chartData.kbliLabels || [];
+    const fullValues = window.chartData.kbliValues || [];
+
+    if (fullLabels.length === 0) {
+        console.warn("Data KBLI tidak ditemukan");
+        return;
+    }
+
+    // 2. Variabel Kontrol Pagination
+    let currentPage = 0;
+    const itemsPerPage = 10;
+    const totalPages = Math.ceil(fullLabels.length / itemsPerPage);
+    
+    let kbliChartInstance = null;
+    const ctx = document.getElementById("kbliList").getContext("2d");
+
+    // 3. Fungsi untuk Render Chart per Halaman
+    function renderKBLIPage(page) {
+        const start = page * itemsPerPage;
+        const end = start + itemsPerPage;
+
+        // Memotong data hanya 10 item untuk halaman ini
+        const labelsSubset = fullLabels.slice(start, end);
+        const valuesSubset = fullValues.slice(start, end);
+
+        // Hancurkan instance lama jika ada (agar tidak tumpang tindih)
+        if (kbliChartInstance) {
+            kbliChartInstance.destroy();
+        }
+
+        kbliChartInstance = new Chart(ctx, {
+            type: "bar",
+            data: {
+                labels: labelsSubset,
+                datasets: [{
+                    label: "Jumlah Perusahaan",
+                    data: valuesSubset,
+                    backgroundColor: '#42A5F5',
+                    barPercentage: 0.6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: true, labels: { color: 'white' } },
+                    datalabels: {
+                        anchor: "end",
+                        align: "top",
+                        color: "white",
+                        formatter: (val) => val.toLocaleString("id-ID")
+                    }
+                },
+                scales: {
+                    y: { 
+                        beginAtZero: true,
+                        ticks: { color: 'white' },
+                        grid: { color: 'rgba(255,255,255,0.1)' }
+                    },
+                    x: { 
+                        ticks: { color: 'white', autoSkip: false, maxRotation: 45 },
+                        grid: { display: false }
+                    }
+                }
+            },
+            plugins: [ChartDataLabels]
+        });
+
+        // Update indikator teks
+        document.getElementById("pageIndicatorKBLI").innerText = `Halaman ${page + 1} dari ${totalPages}`;
+        
+        // Atur status tombol
+        document.getElementById("prevBtnKBLI").disabled = (page === 0);
+        document.getElementById("nextBtnKBLI").disabled = (page === totalPages - 1);
+        
+        // Styling tombol disabled agar terlihat jelas
+        document.getElementById("prevBtnKBLI").style.opacity = (page === 0) ? "0.5" : "1";
+        document.getElementById("nextBtnKBLI").style.opacity = (page === totalPages - 1) ? "0.5" : "1";
+    }
+
+    // 4. Inisialisasi Pemuatan Pertama
+    renderKBLIPage(currentPage);
+
+    // 5. Event Listener Tombol Navigasi
+    document.getElementById("nextBtnKBLI").addEventListener("click", function() {
+        if (currentPage < totalPages - 1) {
+            currentPage++;
+            renderKBLIPage(currentPage);
+        }
+    });
+
+    document.getElementById("prevBtnKBLI").addEventListener("click", function() {
+        if (currentPage > 0) {
+            currentPage--;
+            renderKBLIPage(currentPage);
+        }
+    });
+});
