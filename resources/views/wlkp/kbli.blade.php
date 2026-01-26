@@ -1,3 +1,5 @@
+<section class="card p-3 mb-4">
+    <h1 class="mb-3">Rekap Lapangan Usaha (KBLI)</h1>
 <form method="GET" id="filterForm">
     <select name="tahun" onchange="this.form.submit()">
         <option value="">-- Periode Tahun --</option>
@@ -39,3 +41,4 @@
 <div style="height:400px;margin-top:20px">
     <canvas id="kbliList"></canvas>
 </div>
+</section>

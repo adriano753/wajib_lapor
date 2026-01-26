@@ -121,6 +121,7 @@
             </div>
             {{-- GRAFIK KLASIFIKASI --}}
             @include('wlkp.perusahaanklasifikasi')
+            @include('wlkp.kbli')
             {{-- GRAFIK TK --}}
             @include('wlkp.tenagakerja')
             @include('wlkp.jaminansosial')
@@ -128,10 +129,6 @@
             @include('wlkp.sebarantkkbli')
 
         </div>
-        <section class="card p-3 mb-4">
-            <h1 class="mb-3">Rekap Lapangan Usaha (KBLI)</h1>
-            @include('wlkp.kbli')
-        </section>
 
     </section>
 
@@ -258,7 +255,7 @@
             mikroProv: @json($mikroProv),
             kecilProv: @json($kecilProv),
             menengahProv: @json($menengahProv),
-            besarProv: @json($besarProv)
+            besarProv: @json($besarProv),
             kbliLabels: @json($kbliLabels),
             kbliValues: @json($kbliValues),
         };
@@ -328,6 +325,7 @@
     </script>
 
     <script src="{{ asset('js/templatemo-graph-script.js') }}"></script>
+    <script src="{{ asset('js/dashboard-klasifikasi.js') }}"></script>
 </body>
 
 </html>

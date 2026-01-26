@@ -1,5 +1,6 @@
     <?php
 
+use App\Http\Controllers\WlkpDetailController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\WlkpController;
 use App\Http\Controllers\KbliController;
@@ -8,6 +9,7 @@ use App\Http\Controllers\KbliController;
         return view('welcome');
     });
 
+
 /*
 |--------------------------------------------------------------------------
 | WLKP DASHBOARD
@@ -15,6 +17,7 @@ use App\Http\Controllers\KbliController;
 */
 Route::get('/wlkp', [WlkpController::class, 'index'])
     ->name('wlkp.index');
+    Route::get('/wlkp/detail', [WlkpDetailController::class, 'index'])->name('wlkp.detail');
 
 Route::get('/wlkp/perusahaan-klasifikasi', [WlkpController::class, 'perusahaanKlasifikasi'])
     ->name('wlkp.klasifikasi');

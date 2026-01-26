@@ -339,6 +339,10 @@ class WlkpController extends Controller
             'kbliChart',
             'kbliLabels',
             'kbliValues',
+            'mikroProv',
+            'kecilProv',
+            'menengahProv',
+            'besarProv',
             'besarChart'
         ), [
             'optTahun'       => $dropdowns['tahun'],
