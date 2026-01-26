@@ -125,6 +125,7 @@
             {{-- GRAFIK TK --}}
             @include('wlkp.tenagakerja')
             @include('wlkp.jaminansosial')
+            @include('wlkp.upahminimum')
             {{-- GRAFIK SEBARAN TENAGA KERJA BERDASARKAN 2 DIGIT KBLI --}}
             @include('wlkp.sebarantkkbli')
 
@@ -271,6 +272,10 @@
             jkm: @json($rowsBpjs->pluck('jkm')),
             jp:  @json($rowsBpjs->pluck('jp')),
         };
+        window.chartUpahMinimumData = {
+            labels: @json($listProvinsi),
+            values: @json($listUpah)
+        };
         console.log('KBLI LABEL', window.chartData.kbliLabels);
         console.log('KBLI VALUE', window.chartData.kbliValues);
     </script>
@@ -344,6 +349,10 @@ document.addEventListener("DOMContentLoaded", function() {
 
     <script src="{{ asset('js/templatemo-graph-script.js') }}"></script>
     <script src="{{ asset('js/dashboard-klasifikasi.js') }}"></script>
+
+    <script>
+        const BPJS_FILTER_URL = "{{ route('filter.bpjs') }}";
+    </script>
 </body>
 
 </html>

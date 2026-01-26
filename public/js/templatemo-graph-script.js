@@ -309,7 +309,7 @@ const metricsObserver = new IntersectionObserver(
     },
     {
         threshold: 0.3,
-    }
+    },
 );
 
 document.querySelectorAll(".metrics-grid").forEach((grid) => {
@@ -340,52 +340,175 @@ document.addEventListener("DOMContentLoaded", function () {
         console.error("Data chart tidak lengkap");
         return;
     }
-
-     if (!window.chartJaminanData) {
-        console.warn('chartJaminanData kosong');
+    if (!window.chartJaminanData) {
+        console.warn("chartJaminanData kosong");
         return;
     }
 
-    const canvas = document.getElementById('provinsiLineChartJaminan');
+    /* ===============================
+       FILTER PROVINSI JAMINAN SOSIAL
+    =============================== */
+    document
+        .getElementById("provinsiUpahSelect")
+        .addEventListener("change", function () {
+            const provinsi = this.value;
+
+            if (provinsi === "all") {
+                upahChart.data.labels = window.chartUpahData.labels;
+                upahChart.data.datasets[0].data = window.chartUpahData.values;
+            } else {
+                const idx = window.chartUpahData.labels.indexOf(provinsi);
+
+                if (idx !== -1) {
+                    upahChart.data.labels = [provinsi];
+                    upahChart.data.datasets[0].data = [
+                        window.chartUpahData.values[idx],
+                    ];
+                }
+            }
+
+            upahChart.update();
+        });
+
+    const canvas = document.getElementById("provinsiLineChartJaminan");
     if (!canvas) return;
 
-    new Chart(canvas, {
-        type: 'line',
+    const bpjsMainChart = new Chart(canvas, {
+        type: "bar",
         data: {
-            labels: window.chartJaminanData.labels,
+            labels: window.chartJaminanData.labels, // PROVINSI
             datasets: [
                 {
-                    label: 'JKK',
+                    label: "JKK",
                     data: window.chartJaminanData.jkk,
-                    tension: 0.3
+                    backgroundColor: "#3B82F6",
                 },
                 {
-                    label: 'JHT',
+                    label: "JHT",
                     data: window.chartJaminanData.jht,
-                    tension: 0.3
+                    backgroundColor: "#22C55E",
                 },
                 {
-                    label: 'JKM',
+                    label: "JKM",
                     data: window.chartJaminanData.jkm,
-                    tension: 0.3
+                    backgroundColor: "#F97316",
                 },
                 {
-                    label: 'JP',
+                    label: "JP",
                     data: window.chartJaminanData.jp,
-                    tension: 0.3
-                }
-            ]
+                    backgroundColor: "#A855F7",
+                },
+            ],
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
+
+            interaction: {
+                mode: "index", // ⬅️ KUNCI PER PROVINSI
+                axis: "x",
+                intersect: false, // ⬅️ cursor bebas, tetap sesuai provinsi
+            },
+
             scales: {
+                x: {
+                    categoryPercentage: 0.55,
+                    barPercentage: 0.9,
+                    ticks: {
+                        maxRotation: 45,
+                        minRotation: 45,
+                    },
+                },
                 y: {
                     beginAtZero: true,
-                    ticks: { precision: 0 }
+                },
+            },
+
+            plugins: {
+                tooltip: {
+                    enabled: true,
+                    mode: "index",
+                    intersect: false,
+                    callbacks: {
+                        title: function (tooltipItems) {
+                            // ⬅️ INI KUNCI UTAMA
+                            return tooltipItems[0].label;
+                        },
+                    },
+                },
+                legend: {
+                    position: "top",
+                },
+            },
+        },
+    });
+
+    /* ===============================
+       1️⃣ START FILTER BPJS TABLE PROVINSI
+    =============================== */
+
+    const provinsiSelect = document.getElementById("provinsiBpjsSelect");
+    const tableRows = document.querySelectorAll("#bpjsTable .bpjs-row");
+
+    provinsiSelect.addEventListener("change", function () {
+        const provinsi = this.value;
+
+        // ================= CHART =================
+        fetch(`/filter/bpjs?provinsi=${provinsi}`)
+            .then((res) => res.json())
+            .then((data) => {
+                if (provinsi === "all") {
+                    bpjsMainChart.data.labels = window.chartJaminanData.labels;
+
+                    bpjsMainChart.data.datasets[0].data =
+                        window.chartJaminanData.jkk;
+                    bpjsMainChart.data.datasets[1].data =
+                        window.chartJaminanData.jht;
+                    bpjsMainChart.data.datasets[2].data =
+                        window.chartJaminanData.jkm;
+                    bpjsMainChart.data.datasets[3].data =
+                        window.chartJaminanData.jp;
+                } else {
+                    const r = data[0];
+
+                    bpjsMainChart.data.labels = [r.provinsi];
+                    bpjsMainChart.data.datasets[0].data = [r.jkk];
+                    bpjsMainChart.data.datasets[1].data = [r.jht];
+                    bpjsMainChart.data.datasets[2].data = [r.jkm];
+                    bpjsMainChart.data.datasets[3].data = [r.jp];
                 }
+
+                bpjsMainChart.update();
+            });
+
+        // ================= TABLE =================
+        tableRows.forEach((row) => {
+            const rowProv = row.dataset.provinsi;
+
+            if (provinsi === "all" || rowProv === provinsi) {
+                row.style.display = "block";
+            } else {
+                row.style.display = "none";
             }
-        }
+        });
+    });
+
+    /* ===============================
+    TOGGLE LABEL BPJS (TABLE)
+    =============================== */
+    const toggleBtn = document.getElementById("toggleBpjsLabel");
+    const bpjsTable = document.getElementById("bpjsTable");
+
+    let isVisible = true;
+
+    toggleBtn.addEventListener("click", function () {
+        isVisible = !isVisible;
+
+        bpjsTable.classList.toggle("hidden", !isVisible);
+
+        toggleBtn.innerText = isVisible
+            ? "Sembunyikan Detail Provinsi"
+            : "Tampilkan Detail Provinsi";
     });
 
      if (!window.chartJaminanData) {
@@ -468,7 +591,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     },
                 },
             },
-        }
+        },
     );
     /* =================================
         END GRAFIK UTAMA → DEFAULT PROVINSI
@@ -605,8 +728,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 besar
             );
         });
-
-
 
     /* ===============================
        4️⃣ END FILTER DROPDOWN KABUPATEN
@@ -952,19 +1073,198 @@ document.addEventListener("DOMContentLoaded", function () {
         </table>
     `;
 }
+    /* ===============================
+       4️⃣ END FILTER DROPDOWN PROVINSI
+    =============================== */
+    document
+        .getElementById("tableFilter")
+        .addEventListener("change", function () {
+            const val = this.value;
 
+            document.getElementById("tableProvinsiWrapper").style.display =
+                "none";
+            document.getElementById("tableKabupatenWrapper").style.display =
+                "none";
+
+            if (val === "provinsi") {
+                renderTableProvinsi();
+                document.getElementById("tableProvinsiWrapper").style.display =
+                    "block";
+            }
+
+            if (val === "kabupaten") {
+                renderTableKabupaten();
+                document.getElementById("tableKabupatenWrapper").style.display =
+                    "block";
+            }
+        });
+
+    document
+        .getElementById("jenisTenagaKerja")
+        .addEventListener("change", function () {
+            document
+                .getElementById("provinsiSelect")
+                .dispatchEvent(new Event("change"));
+        });
+    document
+        .getElementById("jenisKelamin")
+        .addEventListener("change", function () {
+            document
+                .getElementById("provinsiSelect")
+                .dispatchEvent(new Event("change"));
+        });
+    document
+        .getElementById("perjanjianKerja")
+        .addEventListener("change", function () {
+            document
+                .getElementById("provinsiSelect")
+                .dispatchEvent(new Event("change"));
+        });
+    document.getElementById("tableFilter").dispatchEvent(new Event("change"));
+
+    /* ===================================================================
+       START DISABLE JENIS TENAGA & JENIS KELAMIN SAAT MEMILIH PERJANJIAN KERJA
+    ============================================================================ */
+    document
+        .getElementById("perjanjianKerja")
+        .addEventListener("change", function () {
+            const perjanjianValue = this.value.toLowerCase();
+            const jenisTenaga = document.getElementById("jenisTenagaKerja");
+            const jenisKelamin = document.getElementById("jenisKelamin");
+
+            if (perjanjianValue === "pkwt" || perjanjianValue === "pkwtt") {
+                // Set otomatis
+                jenisTenaga.value = "wni"; // otomatis WNI
+                jenisTenaga.disabled = true; // disable pilihan
+                jenisKelamin.value = "all"; // semua gender
+                jenisKelamin.disabled = true; // disable pilihan
+            } else {
+                // Kembalikan normal
+                jenisTenaga.disabled = false;
+                jenisKelamin.disabled = false;
+            }
+
+            // Trigger update chart / data
+            document
+                .getElementById("provinsiSelect")
+                .dispatchEvent(new Event("change"));
+        });
+    /* ===================================================================
+       END DISABLE JENIS TENAGA & JENIS KELAMIN SAAT MEMILIH PERJANJIAN KERJA
+    ============================================================================ */
 
     /* ===============================
-        START HELPER FUNCTION KABUPATEN
+        START FUNCTION TOTAL  PROVINSI
     =============================== */
-    function sumBySkalaKab(skala, kota = null) {
+    function totalProvinsi() {
+        const map = {};
+
+        window.provData.forEach((d) => {
+            if (!map[d.provinsi]) map[d.provinsi] = 0;
+            map[d.provinsi] += getTotalByJenis(d);
+        });
+
+        return map;
+    }
+
+    /* ===============================
+        END FUNCTION TOTAL  PROVINSI
+    =============================== */
+
+    /* ===============================
+        START FUNCTION TOTAL KOTA BY PROVINSI
+    =============================== */
+
+    function totalKotaByProvinsi(provinsi) {
+        const map = {};
+
+        const target = provinsi.trim().toUpperCase();
+
+        window.kabData.forEach((d) => {
+            if (!d.provinsi) return;
+
+            const dataProv = d.provinsi.trim().toUpperCase();
+
+            if (dataProv === target) {
+                if (!map[d.kota]) map[d.kota] = 0;
+                map[d.kota] += getTotalByJenis(d); // ⬅ hanya ini yang berubah
+            }
+        });
+
+        return map;
+    }
+
+    /* ===============================
+        END FUNCTION TOTAL KOTA BY PROVINSI
+    =============================== */
+
+    /* ===============================
+        START FUNCTION TOTAL ALL TENAGA KERJA
+    =============================== */
+    function totalSemuaTenagaKerja() {
+        let total = 0;
+
+        window.provData.forEach((d) => {
+            total += getTotalByJenis(d); // ⬅ hanya ini yang berubah
+        });
+
+        return total;
+    }
+
+    /* ===============================
+        END FUNCTION TOTAL ALL TENAGA KERJA
+    =============================== */
+
+    /* ===============================
+        START FUNCTION TOTAL TENAGA KERJA PER PROVINSI
+    =============================== */
+
+    function totalTenagaKerjaProvinsi(provinsi) {
+        const kotaMap = totalKotaByProvinsi(provinsi);
+
+        let total = 0;
+        Object.values(kotaMap).forEach((val) => {
+            total += val;
+        });
+
+        return total;
+    }
+
+    /* ===============================
+        END FUNCTION TOTAL TENAGA KERJA PER PROVINSI
+    =============================== */
+
+    /* ===============================
+        START FUNCTION TOTAL PROVINSI
+    =============================== */
+    function totalSemuaProvinsi() {
+        const provMap = totalProvinsi();
+
+        let total = 0;
+        Object.values(provMap).forEach((val) => {
+            total += val;
+        });
+
+        return total;
+    }
+
+    /* ===============================
+        END FUNCTION TOTAL PROVINSI
+    =============================== */
+
+    /* ===============================
+        START DATA TIDAK TERIDENTIFIKASI
+    =============================== */
+
+    function sumTidakTeridentifikasiKab(kota = null) {
         return window.kabData
             .filter(
                 (d) =>
-                    d.skala_objek_pengawasan === skala &&
+                    (!d.skala_objek_pengawasan ||
+                        d.skala_objek_pengawasan.trim() === "") &&
                     (!kota || d.kota === kota)
             )
-            .reduce((sum, d) => sum + getTotalByJenis(d), 0);
+            .reduce((sum, d) => sum + Number(d.total), 0);
     }
 
     function lineFilterKab(skala, kota) {
@@ -973,21 +1273,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
             return window.kabData
                 .filter(
-                    (d) => d.kota === kota && d.skala_objek_pengawasan === skala
+                    (d) =>
+                        d.kota === kota && d.skala_objek_pengawasan === skala,
                 )
                 .reduce((sum, d) => sum + getTotalByJenis(d), 0);
         });
     }
+});
 
-    /* ===============================
-        END HELPER FUNCTION KABUPATEN
-    =============================== */
-
-    /* ===============================
-       START HELPER FUNCTION PROVINSI
-    =============================== */
-
-    function sumBySkalaProv(skala, provinsi = null) {
+function sumBySkalaProv(skala, provinsi = null) {
         return window.provData
             .filter(
                 (d) =>
@@ -1270,7 +1564,7 @@ document.addEventListener("DOMContentLoaded", function () {
     /* ===============================
        END FUNCTION KBLI PROVINSI
     =============================== */
-});
+    
 /* =================================
        END GRAFIK TENAGA KERJA 
     ==================================== */
@@ -1374,4 +1668,69 @@ document.addEventListener("DOMContentLoaded", function () {
             renderKBLIPage(currentPage);
         }
     });
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    if (typeof Chart === "undefined") {
+        console.error("Chart.js belum ke-load");
+        return;
+    }
+
+    /* ===============================
+       UPAH MINIMUM CHART
+    =============================== */
+    let upahChart = null;
+
+    const upahCanvas = document.getElementById("upahMinimumChart");
+
+    if (upahCanvas && window.chartUpahMinimumData) {
+        upahChart = new Chart(upahCanvas, {
+            type: "bar",
+            data: {
+                labels: window.chartUpahMinimumData.labels,
+                datasets: [{
+                    label: "Upah Minimum",
+                    data: window.chartUpahMinimumData.values,
+                    backgroundColor: "#0d6efd"
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+    } else {
+        console.warn("Canvas atau data upah minimum tidak ditemukan");
+    }
+
+    /* ===============================
+       FILTER PROVINSI UPAH MINIMUM
+    =============================== */
+    const upahSelect = document.getElementById("provinsiUpahSelect");
+
+    if (upahSelect && upahChart) {
+        upahSelect.addEventListener("change", function () {
+            const provinsi = this.value;
+
+            fetch(`/filter/upah-minimum?provinsi=${provinsi}`)
+                .then(res => res.json())
+                .then(data => {
+
+                    if (provinsi === "all") {
+                        upahChart.data.labels = window.chartUpahMinimumData.labels;
+                        upahChart.data.datasets[0].data = window.chartUpahMinimumData.values;
+                    } else if (data.length) {
+                        upahChart.data.labels = [data[0].provinsi];
+                        upahChart.data.datasets[0].data = [data[0].total];
+                    }
+
+                    upahChart.update();
+                });
+        });
+    }
+
 });
