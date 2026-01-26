@@ -547,17 +547,17 @@ document.addEventListener("DOMContentLoaded", function () {
     /* ===============================
     TOGGLE LABEL BPJS (TABLE)
     =============================== */
-    const toggleBtn = document.getElementById("toggleBpjsLabel");
+    const toggleBtnBpjs = document.getElementById("toggleBpjsLabel");
     const bpjsTable = document.getElementById("bpjsTable");
 
     let isVisible = true;
 
-    toggleBtn.addEventListener("click", function () {
+    toggleBtnBpjs.addEventListener("click", function () {
         isVisible = !isVisible;
 
         bpjsTable.classList.toggle("hidden", !isVisible);
 
-        toggleBtn.innerText = isVisible
+        toggleBtnBpjs.innerText = isVisible
             ? "Sembunyikan Detail Provinsi"
             : "Tampilkan Detail Provinsi";
     });
@@ -1642,18 +1642,18 @@ document.addEventListener("DOMContentLoaded", function () {
                     datalabels: {
                         anchor: "end",
                         align: "top",
-                        color: "white",
+                        // color: "white",
                         formatter: (val) => val.toLocaleString("id-ID")
                     }
                 },
                 scales: {
                     y: { 
                         beginAtZero: true,
-                        ticks: { color: 'white' },
-                        grid: { color: 'rgba(255,255,255,0.1)' }
+                        // ticks: { color: 'white' },
+                        // grid: { color: 'rgba(255,255,255,0.1)' }
                     },
                     x: { 
-                        ticks: { color: 'white', autoSkip: false, maxRotation: 45 },
+                        // ticks: { color: 'white', autoSkip: false, maxRotation: 45 },
                         grid: { display: false }
                     }
                 }

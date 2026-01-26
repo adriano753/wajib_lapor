@@ -72,7 +72,7 @@
         </div>
 
         <div style="flex: 1; min-width: 300px; height: 400px;">
-            <h3 style="color:white; text-align:center; margin-bottom:10px;">Klasifikasi</h3>
+            <h3 style="text-align:center; margin-bottom:10px;">Klasifikasi</h3>
             <canvas id="klasifikasiChart"></canvas>
         </div>
     </div>

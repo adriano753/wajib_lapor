@@ -324,7 +324,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 datalabels: {
                     anchor: 'end',
                     align: 'top',
-                    color: 'white',
+                    // color: 'white',
                     font: { weight: 'bold' },
                     formatter: (value) => value.toLocaleString('id-ID')
                 }
@@ -333,7 +333,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 x: {
                     grid: { display: false },
                     ticks: {
-                        color: 'white',
+                        // color: 'white',
                         maxRotation: 45,
                         minRotation: 45,
                         autoSkip: false // Tampilkan semua label karena sudah bisa di-scroll
@@ -341,8 +341,8 @@ document.addEventListener("DOMContentLoaded", function() {
                 },
                 y: {
                     beginAtZero: true,
-                    ticks: { color: 'white' },
-                    grid: { color: 'rgba(255,255,255,0.1)' }
+                    // ticks: { color: 'white' },
+                    // grid: { color: 'rgba(255,255,255,0.1)' }
                 }
             }
         },

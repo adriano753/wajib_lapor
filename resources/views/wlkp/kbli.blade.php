@@ -53,7 +53,7 @@
     </div>
 </form>
 
-<div class="chart-scroll-wrapper" style="width: 100%; overflow-x: auto; margin-top: 20px; background: rgba(255,255,255,0.05); border-radius: 10px;">
+<div class="chart-scroll-wrapper" style="width: 100%; overflow-x: auto; margin-top: 20px; border-radius: 10px;">
     <div id="chartStage" style="height: 450px; min-width: 100%;">
         <canvas id="kbliList"></canvas>
     </div>

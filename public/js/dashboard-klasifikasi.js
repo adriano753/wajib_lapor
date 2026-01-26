@@ -39,7 +39,7 @@ const chartProvinsi = new Chart(document.getElementById("provinsiChart"), {
                     weight: "bold",
                     size: 11,
                 },
-                color: "white",
+                // color: "white",
             },
         },
         scales: {
@@ -47,10 +47,10 @@ const chartProvinsi = new Chart(document.getElementById("provinsiChart"), {
                 beginAtZero: true,
                 ticks: {
                     callback: (value) => value.toLocaleString("id-ID"),
-                    color: "white",
+                    // color: "white",
                 },
                 grid: {
-                    color: "rgba(255, 255, 255, 0.1)", // Garis grid tipis transparan
+                    // color: "rgba(255, 255, 255, 0.1)", // Garis grid tipis transparan
                 },
             },
             x: {
@@ -61,7 +61,7 @@ const chartProvinsi = new Chart(document.getElementById("provinsiChart"), {
                     font: {
                         size: 10,
                     },
-                    color: "white",
+                    // color: "white",
                 },
                 grid: {
                     display: false,
@@ -120,7 +120,7 @@ const chartKlasifikasi = new Chart(
                         weight: "bold",
                         size: 11,
                     },
-                    color: "white", // Atau sesuaikan dengan tema background (misal: black/white)
+                    // color: "white", // Atau sesuaikan dengan tema background (misal: black/white)
                 },
             },
             scales: {
@@ -128,16 +128,16 @@ const chartKlasifikasi = new Chart(
                     beginAtZero: true,
                     ticks: {
                         callback: (value) => value.toLocaleString("id-ID"),
-                        color: "#e0e0e0", // Warna teks sumbu Y
+                        // color: "#e0e0e0", // Warna teks sumbu Y
                     },
                     grid: {
-                        color: "rgba(255, 255, 255, 0.1)", // Grid tipis transparan
+                        // color: "rgba(255, 255, 255, 0.1)", // Grid tipis transparan
                     },
                 },
                 x: {
                     ticks: {
                         autoSkip: false,
-                        color: "#e0e0e0",
+                        // color: "#e0e0e0",
                         font: {
                             size: 11,
                         },
@@ -175,21 +175,23 @@ const chartKota = new Chart(document.getElementById("kotaChart"), {
                 align: "top",
                 formatter: (value) => value.toLocaleString("id-ID"),
                 font: { weight: "bold", size: 10 },
-                color: "white",
+                // color: "white",
             },
         },
         scales: {
             y: {
                 beginAtZero: true,
                 ticks: {
-                    color: "#e0e0e0",
+                    // color: "#e0e0e0",
                     callback: (v) => v.toLocaleString("id-ID"),
                 },
-                grid: { color: "rgba(255, 255, 255, 0.1)" },
+                grid: { 
+                    // color: "rgba(255, 255, 255, 0.1)" 
+                },
             },
             x: {
                 ticks: {
-                    color: "#e0e0e0",
+                    // color: "#e0e0e0",
                     autoSkip: false,
                     maxRotation: 90,
                     minRotation: 45,
