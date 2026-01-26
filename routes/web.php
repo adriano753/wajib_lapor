@@ -1,4 +1,4 @@
-    <?php
+<?php
 
 use App\Http\Controllers\WlkpDetailController;
 use Illuminate\Support\Facades\Route;
@@ -7,9 +7,12 @@ use App\Http\Controllers\KbliController;
 use App\Http\Controllers\BpjsFilterController;
     // use App\Http\Controllers\UpahMinimumFilterController;;
 
-    Route::get('/', function () {
-        return view('welcome');
-    });
+Route::get('/', function () {
+    return redirect('/wlkp');
+});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
 
 
 /*

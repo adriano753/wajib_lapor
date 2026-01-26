@@ -1,4 +1,5 @@
             <!-- GRAFIK PROVINSI -->
+            <br>
             <section class="class laporan-section" id="laporan">
                 <div class="class beranda-container">
                     <div class="chart-card full-width">

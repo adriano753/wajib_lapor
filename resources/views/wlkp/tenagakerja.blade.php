@@ -101,23 +101,25 @@
     </div>
 
     <!-- TABEL PROVINSI -->
-    <div id="tableProvinsiWrapper" style="display:none">
-        <h6>Tabel Total Tenaga Kerja Provinsi</h6>
-        <table class="table table-bordered table-sm text-white">
-            <thead>
-                <tr>
-                    <th>Nama Provinsi</th>
-                    <th>Total Tenaga Kerja</th>
-                </tr>
-            </thead>
-            <tbody id="tableProvinsiBody"></tbody>
-        </table>
-    </div>
+    <div id="tableProvinsiWrapper" >
+    <h6>Tabel Total Tenaga Kerja Provinsi</h6>
+
+    <table class="table table-bordered table-sm table-hover">
+        <thead>
+            <tr>
+                <th>Nama Provinsi</th>
+                <th>Total Tenaga Kerja</th>
+            </tr>
+        </thead>
+        <tbody id="tableProvinsiBody"></tbody>
+    </table>
+</div>
+
 
     <!-- TABEL KABUPATEN -->
-    <div id="tableKabupatenWrapper" style="display:none">
+    <div id="tableKabupatenWrapper" >
         <h6>Tabel Total Tenaga Kerja Kabupaten</h6>
-        <table class="table table-bordered table-sm text-white">
+        <table class="table table-bordered table-sm table-hover">
             <thead>
                 <tr>
                     <th>Nama Kabupaten</th>
@@ -163,70 +165,11 @@
                 <canvas id="tenagaKerjaKabChart"></canvas>
             </div>
         </div>
+        <br>
     </div>
 </div>
-
+<br>
 
 </section>
+<br>
 
-
-
-
-{{-- <section>
-    <div style="width:100%; height:400px;">
-
-        <h2>DATA TENAGA KERJA</h2>
-        <select id="provinsiSelect" class="form-select mb-3">
-            <option value="">-- Pilih Provinsi --</option>
-            @foreach ($provinsi as $p)
-                <option value="{{ $p }}">{{ $p }}</option>
-            @endforeach
-        </select>
-        <canvas id="tenagaKerjaProvChart">chart</canvas>
-    </div>
-</section>
-<div style="width:100%; height:400px;">
-    <select id="kabupatenSelect" class="form-select mb-3">
-        <option value="">-- Pilih Kab/Kota --</option>
-        @foreach ($kota as $k)
-            <option value="{{ $k }}">{{ $k }}</option>
-        @endforeach
-    </select>
-    <h4>Tenaga Kerja<br>Kab/Kota Tertentu</h4>
-    <canvas id="tenagaKerjaKabChart"></canvas>
-</div>
-
-
-<section>
-    <div class="tk-wrapper">
-        <div class="tk-box">
-            <select id="provinsiSelect" class="form-select mb-3">
-                <option value="">-- Pilih Provinsi --</option>
-                @foreach ($provinsi as $p)
-                    <option value="{{ $p }}">{{ $p }}</option>
-                @endforeach
-            </select>
-            <h4>Tenaga Kerja<br>Semua Kab/Kota</h4>
-            <canvas id="tenagaKerjaProvChart"></canvas>
-        </div>
-
-    </div>
-</section> --}}
-
-
-
-
-
-{{-- <div class="chart-container-tk">
-        <!-- KIRI: FILTER 1 KABUPATEN -->
-        <div class="chart-box-tk">
-            <h4>Tenaga Kerja<br>Kab/Kota Tertentu</h4>
-            <canvas id="tenagaKerjaKabChart"></canvas>
-        </div>
-
-        <!-- KANAN: DATA FULL -->
-        <div class="chart-box">
-            <h4>Tenaga Kerja<br>Semua Kab/Kota</h4>
-            <canvas id="tenagaKerjaFullChart"></canvas>
-        </div>
-    </div> --}}
