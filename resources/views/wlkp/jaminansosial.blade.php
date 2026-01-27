@@ -48,7 +48,7 @@
 
 </div>
 
-{{-- ================= SUMMARY ANGKA (HORIZONTAL SCROLL) ================= --}}
+<!-- {{-- ================= SUMMARY ANGKA (HORIZONTAL SCROLL) ================= --}}
 <div class="metrics-scroll mt-4">
 
     <div class="metric-item">
@@ -78,4 +78,4 @@
         </div>
         <div class="metric-label">JP</div>
     </div>
-</div>
+</div> -->

@@ -128,11 +128,10 @@
             @include('wlkp.kbli')
             {{-- GRAFIK TK --}}
             @include('wlkp.tenagakerja')
-            @include('wlkp.jaminansosial')
-            @include('wlkp.upahminimum')
             {{-- GRAFIK SEBARAN TENAGA KERJA BERDASARKAN 2 DIGIT KBLI --}}
             @include('wlkp.sebarantkkbli')
-
+            @include('wlkp.jaminansosial')
+            @include('wlkp.upahminimum')
         </div>
 
     </section>

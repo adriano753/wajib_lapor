@@ -1074,6 +1074,16 @@ document.addEventListener("DOMContentLoaded", function () {
         START DATA TIDAK TERIDENTIFIKASI
     =============================== */
 
+    function sumBySkalaKab(skala, kota = null) {
+        return window.kabData
+            .filter(
+                (d) =>
+                    d.skala_objek_pengawasan === skala &&
+                    (!kota || d.kota === kota),
+            )
+            .reduce((sum, d) => sum + getTotalByJenis(d), 0);
+    }
+
     function sumTidakTeridentifikasiKab(kota = null) {
         return window.kabData
             .filter(
@@ -1278,16 +1288,6 @@ document.addEventListener("DOMContentLoaded", function () {
     /* ===============================
         START DATA TIDAK TERIDENTIFIKASI
     =============================== */
-
-    function sumTidakTeridentifikasiKab(kota = null) {
-        return window.kabData
-            .filter(
-                (d) =>
-                    d.skala_objek_pengawasan === skala &&
-                    (!kota || d.kota === kota),
-            )
-            .reduce((sum, d) => sum + Number(d.total), 0);
-    }
 
     function lineFilterKab(skala, kota) {
         return window.chartData.kota.map((k) => {
