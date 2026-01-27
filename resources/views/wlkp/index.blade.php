@@ -114,7 +114,7 @@
             @include('wlkp.tenagakerja')
             @include('wlkp.jaminansosial')
             @include('wlkp.upahminimum')
-
+            @include('wlkp.kbli')
         </div>
     </section>
 
@@ -216,6 +216,11 @@
         window.chartUpahMinimumData = {
             labels: @json($listProvinsi),
             values: @json($listUpah)
+        };
+
+        window.chartKbliData = {
+            labels: @json($listNamaKbli),
+            values: @json($listTotal)
         };
     </script>
 
