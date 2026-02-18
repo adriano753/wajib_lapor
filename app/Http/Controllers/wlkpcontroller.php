@@ -2,16 +2,26 @@
 
 namespace App\Http\Controllers;
 
+
+use App\Services\WlkpService;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class WlkpController extends Controller
 {
+    protected $service;
+
+    // Inject Service
+    public function __construct(WlkpService $service)
+    {
+        $this->service = $service;
+    }
     private function formatDetail($n)
     {
         return number_format((int) $n, 0, ',', '.');
-    }
+    }       
 
-    public function index()
+    public function index(Request $request)
     {
         /* ===============================
            TOTAL KESELURUHAN
