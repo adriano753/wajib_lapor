@@ -8,7 +8,7 @@ const chartProvinsi = new Chart(document.getElementById("provinsiChart"), {
         labels: window.chartData.provinsi,
         datasets: [
             {
-                data: window.chartData.totalProvinsi,
+                data: window.chartData.totalProvinsiKlas,
                 backgroundColor: "#42A5F5",
                 // --- PENGATURAN LEBAR DAN MARGIN ---
                 barPercentage: 0.9, // Mengatur lebar bar (0.1 - 1.0). Semakin dekat ke 1, semakin lebar.
@@ -280,12 +280,17 @@ function updateDashboard() {
         // Ini memunculkan Scrollbar agar muat 38 provinsi
         if (chartContainer) chartContainer.style.width = "2000px";
 
-        // 2. Set Data & Label Full
-        chartProvinsiLabels = listProvinsiLabel;
-        chartProvinsiData = listProvinsiLabel.map((namaProv) => {
-            const dataProv = filteredData.filter(
-                (r) => r.provinsi === namaProv
-            );
+        // 1. Mengubah value 'null' dari Controller menjadi string 'TIDAK TERINDENTIFIKASI'
+        chartProvinsiLabels = listProvinsiLabel.map(label => {
+            return (label === null || label === "") ? "TIDAK TERINDENTIFIKASI" : label;
+        });
+
+        // 2. Mapping Data (Sekarang labelnya sudah string, jadi akan cocok dengan datanya)
+        chartProvinsiData = chartProvinsiLabels.map((namaProv) => {
+            const dataProv = filteredData.filter((r) => {
+                const rowProv = (r.provinsi === null || r.provinsi === "") ? "TIDAK TERINDENTIFIKASI" : r.provinsi;
+                return rowProv === namaProv;
+            });
             return dataProv.reduce((sum, row) => sum + parseInt(row.total), 0);
         });
     }

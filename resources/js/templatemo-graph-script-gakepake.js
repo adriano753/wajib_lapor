@@ -375,6 +375,79 @@ document.querySelectorAll(".metric-item").forEach((item) => {
 });
 
 /* =================================
+GLOBAL DATA FUNCTION (WAJIB DI ATAS)
+================================= */
+
+function totalProvinsi() {
+    const map = {};
+    window.provData.forEach((d) => {
+        if (!map[d.provinsi]) map[d.provinsi] = 0;
+        map[d.provinsi] += getTotalByJenis(d);
+    });
+    return map;
+}
+
+function totalKotaByProvinsi(provinsi) {
+    const map = {};
+    const target = provinsi.trim().toUpperCase();
+
+    window.kabData.forEach((d) => {
+        if (!d.provinsi) return;
+        const dataProv = d.provinsi.trim().toUpperCase();
+
+        if (dataProv === target) {
+            if (!map[d.kota]) map[d.kota] = 0;
+            map[d.kota] += getTotalByJenis(d);
+        }
+    });
+
+    return map;
+}
+
+function totalSemuaTenagaKerja() {
+    let total = 0;
+    window.provData.forEach((d) => {
+        total += getTotalByJenis(d);
+    });
+    return total;
+}
+
+function totalTenagaKerjaProvinsi(provinsi) {
+    const kotaMap = totalKotaByProvinsi(provinsi);
+    let total = 0;
+    Object.values(kotaMap).forEach((val) => (total += val));
+    return total;
+}
+
+function totalSemuaProvinsi() {
+    const provMap = totalProvinsi();
+    let total = 0;
+    Object.values(provMap).forEach((val) => (total += val));
+    return total;
+}
+
+function sumBySkalaKab(skala, kota = null) {
+    return window.kabData
+        .filter(
+            (d) =>
+                d.skala_objek_pengawasan === skala &&
+                (!kota || d.kota === kota),
+        )
+        .reduce((sum, d) => sum + getTotalByJenis(d), 0);
+}
+
+function sumTidakTeridentifikasiKab(kota = null) {
+    return window.kabData
+        .filter(
+            (d) =>
+                (!d.skala_objek_pengawasan ||
+                    d.skala_objek_pengawasan.trim() === "") &&
+                (!kota || d.kota === kota),
+        )
+        .reduce((sum, d) => sum + getTotalByJenis(d), 0);
+}
+
+/* =================================
        START GRAFIK TENAGA KERJA 
     ==================================== */
 document.addEventListener("DOMContentLoaded", function () {
@@ -562,8 +635,8 @@ document.addEventListener("DOMContentLoaded", function () {
             : "Tampilkan Detail Provinsi";
     });
 
-     if (!window.chartJaminanData) {
-        console.warn('chartJaminanData kosong');
+    if (!window.chartJaminanData) {
+        console.warn("chartJaminanData kosong");
         return;
     }
 
@@ -713,22 +786,22 @@ document.addEventListener("DOMContentLoaded", function () {
 =============================== */
     const toggleBtn = document.getElementById("themeToggle");
 
-    if (!toggleBtn) return;
+    if (toggleBtn) {
+        toggleBtn.addEventListener("click", () => {
+            document.body.classList.toggle("light-mode");
 
-    toggleBtn.addEventListener("click", () => {
-        document.body.classList.toggle("light-mode");
+            if (document.body.classList.contains("light-mode")) {
+                toggleBtn.innerHTML = "☀ Light";
+                localStorage.setItem("theme", "light");
+            } else {
+                toggleBtn.innerHTML = "🌙 Dark";
+                localStorage.setItem("theme", "dark");
+            }
 
-        if (document.body.classList.contains("light-mode")) {
-            toggleBtn.innerHTML = "☀ Light";
-            localStorage.setItem("theme", "light");
-        } else {
-            toggleBtn.innerHTML = "🌙 Dark";
-            localStorage.setItem("theme", "dark");
-        }
-
-        if (window.kabChart) applyChartTheme(kabChart);
-        if (window.mainChart) applyChartTheme(mainChart);
-    });
+            if (window.kabChart) applyChartTheme(kabChart);
+            if (window.mainChart) applyChartTheme(mainChart);
+        });
+    }
 
     function applyChartTheme(chart) {
         if (!chart) return;
@@ -764,6 +837,32 @@ document.addEventListener("DOMContentLoaded", function () {
     /* ===============================
    END BUTTON LIGHT
 =============================== */
+    const tableFilter = document.getElementById("tableFilter");
+
+    if (tableFilter) {
+        tableFilter.addEventListener("change", function () {
+            const val = this.value;
+
+            const prov = document.getElementById("tableProvinsiWrapper");
+            const kab = document.getElementById("tableKabupatenWrapper");
+
+            if (prov) prov.style.display = "none";
+            if (kab) kab.style.display = "none";
+
+            if (val === "provinsi") {
+                renderTableProvinsi();
+                if (prov) prov.style.display = "block";
+            }
+
+            if (val === "kabupaten") {
+                renderTableKabupaten();
+                if (kab) kab.style.display = "block";
+            }
+        });
+
+        // trigger awal
+        tableFilter.dispatchEvent(new Event("change"));
+    }
 
     /* ===============================
        4️⃣ START FILTER DROPDOWN KABUPATEN
@@ -1187,24 +1286,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     /* ===============================
-        START FUNCTION TOTAL  PROVINSI
-    =============================== */
-    function totalProvinsi() {
-        const map = {};
-
-        window.provData.forEach((d) => {
-            if (!map[d.provinsi]) map[d.provinsi] = 0;
-            map[d.provinsi] += getTotalByJenis(d);
-        });
-
-        return map;
-    }
-
-    /* ===============================
-        END FUNCTION TOTAL  PROVINSI
-    =============================== */
-
-    /* ===============================
         START FUNCTION TOTAL KOTA BY PROVINSI
     =============================== */
 
@@ -1304,272 +1385,266 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function sumBySkalaProv(skala, provinsi = null) {
+    return window.provData
+        .filter(
+            (d) =>
+                d.skala_objek_pengawasan === skala &&
+                (!provinsi || d.provinsi === provinsi),
+        )
+        .reduce((sum, d) => sum + getTotalByJenis(d), 0);
+}
+
+function lineFilterProv(skala, provinsi) {
+    return window.chartData.provinsi.map((k) => {
+        if (k !== provinsi) return 0;
+
         return window.provData
             .filter(
                 (d) =>
-                    d.skala_objek_pengawasan === skala &&
-                    (!provinsi || d.provinsi === provinsi),
+                    d.provinsi === provinsi &&
+                    d.skala_objek_pengawasan === skala,
             )
             .reduce((sum, d) => sum + getTotalByJenis(d), 0);
-    }
+    });
+}
 
-    function lineFilterProv(skala, provinsi) {
-        return window.chartData.provinsi.map((k) => {
-            if (k !== provinsi) return 0;
-
-            return window.provData
-                .filter(
-                    (d) =>
-                        d.provinsi === provinsi &&
-                        d.skala_objek_pengawasan === skala,
-                )
-                .reduce((sum, d) => sum + getTotalByJenis(d), 0);
-        });
-    }
-
-    /* ===============================
+/* ===============================
        END HELPER FUNCTION PROVINSI
     =============================== */
 
-    /* ===============================
+/* ===============================
        START FUNCTION LABEL JENIS
     =============================== */
-    function getLabelJenis() {
-        const jenisTenaga = document.getElementById("jenisTenagaKerja").value;
-        const jenisKelamin = document.getElementById("jenisKelamin").value;
-        const perjanjianKerja =
-            document.getElementById("perjanjianKerja").value;
+function getLabelJenis() {
+    const jenisTenaga = document.getElementById("jenisTenagaKerja").value;
+    const jenisKelamin = document.getElementById("jenisKelamin").value;
+    const perjanjianKerja = document.getElementById("perjanjianKerja").value;
 
-        let labelTenaga = "";
-        let labelGender = "";
-        let labelPerjanjian = "";
+    let labelTenaga = "";
+    let labelGender = "";
+    let labelPerjanjian = "";
 
-        if (jenisTenaga === "wni") labelTenaga = "Tenaga Kerja Indonesia";
-        else if (jenisTenaga === "wna") labelTenaga = "Tenaga Kerja Asing";
-        else labelTenaga = "Seluruh Tenaga Kerja";
+    if (jenisTenaga === "wni") labelTenaga = "Tenaga Kerja Indonesia";
+    else if (jenisTenaga === "wna") labelTenaga = "Tenaga Kerja Asing";
+    else labelTenaga = "Seluruh Tenaga Kerja";
 
-        if (jenisKelamin === "l") labelGender = "Laki-laki";
-        else if (jenisKelamin === "p") labelGender = "Perempuan";
+    if (jenisKelamin === "l") labelGender = "Laki-laki";
+    else if (jenisKelamin === "p") labelGender = "Perempuan";
 
-        if (perjanjianKerja === "pkwtt") labelPerjanjian = "PKWTT";
-        else if (perjanjianKerja === "pkwt") labelPerjanjian = "PKWT";
+    if (perjanjianKerja === "pkwtt") labelPerjanjian = "PKWTT";
+    else if (perjanjianKerja === "pkwt") labelPerjanjian = "PKWT";
 
-        let label = "Total " + labelTenaga;
+    let label = "Total " + labelTenaga;
 
-        if (labelGender) label += ` (${labelGender})`;
-        if (labelPerjanjian) label += ` (${labelPerjanjian})`;
+    if (labelGender) label += ` (${labelGender})`;
+    if (labelPerjanjian) label += ` (${labelPerjanjian})`;
 
-        return label;
-    }
+    return label;
+}
 
-    function safeNumber(val) {
-        if (val === null || val === undefined || val === "") return 0;
-        return Number(val);
-    }
+function safeNumber(val) {
+    if (val === null || val === undefined || val === "") return 0;
+    return Number(val);
+}
 
-    function getTotalByJenis(d) {
-        const jenisTenaga = document.getElementById("jenisTenagaKerja").value; // wni | wna | all
-        const jenisKelamin = document.getElementById("jenisKelamin").value; // all | l | p
-        const perjanjianKerja =
-            document.getElementById("perjanjianKerja").value; // all | pkwtt | pkwt
+function getTotalByJenis(d) {
+    const jenisTenaga = document.getElementById("jenisTenagaKerja").value; // wni | wna | all
+    const jenisKelamin = document.getElementById("jenisKelamin").value; // all | l | p
+    const perjanjianKerja = document.getElementById("perjanjianKerja").value; // all | pkwtt | pkwt
 
-        const totalWni = safeNumber(d.total_wni);
-        const totalWna = safeNumber(d.total_wna);
+    const totalWni = safeNumber(d.total_wni);
+    const totalWna = safeNumber(d.total_wna);
 
-        const totalWniLaki = safeNumber(d.total_laki);
-        const totalWniPerempuan = safeNumber(d.total_perempuan);
+    const totalWniLaki = safeNumber(d.total_laki);
+    const totalWniPerempuan = safeNumber(d.total_perempuan);
 
-        const totalWnaLaki = safeNumber(d.total_tka_laki);
-        const totalWnaPerempuan = safeNumber(d.total_tka_perempuan);
+    const totalWnaLaki = safeNumber(d.total_tka_laki);
+    const totalWnaPerempuan = safeNumber(d.total_tka_perempuan);
 
-        const totalPKWTT = safeNumber(d.total_pkwtt);
-        const totalPKWT = safeNumber(d.total_pkwt);
+    const totalPKWTT = safeNumber(d.total_pkwtt);
+    const totalPKWT = safeNumber(d.total_pkwt);
 
-        let total = 0;
-        /* ===============================
+    let total = 0;
+    /* ===============================
        END FUNCTION LABEL JENIS
     =============================== */
 
-        /* =============================
+    /* =============================
        FILTER TENAGA KERJA + GENDER
        ============================= */
 
-        if (jenisTenaga === "all") {
-            if (jenisKelamin === "l") total = totalWniLaki + totalWnaLaki;
-            else if (jenisKelamin === "p")
-                total = totalWniPerempuan + totalWnaPerempuan;
-            else total = totalWni + totalWna;
-        }
+    if (jenisTenaga === "all") {
+        if (jenisKelamin === "l") total = totalWniLaki + totalWnaLaki;
+        else if (jenisKelamin === "p")
+            total = totalWniPerempuan + totalWnaPerempuan;
+        else total = totalWni + totalWna;
+    }
 
-        if (jenisTenaga === "wni") {
-            if (jenisKelamin === "l") total = totalWniLaki;
-            else if (jenisKelamin === "p") total = totalWniPerempuan;
-            else total = totalWni;
-        }
+    if (jenisTenaga === "wni") {
+        if (jenisKelamin === "l") total = totalWniLaki;
+        else if (jenisKelamin === "p") total = totalWniPerempuan;
+        else total = totalWni;
+    }
 
-        if (jenisTenaga === "wna") {
-            if (jenisKelamin === "l") total = totalWnaLaki;
-            else if (jenisKelamin === "p") total = totalWnaPerempuan;
-            else total = totalWna;
-        }
+    if (jenisTenaga === "wna") {
+        if (jenisKelamin === "l") total = totalWnaLaki;
+        else if (jenisKelamin === "p") total = totalWnaPerempuan;
+        else total = totalWna;
+    }
 
-        /* =============================
+    /* =============================
        FILTER PERJANJIAN KERJA
        ============================= */
 
-        if (perjanjianKerja === "pkwtt") return totalPKWTT;
-        if (perjanjianKerja === "pkwt") return totalPKWT;
+    if (perjanjianKerja === "pkwtt") return totalPKWTT;
+    if (perjanjianKerja === "pkwt") return totalPKWT;
 
-        return total;
-    }
+    return total;
+}
 
-    /* ===============================
+/* ===============================
        END FUNCTION LABEL JENIS
     =============================== */
 
-    /* ===============================
+/* ===============================
        START FUNCTION KBLI PROVINSI
     =============================== */
-    function getKBLIByProvinsi(provinsi) {
-        const map = {};
+function getKBLIByProvinsi(provinsi) {
+    const map = {};
 
-        window.kbliData.forEach((d) => {
-            if (provinsi && d.provinsi !== provinsi) return;
+    window.kbliData.forEach((d) => {
+        if (provinsi && d.provinsi !== provinsi) return;
 
-            const kode = d.kode_2_digit;
-            const nama = d.nama_2_digit || "Tidak Teridentifikasi"; // ganti null
+        const kode = d.kode_2_digit;
+        const nama = d.nama_2_digit || "Tidak Teridentifikasi"; // ganti null
 
-            if (!map[kode]) {
-                map[kode] = {
-                    nama: nama,
-                    total: 0,
-                };
-            }
+        if (!map[kode]) {
+            map[kode] = {
+                nama: nama,
+                total: 0,
+            };
+        }
 
-            map[kode].total += Number(d.total);
-        });
+        map[kode].total += Number(d.total);
+    });
 
-        // ubah ke array dan urutkan berdasarkan nama A-Z
-        return Object.values(map).sort((a, b) => {
-            const nameA = a.nama.toUpperCase();
-            const nameB = b.nama.toUpperCase();
-            if (nameA < nameB) return -1;
-            if (nameA > nameB) return 1;
-            return 0;
-        });
+    // ubah ke array dan urutkan berdasarkan nama A-Z
+    return Object.values(map).sort((a, b) => {
+        const nameA = a.nama.toUpperCase();
+        const nameB = b.nama.toUpperCase();
+        if (nameA < nameB) return -1;
+        if (nameA > nameB) return 1;
+        return 0;
+    });
+}
+
+function renderKBLIChart() {
+    const provinsi = document.getElementById("provinsiSelect").value;
+    const barChart = document.getElementById("barChartKbli");
+    const title = document.getElementById("kbliChartTitle");
+
+    barChart.innerHTML = "";
+
+    // update judul
+    if (!provinsi) {
+        title.innerText =
+            "Laporan Sebaran Tenaga Kerja Berdasarkan  KBLI (Semua Provinsi)";
+    } else {
+        title.innerText =
+            "Laporan Sebaran Tenaga Kerja Berdasarkan KBLI (" + provinsi + ")";
     }
 
-    function renderKBLIChart() {
-        const provinsi = document.getElementById("provinsiSelect").value;
-        const barChart = document.getElementById("barChartKbli");
-        const title = document.getElementById("kbliChartTitle");
+    const data = getKBLIByProvinsi(provinsi);
+    if (!data.length) {
+        barChart.innerHTML = "<p>Tidak ada data</p>";
+        return;
+    }
 
-        barChart.innerHTML = "";
+    const maxVal = Math.max(...data.map((d) => d.total), 1);
 
-        // update judul
-        if (!provinsi) {
-            title.innerText =
-                "Laporan Sebaran Tenaga Kerja Berdasarkan  KBLI (Semua Provinsi)";
-        } else {
-            title.innerText =
-                "Laporan Sebaran Tenaga Kerja Berdasarkan KBLI (" +
-                provinsi +
-                ")";
-        }
+    data.forEach((row) => {
+        const height = (row.total / maxVal) * 100;
 
-        const data = getKBLIByProvinsi(provinsi);
-        if (!data.length) {
-            barChart.innerHTML = "<p>Tidak ada data</p>";
-            return;
-        }
+        const bar = document.createElement("div");
+        bar.className = "bar";
+        bar.style.height = height + "%";
+        bar.title = row.nama;
 
-        const maxVal = Math.max(...data.map((d) => d.total), 1);
-
-        data.forEach((row) => {
-            const height = (row.total / maxVal) * 100;
-
-            const bar = document.createElement("div");
-            bar.className = "bar";
-            bar.style.height = height + "%";
-            bar.title = row.nama;
-
-            bar.innerHTML = `
+        bar.innerHTML = `
             <span class="bar-value">${row.total.toLocaleString("id-ID")}</span>
             <span class="bar-label">${row.nama}</span>
         `;
 
-            barChart.appendChild(bar);
-        });
-    }
+        barChart.appendChild(bar);
+    });
+}
 
-    /* ===============================
+/* ===============================
        END FUNCTION KBLI PROVINSI
     =============================== */
 
-    function renderTableProvinsi() {
-        const tbody = document.getElementById("tableProvinsiBody");
-        tbody.innerHTML = "";
+function renderTableProvinsi() {
+    const tbody = document.getElementById("tableProvinsiBody");
+    tbody.innerHTML = "";
 
-        const provinsiSelected =
-            document.getElementById("provinsiSelect").value;
-        const provMap = totalProvinsi();
+    const provinsiSelected = document.getElementById("provinsiSelect").value;
+    const provMap = totalProvinsi();
 
-        // Jika provinsi dipilih → tampilkan hanya 1 baris
-        if (provinsiSelected) {
-            const total = provMap[provinsiSelected] || 0;
+    // Jika provinsi dipilih → tampilkan hanya 1 baris
+    if (provinsiSelected) {
+        const total = provMap[provinsiSelected] || 0;
 
-            const tr = document.createElement("tr");
-            tr.innerHTML = `
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
             <td>${provinsiSelected}</td>
             <td>${total.toLocaleString("id-ID")}</td>
         `;
 
-            tbody.appendChild(tr);
-            return;
-        }
+        tbody.appendChild(tr);
+        return;
+    }
 
-        // Jika belum pilih provinsi → tampilkan semua
-        Object.keys(provMap).forEach((prov) => {
-            const total = provMap[prov];
+    // Jika belum pilih provinsi → tampilkan semua
+    Object.keys(provMap).forEach((prov) => {
+        const total = provMap[prov];
 
-            const tr = document.createElement("tr");
-            tr.innerHTML = `
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
             <td>${prov}</td>
             <td>${total.toLocaleString("id-ID")}</td>
         `;
 
-            tbody.appendChild(tr);
-        });
+        tbody.appendChild(tr);
+    });
+}
+
+function renderTableKabupaten() {
+    const tbody = document.getElementById("tableKabupatenBody");
+    tbody.innerHTML = "";
+
+    const provinsi = document.getElementById("provinsiSelect").value;
+
+    let kotaList = window.kabData;
+
+    // Jika provinsi dipilih, filter kabupaten dalam provinsi itu saja
+    if (provinsi) {
+        kotaList = kotaList.filter((d) => d.provinsi === provinsi);
     }
 
-    function renderTableKabupaten() {
-        const tbody = document.getElementById("tableKabupatenBody");
-        tbody.innerHTML = "";
+    // Ambil kota unik
+    const kotaUnik = [...new Set(kotaList.map((d) => d.kota))];
 
-        const provinsi = document.getElementById("provinsiSelect").value;
+    kotaUnik.forEach((kota) => {
+        const mikro = sumBySkalaKab("Mikro", kota);
+        const kecil = sumBySkalaKab("Kecil", kota);
+        const menengah = sumBySkalaKab("Menengah", kota);
+        const besar = sumBySkalaKab("Besar", kota);
+        const tidakTeridentifikasi = sumTidakTeridentifikasiKab(kota);
 
-        let kotaList = window.kabData;
+        const total = mikro + kecil + menengah + besar + tidakTeridentifikasi;
 
-        // Jika provinsi dipilih, filter kabupaten dalam provinsi itu saja
-        if (provinsi) {
-            kotaList = kotaList.filter((d) => d.provinsi === provinsi);
-        }
-
-        // Ambil kota unik
-        const kotaUnik = [...new Set(kotaList.map((d) => d.kota))];
-
-        kotaUnik.forEach((kota) => {
-            const mikro = sumBySkalaKab("Mikro", kota);
-            const kecil = sumBySkalaKab("Kecil", kota);
-            const menengah = sumBySkalaKab("Menengah", kota);
-            const besar = sumBySkalaKab("Besar", kota);
-            const tidakTeridentifikasi = sumTidakTeridentifikasiKab(kota);
-
-            const total =
-                mikro + kecil + menengah + besar + tidakTeridentifikasi;
-
-            const tr = document.createElement("tr");
-            tr.innerHTML = `
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
             <td>${kota}</td>
             <td>${total.toLocaleString("id-ID")}</td>
             <td>${tidakTeridentifikasi.toLocaleString("id-ID")}</td>
@@ -1579,14 +1654,14 @@ function sumBySkalaProv(skala, provinsi = null) {
             <td>${besar.toLocaleString("id-ID")}</td>
         `;
 
-            tbody.appendChild(tr);
-        });
-    }
+        tbody.appendChild(tr);
+    });
+}
 
-    /* ===============================
+/* ===============================
        END FUNCTION KBLI PROVINSI
     =============================== */
-    
+
 /* =================================
        END GRAFIK TENAGA KERJA 
     ==================================== */
@@ -1605,7 +1680,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let currentPage = 0;
     const itemsPerPage = 10;
     const totalPages = Math.ceil(fullLabels.length / itemsPerPage);
-    
+
     let kbliChartInstance = null;
     const ctx = document.getElementById("kbliList").getContext("2d");
 
@@ -1627,73 +1702,82 @@ document.addEventListener("DOMContentLoaded", function () {
             type: "bar",
             data: {
                 labels: labelsSubset,
-                datasets: [{
-                    label: "Jumlah Perusahaan",
-                    data: valuesSubset,
-                    backgroundColor: '#42A5F5',
-                    barPercentage: 0.6
-                }]
+                datasets: [
+                    {
+                        label: "Jumlah Perusahaan",
+                        data: valuesSubset,
+                        backgroundColor: "#42A5F5",
+                        barPercentage: 0.6,
+                    },
+                ],
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: { display: true, labels: { color: 'white' } },
+                    legend: { display: true, labels: { color: "white" } },
                     datalabels: {
                         anchor: "end",
                         align: "top",
                         // color: "white",
-                        formatter: (val) => val.toLocaleString("id-ID")
-                    }
+                        formatter: (val) => val.toLocaleString("id-ID"),
+                    },
                 },
                 scales: {
-                    y: { 
+                    y: {
                         beginAtZero: true,
                         // ticks: { color: 'white' },
                         // grid: { color: 'rgba(255,255,255,0.1)' }
                     },
-                    x: { 
+                    x: {
                         // ticks: { color: 'white', autoSkip: false, maxRotation: 45 },
-                        grid: { display: false }
-                    }
-                }
+                        grid: { display: false },
+                    },
+                },
             },
-            plugins: [ChartDataLabels]
+            plugins: [ChartDataLabels],
         });
 
         // Update indikator teks
-        document.getElementById("pageIndicatorKBLI").innerText = `Halaman ${page + 1} dari ${totalPages}`;
-        
+        document.getElementById("pageIndicatorKBLI").innerText =
+            `Halaman ${page + 1} dari ${totalPages}`;
+
         // Atur status tombol
-        document.getElementById("prevBtnKBLI").disabled = (page === 0);
-        document.getElementById("nextBtnKBLI").disabled = (page === totalPages - 1);
-        
+        document.getElementById("prevBtnKBLI").disabled = page === 0;
+        document.getElementById("nextBtnKBLI").disabled =
+            page === totalPages - 1;
+
         // Styling tombol disabled agar terlihat jelas
-        document.getElementById("prevBtnKBLI").style.opacity = (page === 0) ? "0.5" : "1";
-        document.getElementById("nextBtnKBLI").style.opacity = (page === totalPages - 1) ? "0.5" : "1";
+        document.getElementById("prevBtnKBLI").style.opacity =
+            page === 0 ? "0.5" : "1";
+        document.getElementById("nextBtnKBLI").style.opacity =
+            page === totalPages - 1 ? "0.5" : "1";
     }
 
     // 4. Inisialisasi Pemuatan Pertama
     renderKBLIPage(currentPage);
 
     // 5. Event Listener Tombol Navigasi
-    document.getElementById("nextBtnKBLI").addEventListener("click", function() {
-        if (currentPage < totalPages - 1) {
-            currentPage++;
-            renderKBLIPage(currentPage);
-        }
-    });
+    document
+        .getElementById("nextBtnKBLI")
+        .addEventListener("click", function () {
+            if (currentPage < totalPages - 1) {
+                currentPage++;
+                renderKBLIPage(currentPage);
+            }
+        });
 
-    document.getElementById("prevBtnKBLI").addEventListener("click", function() {
-        if (currentPage > 0) {
-            currentPage--;
-            renderKBLIPage(currentPage);
-        }
-    });
+    document
+        .getElementById("prevBtnKBLI")
+        .addEventListener("click", function () {
+            if (currentPage > 0) {
+                currentPage--;
+                renderKBLIPage(currentPage);
+            }
+        });
 });
 
 document.addEventListener("DOMContentLoaded", function () {
-
     if (typeof Chart === "undefined") {
         console.error("Chart.js belum ke-load");
         return;
@@ -1711,19 +1795,21 @@ document.addEventListener("DOMContentLoaded", function () {
             type: "bar",
             data: {
                 labels: window.chartUpahMinimumData.labels,
-                datasets: [{
-                    label: "Upah Minimum",
-                    data: window.chartUpahMinimumData.values,
-                    backgroundColor: "#0d6efd"
-                }]
+                datasets: [
+                    {
+                        label: "Upah Minimum",
+                        data: window.chartUpahMinimumData.values,
+                        backgroundColor: "#0d6efd",
+                    },
+                ],
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 scales: {
-                    y: { beginAtZero: true }
-                }
-            }
+                    y: { beginAtZero: true },
+                },
+            },
         });
     } else {
         console.warn("Canvas atau data upah minimum tidak ditemukan");
@@ -1739,12 +1825,13 @@ document.addEventListener("DOMContentLoaded", function () {
             const provinsi = this.value;
 
             fetch(`/filter/upah-minimum?provinsi=${provinsi}`)
-                .then(res => res.json())
-                .then(data => {
-
+                .then((res) => res.json())
+                .then((data) => {
                     if (provinsi === "all") {
-                        upahChart.data.labels = window.chartUpahMinimumData.labels;
-                        upahChart.data.datasets[0].data = window.chartUpahMinimumData.values;
+                        upahChart.data.labels =
+                            window.chartUpahMinimumData.labels;
+                        upahChart.data.datasets[0].data =
+                            window.chartUpahMinimumData.values;
                     } else if (data.length) {
                         upahChart.data.labels = [data[0].provinsi];
                         upahChart.data.datasets[0].data = [data[0].total];
@@ -1754,5 +1841,4 @@ document.addEventListener("DOMContentLoaded", function () {
                 });
         });
     }
-
 });

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+
 use App\Services\WlkpService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -22,7 +23,7 @@ class WlkpController extends Controller
     private function formatDetail($n)
     {
         return number_format((int) $n, 0, ',', '.');
-    }
+    }       
 
     // ===============================
     // HALAMAN UTAMA (INDEX)
@@ -39,11 +40,12 @@ class WlkpController extends Controller
         $kbliChart = $this->service->getRekapKBLI($filters);
         $kbliLabels = $kbliChart->pluck('nama_2_digit')->values();
         $kbliValues = $kbliChart->pluck('total')->values();
+        $rowsPPPKB = $this->service->getRekapPPPKB();
 
 
         /* ===============================
-   DROPDOWN KAB/KOTA DINAMIS
-=============================== */
+        DROPDOWN KAB/KOTA DINAMIS
+        =============================== */
         $optKota = DB::table('wajiblapor.report_detil_wlkp_binwas')
             ->when($request->provinsi, function ($q) use ($request) {
                 $q->where('provinsi', $request->provinsi);
@@ -224,10 +226,11 @@ class WlkpController extends Controller
         =============================== */
         $dataProvinsi = DB::table('wajiblapor.report_detil_wlkp_binwas')
             ->select(
-                DB::raw("COALESCE(provinsi, 'TIDAK TERINDENTIFIKASI') as provinsi"), 
+                // PERBAIKAN: Gunakan NULLIF dan TRIM agar string kosong terbaca sebagai NULL lalu dicoalesce
+                DB::raw("COALESCE(NULLIF(TRIM(provinsi), ''), 'TIDAK TERINDENTIFIKASI') as provinsi"), 
                 DB::raw('COUNT(*) as total')
             )
-            ->groupBy(DB::raw("COALESCE(provinsi, 'TIDAK TERINDENTIFIKASI')")) 
+            ->groupBy(DB::raw("COALESCE(NULLIF(TRIM(provinsi), ''), 'TIDAK TERINDENTIFIKASI')")) 
             ->orderByDesc('total')
             ->get();
         
@@ -316,7 +319,6 @@ class WlkpController extends Controller
         $listProvinsi = $rowsUpah->pluck('provinsi');
         $listUpah     = $rowsUpah->pluck('total_upah_minimum');
 
-
         /* ===============================
            KIRIM KE BLADE (Return Final)
         =============================== */
@@ -336,6 +338,7 @@ class WlkpController extends Controller
             'maxVal',
             'maxValTk',
             'rowsKodeTk',
+            'rowsPPPKB',
             'totalTk',
             'totalLlmb',
             'totalPmb',

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\UpahMinimumFilterController;
 use App\Http\Controllers\WlkpDetailController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\WlkpController;
