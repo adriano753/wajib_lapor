@@ -1,7 +1,7 @@
 <link rel="stylesheet" href="{{ asset('css/dropdown.css') }}">
 
 <section class="card p-3 mb-4">
-    <h1 class="mb-3">Rekap Lapangan Usaha (KBLI)</h1>
+    <h2 class="mb-3">Rekap Lapangan Usaha (KBLI)</h2>
 <form method="GET" id="filterForm" class="filter-container">
     
     <div class="dropdown-wrapper">

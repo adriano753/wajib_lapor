@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\UpahMinimumFilterController;
 use App\Http\Controllers\WlkpDetailController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\WlkpController;
@@ -30,7 +31,7 @@ Route::get('/wlkp/perusahaan-klasifikasi', [WlkpController::class, 'perusahaanKl
 Route::get('/wlkp/chart-provinsi', [WlkpController::class, 'chartProvinsi']);
 Route::get('/wlkp/chart-kabupaten', [WlkpController::class, 'chartKabupaten']);
 Route::get('/filter/bpjs', [BpjsFilterController::class, 'filter'])->name('filter.bpjs');
-    // Route::get('/filter/upah-minimum', [UpahMinimumFilterController::class, 'filter'])->name('filter.upah-minimum');
+Route::get('/filter/upah-minimum', [UpahMinimumFilterController::class, 'filter'])->name('filter.upah-minimum');
 
 
 /*

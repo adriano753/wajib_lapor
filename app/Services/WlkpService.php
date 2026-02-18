@@ -157,4 +157,22 @@ public function getRekapKBLI(array $filters = [])
         ->get();
 }
 
+// Tambahkan di dalam class WlkpService
+
+public function getRekapPPPKB()
+{
+    return DB::table('wajiblapor.report_detil_wlkp_binwas')
+        ->select(
+            'provinsi',
+            // Gunakan alias unik agar aman saat di-JSON-kan
+            DB::raw("SUM(CASE WHEN melapor_memiliki_pp = 'Ada' THEN 1 ELSE 0 END) as pp_ada"),
+            DB::raw("SUM(CASE WHEN melapor_memiliki_pp IS NULL OR melapor_memiliki_pp != 'Ada' THEN 1 ELSE 0 END) as pp_tidak_ada"),
+            DB::raw("SUM(CASE WHEN melapor_memiliki_pkb = 'Ada' THEN 1 ELSE 0 END) as pkb_ada"),
+            DB::raw("SUM(CASE WHEN melapor_memiliki_pkb IS NULL OR melapor_memiliki_pkb != 'Ada' THEN 1 ELSE 0 END) as pkb_tidak_ada")
+        )
+        ->groupBy('provinsi')
+        ->orderBy('provinsi')
+        ->get();
+}
+
 }

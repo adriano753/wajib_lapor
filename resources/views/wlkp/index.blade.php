@@ -131,6 +131,7 @@
             {{-- GRAFIK SEBARAN TENAGA KERJA BERDASARKAN 2 DIGIT KBLI --}}
             @include('wlkp.sebarantkkbli')
             @include('wlkp.jaminansosial')
+            @include('wlkp.pppkb')
             @include('wlkp.upahminimum')
         </div>
 
@@ -254,7 +255,7 @@
             besar: @json($besarChart),
             provinsi: @json($dataProvinsi->pluck('provinsi')),
             klasifikasi: @json($dataKlasifikasi),
-            totalProvinsi: @json($dataProvinsi->pluck('total')),
+            totalProvinsiKlas: @json($dataProvinsi->pluck('total')),
             provinsi: @json($provinsi),
             mikroProv: @json($mikroProv),
             kecilProv: @json($kecilProv),
@@ -262,6 +263,7 @@
             besarProv: @json($besarProv),
             kbliLabels: @json($kbliLabels),
             kbliValues: @json($kbliValues),
+            PPPKBValues: @json($rowsPPPKB),
         };
         window.kbliData = @json($rowsKodeTk);
         window.chartData.kbliLabels = @json($kbliChart->pluck('nama_2_digit'));
@@ -279,8 +281,6 @@
             labels: @json($listProvinsi),
             values: @json($listUpah)
         };
-        console.log('KBLI LABEL', window.chartData.kbliLabels);
-        console.log('KBLI VALUE', window.chartData.kbliValues);
     </script>
 
     <!-- ============================
@@ -352,6 +352,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     <script src="{{ asset('js/templatemo-graph-script.js') }}"></script>
     <script src="{{ asset('js/dashboard-klasifikasi.js') }}"></script>
+    <script src="{{ asset('js/dashboard-pp-pkb.js') }}"></script>
 
     <script>
         const BPJS_FILTER_URL = "{{ route('filter.bpjs') }}";
