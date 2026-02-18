@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+
 use App\Services\WlkpService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -22,7 +23,7 @@ class WlkpController extends Controller
     private function formatDetail($n)
     {
         return number_format((int) $n, 0, ',', '.');
-    }
+    }       
 
     // ===============================
     // HALAMAN UTAMA (INDEX)
