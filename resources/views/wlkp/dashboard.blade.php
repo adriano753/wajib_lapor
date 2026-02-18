@@ -206,7 +206,7 @@
 
         };
     </script>
-    <script src="{{ asset('js/templatemo-graph-script.js') }}"></script>
+    <script src="{{ asset('../resources/js/templatemo-graph-script.js') }}"></script>
 
 </body>
 

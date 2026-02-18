@@ -350,9 +350,11 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 </script>
 
-    <script src="{{ asset('js/templatemo-graph-script.js') }}"></script>
-    <script src="{{ asset('js/dashboard-klasifikasi.js') }}"></script>
-    <script src="{{ asset('js/dashboard-pp-pkb.js') }}"></script>
+    @vite([
+        'resources/js/templatemo-graph-script.js', 
+        'resources/js/dashboard-klasifikasi.js', 
+        'resources/js/dashboard-pp-pkb.js'
+    ])
 
     <script>
         const BPJS_FILTER_URL = "{{ route('filter.bpjs') }}";
