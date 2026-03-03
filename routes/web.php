@@ -44,3 +44,8 @@ Route::get('/wlkp/kbli', [KbliController::class, 'index'])
 Route::get('/kbli', [KbliController::class, 'index'])->name('kbli.index');
 Route::post('/export-pppkb-pdf', [WlkpController::class, 'exportPPPKB'])
     ->name('export.pppkb.pdf');
+
+
+Route::get('/login', function () {
+    return view('auth.login'); // ✅ tampilkan view
+})->name('login');

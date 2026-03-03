@@ -445,97 +445,95 @@ document.addEventListener("DOMContentLoaded", function () {
             const { jsPDF } = window.jspdf;
             const pdf = new jsPDF("l", "mm", "a4");
 
-            const pageWidth = pdf.internal.pageSize.getWidth(); // ~297mm
-            const pageHeight = pdf.internal.pageSize.getHeight(); // ~210mm
+            const pageWidth = pdf.internal.pageSize.getWidth();
+            const pageHeight = pdf.internal.pageSize.getHeight();
 
-            // =====================
-            // HEADER
-            // =====================
             function addHeader() {
                 const now = new Date();
                 const tanggal = now.toLocaleDateString("id-ID");
                 const jam = now.toLocaleTimeString("id-ID");
 
-                pdf.setFontSize(14);
-                pdf.text("LAPORAN PROVINSI", pageWidth / 2, 12, {
+                pdf.setFont("helvetica", "bold");
+                pdf.setFontSize(16);
+                pdf.text("LAPORAN PROVINSI", pageWidth / 2, 14, {
                     align: "center",
                 });
 
-                pdf.setFontSize(8);
-                pdf.text(`Dicetak: ${tanggal} ${jam}`, pageWidth - 10, 8, {
+                pdf.setFont("helvetica", "normal");
+                pdf.setFontSize(9);
+                pdf.text(`Dicetak: ${tanggal} ${jam}`, pageWidth - 10, 10, {
                     align: "right",
                 });
             }
 
-            const barElement = document.getElementById("barChart");
+            const originalChart = document.getElementById("barChart");
 
-            if (!barElement) {
+            if (!originalChart) {
                 alert("Chart tidak ditemukan");
                 return;
             }
 
-            // Pastikan background putih
-            barElement.style.backgroundColor = "#ffffff";
+            // =========================
+            // 🔥 CLONE UNTUK RESOLUSI BESAR
+            // =========================
+            const clone = originalChart.cloneNode(true);
 
-            html2canvas(barElement, {
-                scale: 4, // 🔥 Tajam
-                useCORS: true,
-                backgroundColor: "#ffffff",
-            }).then((canvas) => {
-                const imgData = canvas.toDataURL("image/png");
+            clone.style.width = "2800px"; // 🔥 tambah lebar
+            clone.style.height = "1500px"; // 🔥 tambah tinggi
+            clone.style.padding = "60px";
+            clone.style.paddingBottom = "250px"; // 🔥 ruang label
+            clone.style.background = "#ffffff";
+            clone.style.overflow = "visible";
 
-                const marginTop = 20;
+            clone.style.position = "absolute";
+            clone.style.left = "-9999px";
+            clone.style.top = "0";
 
-                // 🔥 FULL WIDTH A4 (tidak kecil lagi)
-                const imgWidth = pageWidth - 10;
+            document.body.appendChild(clone);
 
-                // Hitung tinggi proporsional
-                const ratio = canvas.height / canvas.width;
-                const imgHeight = imgWidth * ratio;
+            // pastikan bar tidak hidden
+            clone.querySelectorAll(".bar").forEach((bar) => {
+                bar.style.overflow = "visible";
+            });
 
-                addHeader();
+            // 🔥 PENTING: paksa tinggi sesuai konten
+            clone.style.height = clone.scrollHeight + "px";
 
-                // =====================
-                // Kalau muat 1 halaman
-                // =====================
-                if (imgHeight <= pageHeight - marginTop) {
+            setTimeout(() => {
+                html2canvas(clone, {
+                    scale: 2,
+                    useCORS: true,
+                    backgroundColor: "#ffffff",
+                }).then((canvas) => {
+                    const imgData = canvas.toDataURL("image/png");
+
+                    pdf.setFillColor(240, 240, 240);
+                    pdf.rect(0, 0, pageWidth, pageHeight, "F");
+
+                    addHeader();
+
+                    const marginTop = 25;
+                    const marginSide = 10;
+
+                    const canvasRatio = canvas.height / canvas.width;
+                    const imgWidth = pageWidth - marginSide * 2;
+                    const imgHeight = imgWidth * canvasRatio;
+
                     pdf.addImage(
                         imgData,
                         "PNG",
-                        5,
+                        marginSide,
                         marginTop,
                         imgWidth,
                         imgHeight,
                     );
-                } else {
-                    // =====================
-                    // Auto Split Multi Page
-                    // =====================
-                    let position = 0;
-                    let remainingHeight = imgHeight;
 
-                    while (remainingHeight > 0) {
-                        pdf.addImage(
-                            imgData,
-                            "PNG",
-                            5,
-                            marginTop - position,
-                            imgWidth,
-                            imgHeight,
-                        );
+                    pdf.save("laporan-provinsi.pdf");
 
-                        remainingHeight -= pageHeight - marginTop;
-                        position += pageHeight - marginTop;
-
-                        if (remainingHeight > 0) {
-                            pdf.addPage();
-                            addHeader();
-                        }
-                    }
-                }
-
-                pdf.save("laporan-provinsi.pdf");
-            });
+                    // Hapus clone setelah selesai
+                    document.body.removeChild(clone);
+                });
+            }, 500);
         });
     }
 });

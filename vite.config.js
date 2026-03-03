@@ -8,10 +8,12 @@ export default defineConfig({
         laravel({
             input: [
                 'resources/css/app.css',
+                'resources/css/login.css',
                 'resources/js/app.js',
                 'resources/js/templatemo-graph-script.js', 
                 'resources/js/dashboard-klasifikasi.js',   
-                'resources/js/dashboard-pp-pkb.js',        
+                'resources/js/dashboard-pp-pkb.js',
+                'resources/js/download-data.js',        
             ],
             refresh: true,
         }),
