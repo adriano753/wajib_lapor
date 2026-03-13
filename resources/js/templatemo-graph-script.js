@@ -208,12 +208,13 @@ function applyChartTheme(chart) {
     chart.options.scales.x.grid.color = gridColor;
     chart.options.scales.y.grid.color = gridColor;
 
-    if (chart.options.plugins?.title) chart.options.plugins.title.color = textColor;
-    if (chart.options.plugins?.legend?.labels) chart.options.plugins.legend.labels.color = textColor;
-    if (chart.options.plugins?.tooltip) {
-        chart.options.plugins.tooltip.titleColor = textColor;
-        chart.options.plugins.tooltip.bodyColor = textColor;
-    }
+    // Set global tooltip default
+    Chart.defaults.plugins.tooltip.backgroundColor = "rgba(17, 24, 39, 0.95)";
+    Chart.defaults.plugins.tooltip.titleColor = "#ffffff";
+    Chart.defaults.plugins.tooltip.bodyColor = "#ffffff";
+    Chart.defaults.plugins.tooltip.footerColor = "#ffffff";
+    Chart.defaults.plugins.tooltip.borderColor = "#374151";
+    Chart.defaults.plugins.tooltip.borderWidth = 1;
     chart.update();
 }
 
@@ -600,8 +601,29 @@ document.addEventListener("DOMContentLoaded", function () {
                     maintainAspectRatio: false,
                     interaction: { mode: "index", axis: "x", intersect: false },
                     plugins: {
-                        tooltip: { mode: "index", intersect: false },
-                        legend: { position: "top" }
+                        title: {
+                            display: true,
+                            text: "Perbandingan Status BPJS Provinsi per Provinsi",
+                            font: {
+                                size: 16,
+                            },
+                        },
+                        tooltip: {
+                            callbacks: {
+                                footer: function (tooltipItems) {
+                                    let total = 0;
+                                    tooltipItems.forEach(
+                                        function (tooltipItem) {
+                                            total += tooltipItem.parsed.y;
+                                        },
+                                    );
+                                    return (
+                                        "Total: " +
+                                        total.toLocaleString("id-ID")
+                                    );
+                                },
+                            },
+                        },
                     },
                     scales: {
                         x: { ticks: { maxRotation: 45, minRotation: 45 } },

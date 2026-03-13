@@ -6,6 +6,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\WlkpController;
 use App\Http\Controllers\KbliController;
 use App\Http\Controllers\BpjsFilterController;
+use App\Http\Controllers\DashboardController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
     // use App\Http\Controllers\UpahMinimumFilterController;;
 
 Route::get('/', function () {
@@ -47,5 +50,17 @@ Route::post('/export-pppkb-pdf', [WlkpController::class, 'exportPPPKB'])
 
 
 Route::get('/login', function () {
-    return view('auth.login'); // ✅ tampilkan view
+    return view('auth.login');
 })->name('login');
+
+Route::get('/dashboard-ketenagakerjaan', [DashboardController::class, 'ketenagakerjaan']);
+Route::get('/chart-ketenagakerjaan', [DashboardController::class, 'chartKetenagakerjaan']);
+Route::get('/get-kabupaten', function(Request $request){
+
+    return DB::table('wajiblapor.report_detil_wlkp_binwas')
+        ->where('provinsi', $request->provinsi)
+        ->select('kota')
+        ->distinct()
+        ->pluck('kota');
+
+});

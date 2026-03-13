@@ -1,12 +1,15 @@
 <section class="container-provinsi-fluid py-4">
-
+<br>
 
     <div class="filter-panel mb-4">
         <div class="filter-group">
+            <label>Download Data</label>
             <button type="button" id="downloadPdf" class="form-select filter-select">
                 Download PDF
             </button>
-
+        </div>
+        <div class="filter-group">
+            <label>Buka Tabel</label>
             <button type="button" id="toggleTableBtn" class="form-select filter-select">
                 Buka Tabel
             </button>

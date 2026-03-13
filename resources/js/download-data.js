@@ -173,9 +173,10 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    //DATA TENAGA KERJA
     document
         .getElementById("downloadPdfTenagaKerja")
-        .addEventListener("click", function () {
+        .addEventListener("click", async function () {
             const { jsPDF } = window.jspdf;
             const pdf = new jsPDF("l", "mm", "a4");
 
@@ -220,36 +221,71 @@ document.addEventListener("DOMContentLoaded", function () {
             pdf.addPage();
             addHeader();
 
-            pdf.autoTable({
-                html: "#tableProvinsiWrapper table",
-                startY: 15,
-            });
+            const tableProv = document.querySelector(
+                "#tableProvinsiWrapper table",
+            );
 
+            if (tableProv) {
+                pdf.autoTable({
+                    html: tableProv,
+                    startY: 15,
+                });
+            } else {
+                console.warn("Tabel provinsi tidak ditemukan");
+            }
             // =========================
-            // HALAMAN 3 - SUMMARY
+            // HALAMAN - CHART KABUPATEN + RINGKASAN
             // =========================
             pdf.addPage();
             addHeader();
 
+            // Judul Chart
             pdf.setFontSize(14);
-            pdf.text("Ringkasan Tenaga Kerja", 10, 15);
+            pdf.text("Grafik Tenaga Kerja per Kabupaten", 10, 15);
 
-            const summaryText =
-                document.getElementById("dataSummary").innerText;
-            const lines = pdf.splitTextToSize(summaryText, 270);
-
-            pdf.setFontSize(10);
-            pdf.text(lines, 10, 25);
-
-            // =========================
-            // HALAMAN 4 - CHART KABUPATEN
-            // =========================
-            pdf.addPage();
-            addHeader();
-
+            // Chart
             const kabChart = Chart.getChart("tenagaKerjaKabChart");
             const kabImg = kabChart.toBase64Image();
-            pdf.addImage(kabImg, "PNG", 10, 15, 277, 120);
+
+            // Chart ditaruh agak ke bawah sedikit
+            pdf.addImage(kabImg, "PNG", 10, 20, 277, 60);
+
+            // =========================
+            // RINGKASAN DI BAWAH CHART
+            // =========================
+
+            // =========================
+            // RINGKASAN (TAMPILAN HTML ASLI)
+            // =========================
+
+            const summaryElement = document.getElementById("dataSummary");
+
+            if (summaryElement) {
+                // clone supaya tidak ganggu layout asli
+                const clone = summaryElement.cloneNode(true);
+
+                clone.style.width = "1000px"; // biar proporsional
+                clone.style.background = "#ffffff";
+                clone.style.padding = "40px";
+                clone.style.position = "absolute";
+                clone.style.left = "-9999px";
+
+                document.body.appendChild(clone);
+
+                const canvas = await html2canvas(clone, {
+                    scale: 2,
+                    backgroundColor: "#ffffff",
+                });
+
+                const imgData = canvas.toDataURL("image/png");
+
+                const imgWidth = 277;
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+                pdf.addImage(imgData, "PNG", 10, 135, imgWidth, imgHeight);
+
+                document.body.removeChild(clone);
+            }
             // =========================
             // HALAMAN 5 - TABEL KABUPATEN
             // =========================
@@ -263,6 +299,41 @@ document.addEventListener("DOMContentLoaded", function () {
                     fontSize: 8,
                 },
             });
+            // =========================
+            // HALAMAN 6 - CHART KBLI
+            // =========================
+            pdf.addPage();
+            addHeader();
+
+            const kbliChart = document.getElementById("barChartKbli");
+
+            if (kbliChart) {
+                const clone = kbliChart.cloneNode(true);
+
+                clone.style.width = "2600px";
+                clone.style.height = "800px";
+                clone.style.padding = "60px";
+                clone.style.paddingBottom = "200px";
+                clone.style.background = "#ffffff";
+                clone.style.position = "absolute";
+                clone.style.left = "-9999px";
+                clone.style.top = "0";
+
+                document.body.appendChild(clone);
+
+                clone.style.height = clone.scrollHeight + "px";
+
+                await html2canvas(clone, {
+                    scale: 2,
+                    backgroundColor: "#ffffff",
+                }).then((canvas) => {
+                    const imgData = canvas.toDataURL("image/png");
+
+                    pdf.addImage(imgData, "PNG", 10, 15, 277, 120);
+                });
+
+                document.body.removeChild(clone);
+            }
 
             pdf.save("laporan-tenaga-kerja.pdf");
         });

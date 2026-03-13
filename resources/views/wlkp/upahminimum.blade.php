@@ -1,10 +1,17 @@
 {{-- Filter Provinsi Upah Minimum --}}
-<select id="provinsiUpahSelect" class="form-select mb-3">
-    <option value="all">-- Semua Provinsi --</option>
-    @foreach ($listProvinsi as $prov)
-        <option value="{{ $prov }}">{{ $prov }}</option>
-    @endforeach
-</select>
+<div class="filter-panel mb-4">
+    <div class="filter-group">
+         <label>Provinsi</label>
+        <select id="provinsiUpahSelect" class="form-select mb-3">
+            <option value="all">-- Semua Provinsi --</option>
+            @foreach ($listProvinsi as $prov)
+                <option value="{{ $prov }}">{{ $prov }}</option>
+            @endforeach
+        </select>
+    </div>
+</div>
+<br>
+
 
 {{-- CHARD CHART --}}
 <div class="chart-card full-width mt-4">

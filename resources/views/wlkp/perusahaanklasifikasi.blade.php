@@ -1,8 +1,6 @@
 <section class="container-provinsi-fluid py-4">
     <br>
-    <button id="downloadPdfKlasifikasi" class="btn btn-danger">
-        Download PDF Klasifikasi
-    </button>
+
     <h2 class="mb-3">DATA KLASIFIKASI PERUSAHAAN</h2>
 
     <div class="filter-panel mb-4">
@@ -72,6 +70,13 @@
                     <option value="{{ $k }}">{{ $k }}</option>
                 @endforeach
             </select>
+        </div>
+
+        <div class="filter-group">
+            <label>Download Data</label>
+                <button type="button" id="downloadPdfKlasifikasi" class="form-select filter-select">
+                    Download PDF Klasifikasi
+                </button>
         </div>
     </div>
 

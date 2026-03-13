@@ -1422,6 +1422,18 @@ footer {
     flex-direction: column;
 }
 
+.filter-group button{
+    width: 100%;
+    max-width: 280px;
+    border-radius: 8px;
+}
+
+.filter-group select,
+.filter-group button{
+    height:42px;
+    max-width:280px;
+}
+
 .filter-group label {
     font-size: 13px;
     color: #94a3b8;
@@ -1928,4 +1940,37 @@ body.light-mode .hero-text h1 {
 }
 .hidden-bpjs {
     display: none !important;
+}
+.chart-row{
+    display:flex;
+    gap:30px;
+}
+
+.chart-left{
+    width:40%;
+    height:320px;
+}
+
+.chart-right{
+    width:60%;
+    height:320px;
+}
+
+/* SCROLL CONTAINER */
+.scroll-wrapper{
+    width:100%;
+    height:100%;
+    overflow-x:auto;
+    overflow-y:hidden;
+}
+
+/* CANVAS AREA */
+.chart-wide{
+    width:3000px; /* area chart besar */
+    height:300px;
+}
+
+.chart-wide canvas{
+    width:100% !important;
+    height:100% !important;
 }

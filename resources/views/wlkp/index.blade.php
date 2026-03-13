@@ -136,6 +136,7 @@
             @include('wlkp.jaminansosial')
             @include('wlkp.pppkb')
             @include('wlkp.upahminimum')
+            @include('wlkp.ketenagakerjaan')
         </div>
 
     </section>
@@ -317,7 +318,7 @@
         });
     </script>
 
-    @vite(['resources/js/templatemo-graph-script.js', 'resources/js/dashboard-klasifikasi.js', 'resources/js/dashboard-pp-pkb.js', 'resources/js/download-data.js'])
+    @vite(['resources/js/templatemo-graph-script.js', 'resources/js/dashboard-klasifikasi.js', 'resources/js/dashboard-pp-pkb.js', 'resources/js/download-data.js', 'resources/js/ketenagakerjaan.js'])
 
     <script>
         const BPJS_FILTER_URL = "{{ route('filter.bpjs') }}";
