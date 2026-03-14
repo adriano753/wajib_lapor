@@ -24,13 +24,16 @@ class WlkpController extends Controller
     private function formatDetail($n)
     {
         return number_format((int) $n, 0, ',', '.');
-    }       
+    }
 
     // ===============================
     // HALAMAN UTAMA (INDEX)
     // ===============================
     public function index(Request $request)
     {
+        set_time_limit(0); // unlimited
+        ini_set('memory_limit', '1024M'); 
+        
         // 1. Definisikan Filters
         $filters = $request->only(['tahun', 'bulan', 'kota', 'provinsi', 'kbli']);
 
@@ -228,13 +231,13 @@ class WlkpController extends Controller
         $dataProvinsi = DB::table('wajiblapor.report_detil_wlkp_binwas')
             ->select(
                 // PERBAIKAN: Gunakan NULLIF dan TRIM agar string kosong terbaca sebagai NULL lalu dicoalesce
-                DB::raw("COALESCE(NULLIF(TRIM(provinsi), ''), 'TIDAK TERINDENTIFIKASI') as provinsi"), 
+                DB::raw("COALESCE(NULLIF(TRIM(provinsi), ''), 'TIDAK TERINDENTIFIKASI') as provinsi"),
                 DB::raw('COUNT(*) as total')
             )
-            ->groupBy(DB::raw("COALESCE(NULLIF(TRIM(provinsi), ''), 'TIDAK TERINDENTIFIKASI')")) 
+            ->groupBy(DB::raw("COALESCE(NULLIF(TRIM(provinsi), ''), 'TIDAK TERINDENTIFIKASI')"))
             ->orderByDesc('total')
             ->get();
-        
+
         // 1. Ambil data mentah (Group By boleh, tapi JANGAN langsung dikirim ke view)
         $rawKlasifikasi = DB::table('wajiblapor.report_detil_wlkp_binwas')
             ->select('skala_objek_pengawasan', DB::raw('COUNT(*) as total'))
@@ -371,14 +374,14 @@ class WlkpController extends Controller
             'optKBLI'     => $dropdownKBLI['kbli'],
         ]);
     }
-   public function exportPPPKB(Request $request)
-{
-    $charts = json_decode($request->charts);
+    public function exportPPPKB(Request $request)
+    {
+        $charts = json_decode($request->charts);
 
-    $pdf = Pdf::loadView('pdf.pppkb-pdf', [
-        'charts' => $charts
-    ])->setPaper('a4', 'landscape');
+        $pdf = Pdf::loadView('pdf.pppkb-pdf', [
+            'charts' => $charts
+        ])->setPaper('a4', 'landscape');
 
-    return $pdf->download('laporan-pppkb.pdf');
-}
+        return $pdf->download('laporan-pppkb.pdf');
+    }
 }
