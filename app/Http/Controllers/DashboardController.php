@@ -28,20 +28,23 @@ class DashboardController extends Controller
         $data = $query->whereNotNull($groupField)->selectRaw("
     $groupField as wilayah,
 
-    COUNT(CASE WHEN lembaga_p2k3 = 'Ada' THEN 1 END) AS p2k3_sudah,
-    COUNT(CASE WHEN lembaga_p2k3 = 'Tidak Ada' THEN 1 END) AS p2k3_belum,
+    COUNT(CASE WHEN lembaga_p2k3 = 'Ada' AND jumlah_karyawan_masih_bekerja > 100 THEN 1 END) AS p2k3_sudah,
+    COUNT(CASE WHEN lembaga_p2k3 = 'Tidak Ada' AND jumlah_karyawan_masih_bekerja > 100 THEN 1 END) AS p2k3_belum,
 
-    COUNT(CASE WHEN personil_k3 = 'Ada' THEN 1 END) AS ahli_sudah,
-    COUNT(CASE WHEN personil_k3 = 'Tidak Ada' THEN 1 END) AS ahli_belum,
+    COUNT(CASE WHEN personil_k3 = 'Ada' AND jumlah_karyawan_masih_bekerja > 100 THEN 1 END) AS ahli_sudah,
+    COUNT(CASE WHEN personil_k3 = 'Tidak Ada' AND jumlah_karyawan_masih_bekerja > 100 THEN 1 END) AS ahli_belum,
 
-    COUNT(CASE WHEN disabilitas_masih_bekerja > 0 THEN 1 END) AS disabilitas_sudah,
-    COUNT(CASE WHEN disabilitas_masih_bekerja = 0 OR disabilitas_masih_bekerja IS NULL THEN 1 END) AS disabilitas_belum,
+    COUNT(CASE WHEN disabilitas_masih_bekerja > 0 AND jumlah_karyawan_masih_bekerja > 100 THEN 1 END) AS disabilitas_sudah,
+    COUNT(CASE WHEN (disabilitas_masih_bekerja = 0 OR disabilitas_masih_bekerja IS NULL) AND jumlah_karyawan_masih_bekerja > 100 THEN 1 END) AS disabilitas_belum,
 
     COUNT(CASE WHEN melapor_memiliki_susu = 'Ada' THEN 1 END) AS susu_sudah,
     COUNT(CASE WHEN COALESCE(melapor_memiliki_susu,'Tidak Ada') = 'Tidak Ada' THEN 1 END) AS susu_belum,
 
     COUNT(CASE WHEN serikat_pekerja = 'Ada' THEN 1 END) AS serikat_sudah,
     COUNT(CASE WHEN serikat_pekerja = 'Tidak Ada' THEN 1 END) AS serikat_belum,
+
+    COUNT(CASE WHEN lks_bipartit = 'Ada' AND jumlah_karyawan_masih_bekerja > 50 THEN 1 END) AS lks_bipartit_sudah,
+    COUNT(CASE WHEN lks_bipartit = 'Tidak Ada' AND jumlah_karyawan_masih_bekerja > 50 THEN 1 END) AS lks_bipartit_belum,
 
     COUNT(CASE WHEN waktu_kerja_waktu_istirahat = 'Ada' THEN 1 END) AS wk_sudah,
     COUNT(CASE WHEN waktu_kerja_waktu_istirahat = 'Tidak Ada' THEN 1 END) AS wk_belum,
@@ -77,6 +80,11 @@ class DashboardController extends Controller
                 'labels' => $data->pluck('wilayah')->values()->toArray(),
                 'sudah'  => $data->pluck('serikat_sudah')->values()->toArray(),
                 'belum'  => $data->pluck('serikat_belum')->values()->toArray()
+            ],
+            'bipartit' => [
+                'labels' => $data->pluck('wilayah')->values()->toArray(),
+                'sudah'  => $data->pluck('lks_bipartit_sudah')->values()->toArray(),
+                'belum'  => $data->pluck('lks_bipartit_belum')->values()->toArray()
             ],
             'waktu_kerja' => [
                 'labels' => $data->pluck('wilayah')->values()->toArray(),

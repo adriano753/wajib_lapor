@@ -14,8 +14,9 @@ class KbliController extends Controller
         $this->service = $service;
     }
 
-    public function index(Request $request)
+    public function chartKBLIRLU(Request $request)
     {
+        
         $filters = [
             'tahun'    => $request->tahun,
             'bulan'    => $request->bulan,

@@ -15,6 +15,15 @@
 
 
 <body>
+    <div id="loader">
+    <div class="loader-content">
+        <img src="{{ asset('images/logo_kemnaker.png') }}" class="loader-logo" alt="WLKP">
+
+        <div class="spinner"></div>
+
+        <p class="loading-text">Memuat Sistem WLKP...</p>
+    </div>
+</div>
 
     <nav id="navbar">
         <div class="nav-container">
@@ -176,8 +185,17 @@
                     <div class="contact-item">
                         <div class="contact-icon">📞</div>
                         <div class="contact-details">
-                            <h4>Nomor Telp</h4>
-                            021-5255733
+                            <div style="display: flex; gap: 20px; align-items: center;">
+                                <div>
+                                    <strong style="color: #000; font-size: 1.1em;">Telepon</strong>
+                                    <strong style="color: #000; font-size: 1.1em;">021-5255733</strong>
+                                </div>
+                                <div style="border-left: 2px solid #ddd; padding-left: 20px;">
+                                    <strong style="color: #000; font-size: 1.1em;">Call
+                                        Center</strong>
+                                    <strong style="color: #000; font-size: 1.1em;">1500630</strong>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -318,7 +336,7 @@
         });
     </script>
 
-    @vite(['resources/js/templatemo-graph-script.js', 'resources/js/dashboard-klasifikasi.js', 'resources/js/dashboard-pp-pkb.js', 'resources/js/download-data.js', 'resources/js/ketenagakerjaan.js'])
+    @vite(['resources/js/templatemo-graph-script.js', 'resources/js/dashboard-klasifikasi.js', 'resources/js/dashboard-pp-pkb.js', 'resources/js/download-data.js', 'resources/js/ketenagakerjaan.js', 'resources/js/loader.js'])
 
     <script>
         const BPJS_FILTER_URL = "{{ route('filter.bpjs') }}";

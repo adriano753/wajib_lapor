@@ -18,6 +18,13 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      */
+    //KHSUS UNTUK CLOUDFLARE
+    // public function boot()
+    // {
+    //     URL::forceScheme('https');
+    // }
+
+    //khusu untuk local
     public function boot()
     {
         if (app()->environment('production')) {

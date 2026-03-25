@@ -232,6 +232,9 @@ function loadChartKetenagakerjaan() {
             updateDoughnut(charts.serikat?.doughnut, data.serikat);
             updateBar(charts.serikat?.bar, data.serikat);
 
+            updateDoughnut(charts.bipartit?.doughnut, data.bipartit);
+            updateBar(charts.bipartit?.bar, data.bipartit);
+
             updateDoughnut(charts.waktu_kerja?.doughnut, data.waktu_kerja);
             updateBar(charts.waktu_kerja?.bar, data.waktu_kerja);
 
@@ -370,6 +373,9 @@ function renderTabelProvinsi(data) {
             <td>${get(data.serikat, "sudah")}</td>
             <td>${get(data.serikat, "belum")}</td>
 
+            <td>${get(data.bipartit, "sudah")}</td>
+            <td>${get(data.bipartit, "belum")}</td>
+
             <td>${get(data.susu, "sudah")}</td>
             <td>${get(data.susu, "belum")}</td>
 
@@ -412,6 +418,9 @@ function renderTabelKabupaten(data) {
             <td>${get(data.serikat, "sudah")}</td>
             <td>${get(data.serikat, "belum")}</td>
 
+            <td>${get(data.bipartit, "sudah")}</td>
+            <td>${get(data.bipartit, "belum")}</td>
+
             <td>${get(data.susu, "sudah")}</td>
             <td>${get(data.susu, "belum")}</td>
 
@@ -436,12 +445,15 @@ function updateJudulWilayah(provinsi, kabupaten) {
         titleSerikat: "Perusahaan Yang Memiliki Serikat Pekerja",
         titleSerikatnasional: "Perusahaan Yang Memiliki Serikat Pekerja",
 
-        titleSusu: "Perusahaan Yang Menerapkan Susu",
-        titleSusunasional: "Perusahaan Yang Menerapkan Susu",
+        titleBipartit: "Perusahaan Yang Memiliki LKS Bipartit",
+        titleBipartitnasional: "Perusahaan Yang Memiliki LKS Bipartit",
 
-        titleWkwi: "Perusahaan Dengan Pengaturan Waktu Kerja Waktu Istirahat",
+        titleSusu: "Perusahaan Yang Menerapkan Struktur Skala Upah",
+        titleSusunasional: "Perusahaan Yang Menerapkan Struktur Skala Upah",
+
+        titleWkwi: "Perusahaan Yang Mengisi Pengaturan Waktu Kerja Waktu Istirahat",
         titleWkwinasional:
-            "Perusahaan Dengan Pengaturan Waktu Kerja Waktu Istirahat ",
+            "Perusahaan Yang Mengisi Pengaturan Waktu Kerja Waktu Istirahat ",
 
         titleRencanaTk:
             "Perusahaan Yang Sudah Menyusun Perencanaan Tenaga Kerja",
@@ -498,6 +510,11 @@ document.addEventListener("DOMContentLoaded", function () {
         serikat: {
             doughnut: createDoughnutChart("doughnutSerikatPekerja"),
             bar: createBarChart("barSerikatPekerja", "serikat"),
+        },
+
+        bipartit: {
+            doughnut: createDoughnutChart("doughnutBipartitPekerja"),
+            bar: createBarChart("barBipartitPekerja", "bipartit"),
         },
 
         waktu_kerja: {

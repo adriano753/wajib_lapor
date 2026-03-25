@@ -136,13 +136,13 @@
 
         <!-- DOUGHNUT -->
         <div class="chart-left">
-            <h5 id="titleSusunasional">Perusahaan Yang Menerapkan Susu per Nasional</h5>
+            <h5 id="titleSusunasional">Perusahaan Yang Menerapkan Struktur Skala Upah per Nasional</h5>
             <canvas id="doughnutSusu"></canvas>
         </div>
 
         <!-- BAR CHART SCROLL -->
         <div class="chart-right">
-            <h5 id="titleSusu">Perusahaan Yang Menerapkan Susu Per Provinsi</h5>
+            <h5 id="titleSusu">Perusahaan Yang Menerapkan Struktur Skala Upah Per Provinsi</h5>
 
             <div class="scroll-wrapper">
                 <div class="chart-wide">
@@ -178,19 +178,43 @@
 </div>
 <br>
 
+{{-- 7. PERUSAHAAN YANG MEMILIKI LKS BIPARTIT --}}
+<div class="chart-card full-width mt-4">
+    <div class="chart-row">
+
+        <!-- DOUGHNUT -->
+        <div class="chart-left">
+            <h5 id="titleBipartitnasional">Perusahaan Yang Memiliki LKS Bipartit per Nasional</h5>
+            <canvas id="doughnutBipartitPekerja"></canvas>
+        </div>
+
+        <!-- BAR CHART SCROLL -->
+        <div class="chart-right">
+            <h5 id="titleBipartit">Perusahaan Yang Memiliki LKS Bipartit Per Provinsi</h5>
+
+            <div class="scroll-wrapper">
+                <div class="chart-wide">
+                    <canvas id="barBipartitPekerja"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br>
+
 {{-- 7. PERUSAHAAN DENGAN PENGATURAN WAKTU KERJA WAKTU ISTIRAHAT --}}
 <div class="chart-card full-width mt-4">
     <div class="chart-row">
 
         <!-- DOUGHNUT -->
         <div class="chart-left">
-            <h5 id="titleWkwinasional">Perusahaan Dengan Pengaturan Waktu Kerja Waktu Istirahat per Nasional</h5>
+            <h5 id="titleWkwinasional">Perusahaan Yang Mengisi Pengaturan Waktu Kerja Waktu Istirahat per Nasional</h5>
             <canvas id="doughnutWkwi"></canvas>
         </div>
 
         <!-- BAR CHART SCROLL -->
         <div class="chart-right">
-            <h5 id="titleWkwi">Perusahaan Dengan Pengaturan Waktu Kerja Waktu Istirahat Per Provinsi</h5>
+            <h5 id="titleWkwi">Perusahaan Yang Mengisi Pengaturan Waktu Kerja Waktu Istirahat Per Provinsi</h5>
 
             <div class="scroll-wrapper">
                 <div class="chart-wide">
@@ -245,11 +269,14 @@
                     <th colspan="2">Disabilitas</th>
                     <th colspan="2">Perencanaan TK</th>
                     <th colspan="2">Serikat Pekerja</th>
-                    <th colspan="2">Pemberian Susu</th>
+                    <th colspan="2">LKS Bipartit</th>
+                    <th colspan="2">Pemberian SUSU</th>
                     <th colspan="2">Waktu Kerja</th>
                 </tr>
 
                 <tr>
+                    <th>Sudah</th>
+                    <th>Belum</th>
                     <th>Sudah</th>
                     <th>Belum</th>
                     <th>Sudah</th>
@@ -294,10 +321,13 @@
                     <th colspan="2">Disabilitas</th>
                     <th colspan="2">Perencanaan TK</th>
                     <th colspan="2">Serikat Pekerja</th>
-                    <th colspan="2">Pemberian Susu</th>
+                    <th colspan="2">LKS Bipartit</th>
+                    <th colspan="2">Pemberian SUSU</th>
                     <th colspan="2">Waktu Kerja</th>
                 </tr>
                 <tr>
+                    <th>Sudah</th>
+                    <th>Belum</th>
                     <th>Sudah</th>
                     <th>Belum</th>
                     <th>Sudah</th>

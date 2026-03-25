@@ -17,7 +17,7 @@
 <div class="chart-card full-width mt-4">
     <div class="chart-header">
         <h3 class="chart-title">
-            Jumlah Perusahaan yang Melaporkan Upah Minimum
+            Jumlah Perusahaan yang Melaporkan Besaran Upah Minimum
         </h3>
     </div>
 
