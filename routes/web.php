@@ -64,3 +64,14 @@ Route::get('/get-kabupaten', function(Request $request){
         ->pluck('kota');
 
 });
+
+
+/*
+|--------------------------------------------------------------------------
+| KBLI (CONTROLLER TERPISAH)
+|--------------------------------------------------------------------------
+*/
+Route::get('/wlkp/kbli', [KbliController::class, 'index'])
+    ->name('wlkp.kbli');
+Route::get('/kbli/filter', [KbliController::class, 'filter']);
+Route::get('/get-kabupaten', [KbliController::class, 'getKabupaten']);

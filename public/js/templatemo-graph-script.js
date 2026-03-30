@@ -661,7 +661,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 datasets: [
                     {
                         label:
-                            "Total " +
                             getLabelJenis() +
                             " Semua Provinsi : " +
                             totalAll.toLocaleString("id-ID") +
@@ -833,6 +832,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         chart.update();
+        renderKbliChart();
     }
     /* ===============================
    END BUTTON LIGHT
@@ -964,7 +964,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 mainChart.data.labels = Object.keys(provMap);
 
                 mainChart.data.datasets[0].label =
-                    "Total " +
                     getLabelJenis() +
                     " (Semua Provinsi: " +
                     totalAll.toLocaleString("id-ID") +
@@ -980,7 +979,6 @@ document.addEventListener("DOMContentLoaded", function () {
             const totalTk = totalTenagaKerjaProvinsi(provinsi);
             mainChart.data.labels = Object.keys(kotaMap);
             mainChart.data.datasets[0].label =
-                "Total " +
                 getLabelJenis() +
                 " - " +
                 provinsi +
@@ -1434,7 +1432,7 @@ function getLabelJenis() {
     if (perjanjianKerja === "pkwtt") labelPerjanjian = "PKWTT";
     else if (perjanjianKerja === "pkwt") labelPerjanjian = "PKWT";
 
-    let label = "Total " + labelTenaga;
+    let label = labelTenaga;
 
     if (labelGender) label += ` (${labelGender})`;
     if (labelPerjanjian) label += ` (${labelPerjanjian})`;
@@ -1667,7 +1665,6 @@ function renderTableKabupaten() {
     ==================================== */
 
 document.addEventListener("DOMContentLoaded", function () {
-
     // ===============================
     // DATA AWAL DARI BLADE
     // ===============================
@@ -1683,7 +1680,6 @@ document.addEventListener("DOMContentLoaded", function () {
     // RENDER CHART
     // ===============================
     function renderKBLIPage(page) {
-
         const totalPages = Math.ceil(filteredData.length / itemsPerPage);
 
         const start = page * itemsPerPage;
@@ -1698,20 +1694,22 @@ document.addEventListener("DOMContentLoaded", function () {
         kbliChartInstance = new Chart(ctx, {
             type: "bar",
             data: {
-                labels: pageData.map(d => d.nama),
-                datasets: [{
-                    label: "Jumlah Perusahaan",
-                    data: pageData.map(d => d.total),
-                    backgroundColor: "#42A5F5",
-                }]
+                labels: pageData.map((d) => d.nama),
+                datasets: [
+                    {
+                        label: "Jumlah Perusahaan",
+                        data: pageData.map((d) => d.total),
+                        backgroundColor: "#42A5F5",
+                    },
+                ],
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 scales: {
-                    y: { beginAtZero: true }
-                }
-            }
+                    y: { beginAtZero: true },
+                },
+            },
         });
     }
 
@@ -1725,98 +1723,173 @@ document.addEventListener("DOMContentLoaded", function () {
         "filterBulan",
         "filterProvinsi",
         "filterKota",
-        "filterKbli"
+        "filterKbli",
     ];
 
-    filters.forEach(id => {
-        document.getElementById(id)
-            ?.addEventListener("change", applyFilter);
+    filters.forEach((id) => {
+        document.getElementById(id)?.addEventListener("change", applyFilter);
     });
 
     console.log("Filter berubah");
     function applyFilter() {
-
-        const tahun    = document.getElementById("filterTahun").value;
-        const bulan    = document.getElementById("filterBulan").value;
+        const tahun = document.getElementById("filterTahun").value;
+        const bulan = document.getElementById("filterBulan").value;
         const provinsi = document.getElementById("filterProvinsi").value;
-        const kota     = document.getElementById("filterKota").value;
-        const kbli     = document.getElementById("filterKbli").value;
+        const kota = document.getElementById("filterKota").value;
+        const kbli = document.getElementById("filterKbli").value;
 
         const params = new URLSearchParams({
             tahun,
             bulan,
             provinsi,
             kota,
-            kbli
+            kbli,
         });
 
         fetch(`/kbli?${params.toString()}`, {
-            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            headers: { "X-Requested-With": "XMLHttpRequest" },
         })
-        .then(res => res.json())
-        .then(data => {
+            .then((res) => res.json())
+            .then((data) => {
+                console.log("DATA DARI BACKEND:", data);
 
-    console.log("DATA DARI BACKEND:", data);
+                // Kalau format {labels:[], values:[]}
+                if (data.labels && data.values) {
+                    filteredData = data.labels.map((label, i) => ({
+                        nama: label,
+                        total: data.values[i],
+                    }));
+                }
+                // Kalau format {data: [...]}
+                else if (data.data) {
+                    filteredData = data.data;
+                }
+                // Kalau sudah array langsung
+                else {
+                    filteredData = data;
+                }
 
-    // Kalau format {labels:[], values:[]}
-    if (data.labels && data.values) {
-        filteredData = data.labels.map((label, i) => ({
-            nama: label,
-            total: data.values[i]
-        }));
+                currentPage = 0;
+                renderKBLIPage(currentPage);
+            })
+            .catch((err) => console.error(err));
     }
-    // Kalau format {data: [...]}
-    else if (data.data) {
-        filteredData = data.data;
-    }
-    // Kalau sudah array langsung
-    else {
-        filteredData = data;
-    }
-
-    currentPage = 0;
-    renderKBLIPage(currentPage);
-
-})
-        .catch(err => console.error(err));
-    }
-
 });
 
+let upahChart = null;
 
+function getTextColor() {
+    return document.body.classList.contains("light-mode")
+        ? "#020617"
+        : "#e5e7eb";
+}
 document.addEventListener("DOMContentLoaded", function () {
-    if (typeof Chart === "undefined") {
-        console.error("Chart.js belum ke-load");
-        return;
-    }
+    if (typeof Chart === "undefined") return;
 
-    /* ===============================
-       UPAH MINIMUM CHART
-    =============================== */
-    let upahChart = null;
+    Chart.register(ChartDataLabels);
 
     const upahCanvas = document.getElementById("upahMinimumChart");
+    console.log("Canvas:", upahCanvas);
+
+    const labels = window.chartUpahMinimumData?.labels ?? [];
+    const values = window.chartUpahMinimumData?.values ?? [];
+
+    const total = values.reduce((a, b) => a + Number(b), 0);
+
+    const provinsi = document.getElementById("provinsiUpahSelect")?.value;
+    const provinsiValue = (provinsi || "").trim();
+
+    const totalEl = document.getElementById("totalUpah");
+
+    if (totalEl) {
+        if (provinsi === "all") {
+            const totalAll = values.reduce((a, b) => a + Number(b), 0);
+            totalEl.innerText = "Total: " + totalAll.toLocaleString("id-ID");
+        } else {
+            totalEl.innerText = "";
+        }
+    }
+
+    const labelUpah =
+        provinsiValue === ""
+            ? `Upah Minimum (${total.toLocaleString("id-ID")})`
+            : "Upah Minimum";
 
     if (upahCanvas && window.chartUpahMinimumData) {
         upahChart = new Chart(upahCanvas, {
             type: "bar",
             data: {
-                labels: window.chartUpahMinimumData.labels,
+                labels: labels,
                 datasets: [
                     {
-                        label: "Upah Minimum",
-                        data: window.chartUpahMinimumData.values,
+                        label: labelUpah,
+                        data: values,
                         backgroundColor: "#0d6efd",
+                        barThickness: 40,
                     },
                 ],
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+
+                plugins: {
+                    legend: {
+                        display: true,
+                    },
+
+                    title: {
+                        display: true,
+                        text: provinsi
+                            ? "Upah Minimum"
+                            : `Upah Minimum Semua Provinsi (${total.toLocaleString("id-ID")})`,
+                        color: getTextColor(),
+                        font: {
+                            size: 16,
+                            weight: "bold",
+                        },
+                    },
+
+                    datalabels: {
+                        anchor: "end",
+                        align: "top",
+                        offset: 4,
+                        clamp: true,
+                        clip: false,
+                        color: getTextColor(),
+                        font: {
+                            weight: "bold",
+                        },
+                        formatter: (value) =>
+                            new Intl.NumberFormat("id-ID").format(value),
+                    },
+                },
+
                 scales: {
-                    y: { beginAtZero: true },
+                    x: {
+                        ticks: {
+                            color: getTextColor(),
+                        },
+                    },
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            color: getTextColor(),
+                            callback: (value) =>
+                                new Intl.NumberFormat("id-ID").format(value),
+                        },
+                        grid: {
+                            color: document.body.classList.contains(
+                                "light-mode",
+                            )
+                                ? "rgba(0,0,0,0.1)"
+                                : "rgba(255,255,255,0.1)",
+                        },
+                    },
                 },
             },
+
+            plugins: [ChartDataLabels],
         });
     } else {
         console.warn("Canvas atau data upah minimum tidak ditemukan");
@@ -1827,18 +1900,18 @@ document.addEventListener("DOMContentLoaded", function () {
     =============================== */
     const upahSelect = document.getElementById("provinsiUpahSelect");
 
-    if (upahSelect && upahChart) {
+    if (upahSelect) {
         upahSelect.addEventListener("change", function () {
+            if (!upahChart) return;
+
             const provinsi = this.value;
 
             fetch(`/filter/upah-minimum?provinsi=${provinsi}`)
                 .then((res) => res.json())
                 .then((data) => {
                     if (provinsi === "all") {
-                        upahChart.data.labels =
-                            window.chartUpahMinimumData.labels;
-                        upahChart.data.datasets[0].data =
-                            window.chartUpahMinimumData.values;
+                        upahChart.data.labels = labels;
+                        upahChart.data.datasets[0].data = values;
                     } else if (data.length) {
                         upahChart.data.labels = [data[0].provinsi];
                         upahChart.data.datasets[0].data = [data[0].total];
@@ -1849,3 +1922,23 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 });
+
+function updateChartUpah() {
+    const values = window.chartUpahMinimumData.values ?? [];
+    const total = values.reduce((a, b) => a + Number(b), 0);
+
+   const provinsi = document.getElementById("provinsiUpahSelect")?.value;
+    const provinsiValue = (provinsi || "").trim();
+
+    upahChart.data.datasets[0].label =
+        provinsiValue === ""
+            ? `Upah Minimum (${total.toLocaleString("id-ID")})`
+            : "Upah Minimum";
+
+    upahChart.options.plugins.title.text =
+        provinsiValue === ""
+            ? `Upah Minimum Semua Provinsi (${total.toLocaleString("id-ID")})`
+            : "Upah Minimum";
+
+    upahChart.update();
+}

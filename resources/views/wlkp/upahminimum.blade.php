@@ -1,8 +1,8 @@
 {{-- Filter Provinsi Upah Minimum --}}
 <div class="filter-panel mb-4">
     <div class="filter-group">
-         <label>Provinsi</label>
-        <select id="provinsiUpahSelect" class="form-select mb-3">
+        <label>Provinsi</label>
+        <select id="provinsiUpahSelect" class="form-select filter-select">
             <option value="all">-- Semua Provinsi --</option>
             @foreach ($listProvinsi as $prov)
                 <option value="{{ $prov }}">{{ $prov }}</option>
@@ -26,6 +26,7 @@
             <canvas id="upahMinimumChart"></canvas>
         </div>
     </div>
+    <div id="totalUpah" style="margin-top:10px; font-weight:bold;"></div>
 
     {{-- <!-- LABEL DATA UPAH MINIMUM -->
     <div id="upahLabelContainer" class="provinsi-summary mt-3"></div> --}}

@@ -19,6 +19,7 @@ const barOptions = {
 
     scales: {
         x: {
+            offset: true,
             ticks: {
                 autoSkip: false,
                 maxRotation: 60,
@@ -35,6 +36,8 @@ const barOptions = {
             },
         },
     },
+    categoryPercentage: 0.8,
+    barPercentage: 0.9,
 };
 
 let charts = {};
@@ -198,6 +201,28 @@ function updateBar(chart, data) {
         chart.data.datasets[1].data = data.belum ?? [];
     }
 
+    
+    const canvasTag = chart.canvas;
+    const container = canvasTag.closest(".chart-wide"); // Ambil div .chart-wide terkait
+
+    if (container) {
+        const jumlahData = chart.data.labels.length;
+        const lebarPerBar = 120; // Atur jarak antar kabupaten disini
+        const minLebarContainer =
+            document.querySelector(".scroll-wrapper").offsetWidth;
+
+        const totalLebarYangDibutuhkan = jumlahData * lebarPerBar;
+
+        // Jika data hanya 1 (filter kabupaten), lebar akan kecil sehingga nempel ke kiri
+        if (totalLebarYangDibutuhkan > minLebarContainer) {
+            container.style.width = totalLebarYangDibutuhkan + "px";
+        } else {
+            // Jika data sedikit, buat lebar container otomatis/100%
+            // tapi flex-start di wrapper akan menjaganya di kiri
+            container.style.width = "100%";
+        }
+    }
+
     chart.update();
 }
 
@@ -256,6 +281,12 @@ function loadChartKabupaten(indikator, provinsi) {
     let wrapperId = {
         p2k3: "chartKabupatenWrapperP2K3",
         ahli_k3: "chartKabupatenWrapperAhliK3",
+        disabilitas: "chartKabupatenWrapperDisabilitas",
+        susu: "chartKabupatenWrapperSusu",
+        serikat: "chartKabupatenWrapperSerikatPekerja",
+        bipartit: "chartKabupatenWrapperBipartitPekerja",
+        waktu_kerja: "chartKabupatenWrapperWkwi",
+        rencana_tk: "chartKabupatenWrapperPerencanaanTk",
     }[indikator];
 
     const wrapper = document.getElementById(wrapperId);
@@ -320,21 +351,24 @@ function loadKabupaten(provinsi) {
     );
 
     if (!provinsi) {
-        kabupatenKetenagakerjaan.innerHTML = `<option value="">Semua Kabupaten</option>`;
+        kabupatenKetenagakerjaan.innerHTML = `
+            <option value="" disabled selected>Pilih Provinsi Terlebih Dahulu</option>
+        `;
         return;
     }
 
     fetch(`/get-kabupaten?provinsi=${encodeURIComponent(provinsi)}`)
         .then((res) => res.json())
         .then((data) => {
+            console.log(data);
             kabupatenKetenagakerjaan.innerHTML = `<option value="">Semua Kabupaten</option>`;
 
             data.forEach((kab) => {
                 kabupatenKetenagakerjaan.innerHTML += `
-                    <option value="${kab}">
-                        ${kab}
-                    </option>
-                `;
+        <option value="${kab.nama}">
+            ${kab.nama}
+        </option>
+    `;
             });
         })
         .catch((err) => console.error("Load Kabupaten error:", err));
@@ -451,7 +485,8 @@ function updateJudulWilayah(provinsi, kabupaten) {
         titleSusu: "Perusahaan Yang Menerapkan Struktur Skala Upah",
         titleSusunasional: "Perusahaan Yang Menerapkan Struktur Skala Upah",
 
-        titleWkwi: "Perusahaan Yang Mengisi Pengaturan Waktu Kerja Waktu Istirahat",
+        titleWkwi:
+            "Perusahaan Yang Mengisi Pengaturan Waktu Kerja Waktu Istirahat",
         titleWkwinasional:
             "Perusahaan Yang Mengisi Pengaturan Waktu Kerja Waktu Istirahat ",
 
@@ -486,6 +521,7 @@ function updateJudulWilayah(provinsi, kabupaten) {
 // INIT
 // ==========================
 document.addEventListener("DOMContentLoaded", function () {
+    loadKabupaten("");
     charts = {
         p2k3: {
             doughnut: createDoughnutChart("doughnutP2K3"),
@@ -530,6 +566,12 @@ document.addEventListener("DOMContentLoaded", function () {
     chartKabupaten = {
         p2k3: createBarChart("barKabupatenP2K3"),
         ahli_k3: createBarChart("barKabupatenAhliK3"),
+        disabilitas: createBarChart("barKabupatenDisabiliats"),
+        susu: createBarChart("barKabupatenSusu"),
+        serikat: createBarChart("barKabupatenSerikatPekerja"),
+        bipartit: createBarChart("barKabupatenBipartitPekerja"),
+        waktu_kerja: createBarChart("barKabupatenWkwi"),
+        rencana_tk: createBarChart("barKabupatenPerencanaanTk"),
     };
 
     loadChartKetenagakerjaan();

@@ -108,51 +108,33 @@ class WlkpService
         ];
     }
 
-public function getRekapKBLI(array $filters = [])
+public function getRekapKBLI($request = null)
 {
-    return DB::table('wajiblapor.report_detil_wlkp_binwas as w')
+    $query = DB::table('wajiblapor.report_detil_wlkp_binwas')
         ->select(
-            'w.nama_2_digit',
+            'nama_2_digit',
             DB::raw('COUNT(*) as total')
         )
-        ->whereNotNull('w.nama_2_digit')
-        ->where('w.nama_2_digit', '<>', '')
+        ->whereNotNull('nama_2_digit');
 
-        // ===== FILTER TAHUN =====
-        ->when(!empty($filters['tahun']), function ($q) use ($filters) {
-            $q->whereRaw(
-                'EXTRACT(YEAR FROM w.tgl_pendaftaran) = ?',
-                [(int)$filters['tahun']]
-            );
+    // kalau ada request → pakai filter
+    if ($request) {
+        $query->when($request->tahun, function ($q) use ($request) {
+            $q->whereYear('tgl_pendaftaran', $request->tahun);
         })
-
-        // ===== FILTER BULAN =====
-        ->when(!empty($filters['bulan']), function ($q) use ($filters) {
-            $q->whereRaw(
-                'EXTRACT(MONTH FROM w.tgl_pendaftaran) = ?',
-                [(int)$filters['bulan']]
-            );
+        ->when($request->bulan, function ($q) use ($request) {
+            $q->whereMonth('tgl_pendaftaran', $request->bulan);
         })
-
-        // ===== FILTER KBLI =====
-        ->when(!empty($filters['kbli']), function ($q) use ($filters) {
-            $q->where('w.nama_2_digit', $filters['kbli']);
+        ->when($request->provinsi, function ($q) use ($request) {
+            $q->where('provinsi', $request->provinsi);
         })
+        ->when($request->kota, function ($q) use ($request) {
+            $q->where('kota', $request->kota);
+        });
+    }
 
-        // ===== PRIORITAS KOTA =====
-        ->when(!empty($filters['kota']), function ($q) use ($filters) {
-            $q->where('w.kota', $filters['kota']);
-        })
-
-        // ===== PROVINSI JIKA KOTA KOSONG =====
-        ->when(
-            empty($filters['kota']) && !empty($filters['provinsi']),
-            function ($q) use ($filters) {
-                $q->where('w.provinsi', $filters['provinsi']);
-            }
-        )
-
-        ->groupBy('w.nama_2_digit')
+    return $query
+        ->groupBy('nama_2_digit')
         ->orderByDesc('total')
         ->get();
 }

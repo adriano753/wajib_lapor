@@ -5,25 +5,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WLKP - Wajib Lapor Ketenagakerjaan Perusahaan</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/kemnaker_logo.png') }}">
     <link rel="stylesheet" href="{{ asset('css/wlkp.css') }}">
     {{-- <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script> --}}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
-
-
 </head>
 
 
 <body>
     <div id="loader">
-    <div class="loader-content">
-        <img src="{{ asset('images/logo_kemnaker.png') }}" class="loader-logo" alt="WLKP">
+        <div class="loader-content">
+            <img src="{{ asset('images/logo_kemnaker.png') }}" class="loader-logo" alt="WLKP">
 
-        <div class="spinner"></div>
+            <div class="spinner"></div>
 
-        <p class="loading-text">Memuat Sistem WLKP...</p>
+            <p class="loading-text">Memuat Sistem WLKP...</p>
+        </div>
     </div>
-</div>
 
     <nav id="navbar">
         <div class="nav-container">
@@ -109,7 +108,7 @@
             <div class="chart-card full-width">
                 <div class="chart-header">
                     <h3 class="chart-title">Laporan Provinsi</h3>
-                    <button id="downloadBarPdf" class="btn btn-danger btn-sm">
+                    <button id="downloadBarPdf" class="form-select filter-select">
                         Download PDF
                     </button>
                 </div>
