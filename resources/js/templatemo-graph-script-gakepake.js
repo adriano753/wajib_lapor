@@ -1434,7 +1434,7 @@ function getLabelJenis() {
     if (perjanjianKerja === "pkwtt") labelPerjanjian = "PKWTT";
     else if (perjanjianKerja === "pkwt") labelPerjanjian = "PKWT";
 
-    let label = "Total " + labelTenaga;
+    let label = labelTenaga;
 
     if (labelGender) label += ` (${labelGender})`;
     if (labelPerjanjian) label += ` (${labelPerjanjian})`;

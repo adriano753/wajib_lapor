@@ -111,6 +111,9 @@
                     <button id="downloadBarPdf" class="form-select filter-select">
                         Download PDF
                     </button>
+                    <button id="toggleTablelprBtn" class="form-select filter-select">
+                        Tampilkan Tabel
+                    </button>
                 </div>
 
                 <div class="chart-container">
@@ -131,6 +134,32 @@
                         @empty
                             <p>Tidak ada data</p>
                         @endforelse
+                    </div>
+                </div>
+                <div id="tableProvinsilprWrapper" style="display: none;">
+                    <div class="table-responsive mt-2">
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Provinsi</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($dataProvinsi as $index => $row)
+                                    <tr>
+                                        <td>{{ $index + 1 }}</td>
+                                        <td>{{ $row->provinsi }}</td>
+                                        <td>{{ number_format($row->total, 0, ',', '.') }}</td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="3" class="text-center">Tidak ada data</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -333,6 +362,22 @@
                 plugins: [ChartDataLabels]
             });
         });
+        document.addEventListener("DOMContentLoaded", function() {
+            const btn = document.getElementById("toggleTablelprBtn");
+            const table = document.getElementById("tableProvinsilprWrapper");
+
+            if (!btn || !table) return;
+
+            btn.addEventListener("click", function() {
+                if (table.style.display === "none") {
+                    table.style.display = "block";
+                    btn.innerText = "Tutup Tabel";
+                } else {
+                    table.style.display = "none";
+                    btn.innerText = "Tampilkan Tabel";
+                }
+            });
+        });
     </script>
 
     @vite(['resources/js/templatemo-graph-script.js', 'resources/js/dashboard-klasifikasi.js', 'resources/js/dashboard-pp-pkb.js', 'resources/js/download-data.js', 'resources/js/ketenagakerjaan.js', 'resources/js/loader.js'])
@@ -345,20 +390,63 @@
     </script>
 
     <script>
-        document.getElementById('downloadPdf').addEventListener('click', function() {
+document.getElementById("downloadBarPdf").addEventListener("click", function () {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF("landscape", "mm", "a4");
 
-            const canvases = document.querySelectorAll('canvas');
-            let images = [];
+    doc.setFontSize(16);
+    doc.text("Laporan Provinsi", 14, 15);
 
-            canvases.forEach((canvas) => {
-                images.push(canvas.toDataURL('image/png', 1.0));
-            });
+    const chartElement = document.getElementById("barChart");
 
-            document.getElementById('chartsInput').value = JSON.stringify(images);
+    html2canvas(chartElement, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: "#ffffff",
+        width: chartElement.scrollWidth,
+        height: chartElement.scrollHeight,
+        windowWidth: chartElement.scrollWidth,
+        windowHeight: chartElement.scrollHeight
+    }).then((canvas) => {
+        const imgData = canvas.toDataURL("image/png");
 
-            document.getElementById('pdfForm').submit();
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const pageHeight = doc.internal.pageSize.getHeight();
+
+        const imgWidth = pageWidth - 20;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+        doc.addImage(imgData, "PNG", 10, 25, imgWidth, imgHeight);
+
+        const rows = [];
+        const tableRows = document.querySelectorAll("#tableProvinsilprWrapper tbody tr");
+
+        tableRows.forEach((tr) => {
+            const cells = tr.querySelectorAll("td");
+            rows.push([
+                cells[0]?.innerText || "",
+                cells[1]?.innerText || "",
+                cells[2]?.innerText || ""
+            ]);
         });
-    </script>
+
+        let tableStartY = imgHeight + 35;
+
+        if (tableStartY > pageHeight - 30) {
+            doc.addPage();
+            tableStartY = 20;
+        }
+
+        doc.autoTable({
+            head: [["No", "Provinsi", "Total"]],
+            body: rows,
+            startY: tableStartY
+        });
+
+        doc.save("laporan-provinsi.pdf");
+    });
+});
+</script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>

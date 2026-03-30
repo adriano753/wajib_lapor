@@ -223,6 +223,7 @@ function updateDashboard() {
     const valProv = filterProvinsi.value;
     const valKab = filterKabupaten.value;
     const valKlas = filterKlasifikasi.value;
+    filterBulan.disabled = !filterTahun.value;
 
 // B. Filter Data
     const filteredData = masterData.filter(row => {
@@ -380,6 +381,7 @@ function updateDashboard() {
         chartKota.data.datasets[0].data = dataKota;
         chartKota.update();
     }
+    renderTabelKlasifikasi(filteredData);
 }
 
 // 4. FUNGSI BANTUAN: UPDATE DROPDOWN KOTA
@@ -421,10 +423,68 @@ function updateKabupatenOptions(selectedProv) {
         filterKabupaten.appendChild(option);
     });
 }
+function renderTabelKlasifikasi(filteredData) {
+    const tbody = document.getElementById("tbodyKlasifikasi");
+    if (!tbody) return;
+
+    const valTahun = filterTahun.value || "Semua Tahun";
+    const valBulan = filterBulan.value || "Semua Bulan";
+    const valProv = filterProvinsi.value || "Semua Provinsi";
+    const valKab = filterKabupaten.value || "Semua Kab/Kota";
+
+    let mikro = 0;
+    let kecil = 0;
+    let menengah = 0;
+    let besar = 0;
+    let tidak = 0;
+
+    filteredData.forEach((row) => {
+        const klas = (row.skala_objek_pengawasan || "").toLowerCase().trim();
+        const total = parseInt(row.total) || 0;
+
+        if (klas === "mikro") mikro += total;
+        else if (klas === "kecil") kecil += total;
+        else if (klas === "menengah") menengah += total;
+        else if (klas === "besar") besar += total;
+        else tidak += total;
+    });
+
+    const grandTotal = mikro + kecil + menengah + besar + tidak;
+
+    tbody.innerHTML = `
+        <tr>
+            <td>1</td>
+            <td>${valTahun}</td>
+            <td>${valBulan}</td>
+            <td>${valProv}</td>
+            <td>${valKab}</td>
+            <td>${mikro.toLocaleString("id-ID")}</td>
+            <td>${kecil.toLocaleString("id-ID")}</td>
+            <td>${menengah.toLocaleString("id-ID")}</td>
+            <td>${besar.toLocaleString("id-ID")}</td>
+            <td>${tidak.toLocaleString("id-ID")}</td>
+            <td><b>${grandTotal.toLocaleString("id-ID")}</b></td>
+        </tr>
+    `;
+}
 
 // 5. PASANG EVENT LISTENER (DI LUAR FUNGSI APAPUN)
 // A. Event Listener: TAHUN, BULAN, KLASIFIKASI (Standar)
-[filterTahun, filterBulan, filterKlasifikasi].forEach((f) => {
+if (filterTahun) {
+    filterTahun.addEventListener("change", function () {
+        // aktif/nonaktif bulan berdasarkan tahun
+        filterBulan.disabled = this.value === "";
+
+        // kalau tahun dihapus, reset bulan juga
+        if (this.value === "") {
+            filterBulan.value = "";
+        }
+
+        updateDashboard();
+    });
+}
+
+[filterBulan, filterKlasifikasi].forEach((f) => {
     if (f) {
         f.addEventListener("change", updateDashboard);
     }
@@ -475,6 +535,21 @@ if (filterKabupaten) {
         // Karena filterProvinsi.value sudah terisi otomatis di atas,
         // maka logic chart akan otomatis masuk ke "Mode 1 Provinsi" (Tengah)
         updateDashboard();
+    });
+}
+
+const toggleTableBtnKlasifikasi = document.getElementById("toggleTableBtnKlasifikasi");
+const tableWrapper = document.getElementById("tableWrapper");
+
+if (toggleTableBtnKlasifikasi && tableWrapper) {
+    toggleTableBtnKlasifikasi.addEventListener("click", function () {
+        if (tableWrapper.style.display === "none") {
+            tableWrapper.style.display = "block";
+            toggleTableBtnKlasifikasi.innerText = "Tutup Tabel";
+        } else {
+            tableWrapper.style.display = "none";
+            toggleTableBtnKlasifikasi.innerText = "Buka Tabel";
+        }
     });
 }
 

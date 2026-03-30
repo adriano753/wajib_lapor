@@ -5,6 +5,7 @@ const doughnutOptions = {
     responsive: true,
     maintainAspectRatio: false,
     cutout: "65%",
+    color: () => Chart.defaults.color,
 };
 
 const barOptions = {
@@ -81,13 +82,16 @@ function createDoughnutChart(canvasId) {
                                     ),
                                 fillStyle:
                                     chart.data.datasets[0].backgroundColor[i],
+                                strokeStyle:
+                                    chart.data.datasets[0].backgroundColor[i],
+                                fontColor: Chart.defaults.color,
                                 index: i,
                             }));
                         },
                     },
                 },
                 datalabels: {
-                    display: false,
+                    color: () => Chart.defaults.color,
                 },
             },
         },
@@ -147,7 +151,7 @@ function createBarChart(canvasId, indikator = null) {
                     offset: 6,
                     clamp: true,
                     clip: false,
-                    color: "#000",
+                    color: () => Chart.defaults.color,
                     font: {
                         weight: "bold",
                         size: 12,
@@ -201,7 +205,6 @@ function updateBar(chart, data) {
         chart.data.datasets[1].data = data.belum ?? [];
     }
 
-    
     const canvasTag = chart.canvas;
     const container = canvasTag.closest(".chart-wide"); // Ambil div .chart-wide terkait
 

@@ -74,9 +74,15 @@
 
         <div class="filter-group">
             <label>Download Data</label>
-                <button type="button" id="downloadPdfKlasifikasi" class="form-select filter-select">
-                    Download PDF Klasifikasi
-                </button>
+            <button type="button" id="downloadPdfKlasifikasi" class="form-select filter-select">
+                Download PDF Klasifikasi
+            </button>
+        </div>
+        <div class="filter-group">
+            <label>Download Data</label>
+            <button id="toggleTableBtnKlasifikasi" class="form-select filter-select">
+                Tutup Tabel
+            </button>
         </div>
     </div>
 
@@ -106,150 +112,39 @@
             </div>
         </div>
     </div>
+    <div class="row mt-4">
+        <div class="col-12">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                
+                
+            </div>
+            
+            <div id="tableWrapper" style="overflow-x:auto; display:none;">
+                <h3 class="mb-0">Tabel Data Klasifikasi</h3>
+                <table class="table table-bordered table-striped" id="tableKlasifikasi">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Tahun</th>
+                            <th>Bulan</th>
+                            <th>Provinsi</th>
+                            <th>Kab/Kota</th>
+                            <th>Mikro</th>
+                            <th>Kecil</th>
+                            <th>Menengah</th>
+                            <th>Besar</th>
+                            <th>Tidak Teridentifikasi</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbodyKlasifikasi">
+                        <tr>
+                            <td colspan="11" style="text-align:center;">Memuat data...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 
 </section>
-{{--
-    <!-- ================= FILTER ================= -->
-     <form action="{{ route('wlkp.index') }}#section-klasifikasi" method="GET">
-        <input type="hidden" name="filter_source" value="klasifikasi">
-        <div class="filter-bar">
-            <select name="tahun" class="form-control" onchange="this.form.submit()">
-                <option value="">Semua Tahun</option>
-                @foreach ($optTahun as $thn)
-                    <option value="{{ $thn }}" {{ request('tahun') == $thn ? 'selected' : '' }}>{{ $thn }}</option>
-                @endforeach
-            </select>
-
-            <select name="bulan" class="form-control" onchange="this.form.submit()">
-                <option value="">Semua Bulan</option>
-                @for ($i = 1; $i <= 12; $i++)
-                    <option value="{{ $i }}" {{ request('bulan') == $i ? 'selected' : '' }}>
-                        {{ date("F", mktime(0, 0, 0, $i, 10)) }}
-                    </option>
-                @endfor
-            </select>
-
-            <select name="provinsi" class="form-control" onchange="this.form.submit()">
-                <option value="">Semua Provinsi</option>
-                @foreach ($optProvinsi as $prov)
-                    <option value="{{ $prov }}" {{ request('provinsi') == $prov ? 'selected' : '' }}>{{ $prov }}</option>
-                @endforeach
-            </select>
-
-            <select name="kota" class="form-control" onchange="this.form.submit()">
-                <option value="">Semua Kota</option>
-                @foreach ($optKota as $k)
-                    <option value="{{ $k }}" {{ request('kota') == $k ? 'selected' : '' }}>{{ $k }}</option>
-                @endforeach
-            </select>
-
-            <select name="klasifikasi" class="form-control" onchange="this.form.submit()">
-                <option value="">Semua Klasifikasi</option>
-                @foreach ($optKlasifikasi as $kls)
-                    <option value="{{ $kls }}" {{ request('klasifikasi') == $kls ? 'selected' : '' }}>{{ $kls }}</option>
-                @endforeach
-            </select>
-        </div>
-    </form>
-
-    <!-- ================= GRID 2 KOLOM ================= -->
-    <div class="chart-grid">
-
-        <!-- ================= KIRI : PROVINSI ================= -->
-        <div class="chart-wrapper">
-
-            <!-- 🔵 CHART LAMA KAMU (TIDAK DIUBAH) -->
-            <div class="chart-card full-width">
-                <div class="chart-header">
-                    <h3 class="chart-title">Laporan Provinsi</h3>
-                </div>
-
-                <div class="chart-container">
-                    <div class="bar-chart">
-                        @forelse ($chartProvinsi as $row)
-                            @php
-                                $height = $maxProvinsi > 0
-                                    ? ($row->total / $maxProvinsi * 100)
-                                    : 0;
-                            @endphp
-                            <div class="bar" style="height: {{ $height }}%" title="{{ $row->provinsi }}">
-                                <span class="bar-value">
-                                    {{ number_format($row->total, 0, ',', '.') }}
-                                </span>
-                                <span class="bar-label">
-                                    {{ $row->provinsi }}
-                                </span>
-                            </div>
-                        @empty
-                            <p>Tidak ada data</p>
-                        @endforelse
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-        <!-- ================= KANAN : KABUPATEN ================= -->
-        <div class="chart-wrapper">
-
-            <div class="chart-card">
-        <div class="chart-header">
-            <h3 class="chart-title">Klasifikasi</h3>
-        </div>
-
-        <div class="chart-container">
-            <div class="bar-chart" id="barChartKlasifikasi">
-                @forelse ($chartKlasifikasi as $row)
-                        @php
-                            $height = $maxKlasifikasi > 0
-                                ? ($row->total / $maxKlasifikasi * 100)
-                                : 0;
-                        @endphp
-
-                        <div class="bar" style="height: {{ $height }}%" title="{{ $row->klasifikasi }}">
-                            <span class="bar-value">
-                                {{ number_format($row->total, 0, ',', '.') }}
-                            </span>
-                            <span class="bar-label">
-                                {{ $row->klasifikasi }}
-                            </span>
-                        </div>
-                    @empty
-                        <p class="text-center text-muted">Tidak ada data</p>
-                    @endforelse
-            </div>
-        </div>
-    </div>
-    </div>
-    <div class="chart-card full-width">
-                <div class="chart-header">
-                    <h3 class="chart-title">Kabupaten/Kota</h3>
-                </div>
-
-                <div class="chart-container">
-                    <div class="bar-chart" id="barChart">
-                        @forelse ($chartKota as $row)
-                        @php
-                        $height = $maxKota > 0
-                        ? ($row->total / $maxKota * 100)
-                        : 0;
-                        @endphp
-
-                        <div class="bar" style="height: {{ $height }}%" title="{{ $row->ota }}">
-                            <span class="bar-value">
-                                {{ number_format($row->total, 0, ',', '.') }}
-                            </span>
-                            <span class="bar-label">
-                                {{ $row->kota }}
-                            </span>
-                        </div>
-                        @empty
-                        <p>Tidak ada data</p>
-                        @endforelse
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-    </div> --}}
