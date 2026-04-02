@@ -81,7 +81,7 @@
         <div class="filter-group">
             <label>Download Data</label>
             <button id="toggleTableBtnKlasifikasi" class="form-select filter-select">
-                Tutup Tabel
+                Buka Tabel
             </button>
         </div>
     </div>
@@ -115,10 +115,10 @@
     <div class="row mt-4">
         <div class="col-12">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                
-                
+
+
             </div>
-            
+
             <div id="tableWrapper" style="overflow-x:auto; display:none;">
                 <h3 class="mb-0">Tabel Data Klasifikasi</h3>
                 <table class="table table-bordered table-striped" id="tableKlasifikasi">

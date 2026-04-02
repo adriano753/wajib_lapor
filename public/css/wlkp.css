@@ -39,6 +39,13 @@ nav.scrolled {
 	margin: 0 auto;
 }
 
+.menu-toggle {
+    display: none;
+    font-size: 26px;
+    color: #ffffff;
+    cursor: pointer;
+}
+
 .logo {
 	display: flex;
 	align-items: center;
@@ -639,10 +646,23 @@ nav.scrolled {
 }
 
 .chart-wrapper {
-    width: 2500px;        /* PAKSA LEBAR: Semakin besar angka ini, bar semakin gemuk */
-    height: 500px;        /* Tinggi chart tetap */
-    position: relative;
+    width: 100%;
+    height: 500px; /* 🔥 batasi tinggi biar bisa scroll vertikal */
+    overflow: auto; /* 🔥 ini bikin scroll horizontal + vertikal */
+    -webkit-overflow-scrolling: touch;
+    border-radius: 10px;
 }
+
+.chart-inner {
+    min-width: 2000px; /* tetap horizontal scroll */
+    min-height: 600px; /* 🔥 ini bikin bisa scroll vertikal */
+    padding-bottom: 50px; /* biar label gak kepotong */
+}
+/* .chart-wrapper {
+    width: 2500px;       
+    height: 500px;        
+    position: relative;
+} */
 
 .chart-option {
 	padding: 8px 16px;
@@ -2072,4 +2092,36 @@ body.light-mode .hero-text h1 {
 
 #kbliChartCanvas {
     height: 100% !important;
+}
+@media (max-width: 768px) {
+
+    .menu-toggle {
+        display: block;
+    }
+
+    .nav-links {
+        position: absolute;
+        top: 70px;
+        right: 0;
+        width: 100%;
+        background: #27485F;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+        display: none;
+        padding: 20px 0;
+        z-index: 999;
+    }
+
+    .nav-links.active {
+        display: flex;
+    }
+
+    .nav-links li {
+        margin: 10px 0;
+    }
+
+    .nav-links a {
+        font-size: 18px;
+    }
 }

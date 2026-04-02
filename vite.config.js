@@ -15,7 +15,9 @@ export default defineConfig({
                 'resources/js/dashboard-pp-pkb.js',
                 'resources/js/download-data.js',
                 'resources/js/ketenagakerjaan.js',    
-                'resources/js/loader.js',       
+                'resources/js/loader.js', 
+                'resources/js/download-data-full.js', 
+                      
             ],
             refresh: true,
         }),

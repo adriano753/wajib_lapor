@@ -12,7 +12,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
             // SKIP kalau section tidak terlihat / tinggi 0
             if (rect.height === 0) {
-                console.log("Skip section height 0");
                 continue;
             }
 
@@ -37,7 +36,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 pageCount++;
             } catch (error) {
-                console.log("Error rendering section:", error);
                 continue;
             }
         }
@@ -310,29 +308,51 @@ document.addEventListener("DOMContentLoaded", function () {
             if (kbliChart) {
                 const clone = kbliChart.cloneNode(true);
 
-                clone.style.width = "2600px";
-                clone.style.height = "800px";
-                clone.style.padding = "60px";
-                clone.style.paddingBottom = "200px";
-                clone.style.background = "#ffffff";
-                clone.style.position = "absolute";
-                clone.style.left = "-9999px";
-                clone.style.top = "0";
+                // Hitung estimasi lebar berdasarkan jumlah bar (asumsi 1 bar butuh min 60px agar label muat)
+                const barCount = clone.querySelectorAll(".bar").length;
+                const estimatedWidth = Math.max(1600, barCount * 65);
+
+                Object.assign(clone.style, {
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "flex-end",
+                    width: `${estimatedWidth}px`, // Lebar dinamis sesuai jumlah data
+                    height: "700px", // Tinggi cukup untuk bar + label miring
+                    padding: "100px 50px 250px 50px", // Padding bawah extra besar untuk teks miring
+                    background: "#ffffff",
+                    position: "absolute",
+                    left: "-10000px",
+                    top: "0",
+                    overflow: "visible",
+                });
 
                 document.body.appendChild(clone);
 
-                clone.style.height = clone.scrollHeight + "px";
+                try {
+                    const canvas = await html2canvas(clone, {
+                        scale: 2,
+                        useCORS: true,
+                        backgroundColor: "#ffffff",
+                        // Memaksa canvas mengambil ukuran penuh clone meskipun di luar layar
+                        width: estimatedWidth,
+                        windowWidth: estimatedWidth,
+                        logging: false,
+                    });
 
-                await html2canvas(clone, {
-                    scale: 2,
-                    backgroundColor: "#ffffff",
-                }).then((canvas) => {
                     const imgData = canvas.toDataURL("image/png");
+                    const imgProps = pdf.getImageProperties(imgData);
 
-                    pdf.addImage(imgData, "PNG", 10, 15, 277, 120);
-                });
+                    const pdfWidth = pdf.internal.pageSize.getWidth() - 20;
+                    const pdfHeight =
+                        (imgProps.height * pdfWidth) / imgProps.width;
 
-                document.body.removeChild(clone);
+                    // Jika pdfHeight melebihi sisa halaman, Anda mungkin perlu mengecilkan margin
+                    pdf.addImage(imgData, "PNG", 10, 30, pdfWidth, pdfHeight);
+                } catch (error) {
+                    console.error("Gagal export chart:", error);
+                } finally {
+                    document.body.removeChild(clone);
+                }
             }
 
             pdf.save("laporan-tenaga-kerja.pdf");
@@ -475,30 +495,35 @@ document.addEventListener("DOMContentLoaded", function () {
             // ====================================
             // HALAMAN 4 - TABEL HASIL FILTER
             // ====================================
+            // ====================================
+            // HALAMAN 4 - TABEL HASIL FILTER (DARI HTML)
+            // ====================================
             pdf.addPage();
             addHeader();
 
-            // 🔥 Ambil data dari chart yang SUDAH TERFILTER
-            const provChartInstance = Chart.getChart("provinsiChart");
+            // ambil tabel dari DOM
+            const table = document.getElementById("tableKlasifikasi");
 
-            if (!provChartInstance) {
-                alert("Chart provinsi belum tersedia");
+            if (!table) {
+                alert("Tabel tidak ditemukan");
                 return;
             }
 
-            const provLabels = provChartInstance.data.labels;
-            const provData = provChartInstance.data.datasets[0].data;
-            const rows = provLabels.map((label, index) => [
-                label,
-                provData[index].toLocaleString("id-ID"),
-            ]);
-
+            // pakai autoTable dari HTML langsung
             pdf.autoTable({
-                head: [["Provinsi", "Total Perusahaan"]],
-                body: rows,
+                html: "#tableKlasifikasi",
                 startY: 15,
-                styles: { fontSize: 8 },
-                headStyles: { fillColor: [66, 165, 245] },
+                styles: {
+                    fontSize: 8,
+                    cellPadding: 2,
+                },
+                headStyles: {
+                    fillColor: [66, 165, 245],
+                    textColor: 255,
+                },
+                alternateRowStyles: {
+                    fillColor: [240, 240, 240],
+                },
             });
 
             pdf.save("laporan-klasifikasi.pdf");

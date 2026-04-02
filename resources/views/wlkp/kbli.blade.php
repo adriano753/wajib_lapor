@@ -1,13 +1,13 @@
 <section class="container-provinsi-fluid py-4">
     <br>
-    <h2 class="mb-3">DATA lAPANGAN USAHA</h2>
+    <h2 class="mb-3">DATA LAPANGAN USAHA</h2>
 
     <div class="filter-panel mb-4">
         <div class="filter-group">
-            <select id="filterKbliBulan" class="form-select filter-select">
-                <option value="">Semua Bulan</option>
-                @foreach ($optBulan as $b)
-                    <option value="{{ $b }}">{{ $b }}</option>
+            <select id="filterKbliProvinsi" class="form-select filter-select">
+                <option value="">Semua Provinsi</option>
+                @foreach ($optProvinsi as $k)
+                    <option value="{{ $k }}">{{ $k }}</option>
                 @endforeach
             </select>
         </div>
@@ -28,19 +28,45 @@
             </select>
         </div>
         <div class="filter-group">
-            <select id="filterKbliProvinsi" class="form-select filter-select">
-                <option value="">Semua Provinsi</option>
-                @foreach ($optProvinsi as $k)
-                    <option value="{{ $k }}">{{ $k }}</option>
+            <select id="filterKbliBulan" class="form-select filter-select">
+                <option value="">Semua Bulan</option>
+                @foreach ($optBulan as $b)
+                    <option value="{{ $b }}">{{ $b }}</option>
                 @endforeach
             </select>
         </div>
+        <div class="filter-group">
+            <button id="toggleTableKbli" class="form-select filter-select">
+                Buka Tabel
+            </button>
+        </div>
+        <div class="filter-group"></div>
+        <button id="downloadPdfKbli" class="form-select filter-select">
+            Download PDF KBLI
+        </button>
+    </div>
     </div>
     <br>
     <div id="kbliOuterWrapper">
         <div id="kbliChartWrapper">
             <canvas id="kbliChartCanvas"></canvas>
         </div>
+    </div>
+    <div id="tableWrapperKbli" style="display: none;">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Tahun</th>
+                    <th>Bulan</th>
+                    <th>Provinsi</th>
+                    <th>Kab/Kota</th>
+                    <th>KBLI</th>
+                    <th>Jumlah</th>
+                </tr>
+            </thead>
+            <tbody id="tbodyKbli"></tbody>
+        </table>
     </div>
 </section>
 
@@ -149,6 +175,7 @@
                     },
                     plugins: [ChartDataLabels]
                 });
+                renderTabelKbli(data);
 
             })
 
@@ -157,14 +184,96 @@
 
     document.addEventListener("DOMContentLoaded", () => {
 
-        renderKbliChart(); // load awal
+        renderKbliChart();
 
         document.querySelectorAll(".filter-select")
             .forEach(el => {
                 el.addEventListener("change", renderKbliChart);
             });
 
+        const btnKbli = document.getElementById("downloadPdfKbli");
+
+        if (!btnKbli) return;
+
+        btnKbli.addEventListener("click", async function() {
+
+            const {
+                jsPDF
+            } = window.jspdf;
+            const pdf = new jsPDF("l", "mm", "a4");
+
+            const now = new Date();
+            const tanggal = now.toLocaleDateString("id-ID");
+            const jam = now.toLocaleTimeString("id-ID");
+
+            const timestamp = `Dicetak: ${tanggal} ${jam}`;
+
+            function addHeader() {
+                const pageWidth = pdf.internal.pageSize.getWidth();
+                pdf.setFontSize(9);
+                pdf.setTextColor(100);
+                pdf.text(timestamp, pageWidth - 10, 8, {
+                    align: "right"
+                });
+            }
+
+            // kasih delay biar chart settle
+            await new Promise(resolve => setTimeout(resolve, 300));
+
+            // =========================
+            // 📊 CHART (SUPER HD)
+            // =========================
+            addHeader();
+
+            const chart = Chart.getChart("kbliChartCanvas");
+
+            if (!chart) {
+                alert("Chart tidak ditemukan");
+                return;
+            }
+
+            const chartImg = chart.toBase64Image("image/png", 4);
+
+            pdf.addImage(chartImg, "PNG", 10, 15, 277, 120);
+
+            // =========================
+            // 📋 TABEL
+            // =========================
+            pdf.addPage();
+            addHeader();
+
+            const tableWrapper = document.getElementById("tableWrapperKbli");
+            const table = document.querySelector("#tableWrapperKbli > table");
+
+            if (!tableWrapper || !table) {
+                alert("Tabel tidak ditemukan");
+                return;
+            }
+
+            const originalDisplay = tableWrapper.style.display;
+
+            tableWrapper.style.display = "block";
+            tableWrapper.style.visibility = "visible";
+
+            pdf.autoTable({
+                html: table,
+                startY: 15,
+                styles: {
+                    fontSize: 8
+                },
+                headStyles: {
+                    fillColor: [66, 165, 245],
+                    textColor: 255,
+                },
+                didDrawPage: () => addHeader(),
+            });
+
+            tableWrapper.style.display = originalDisplay;
+
+            pdf.save("laporan-kbli.pdf");
+        });
     });
+
     document.getElementById("filterKbliProvinsi")
         ?.addEventListener("change", function() {
 
@@ -213,5 +322,57 @@
         return text;
     }
 
-    console.log("CANVAS:", document.getElementById("kbliChartCanvas"));
+    function renderTabelKbli(data) {
+        const tbody = document.getElementById("tbodyKbli");
+        if (!tbody) return;
+
+        const tahun = document.getElementById("filterKbliTahun")?.value || "Semua Tahun";
+        const bulan = document.getElementById("filterKbliBulan")?.value || "Semua Bulan";
+        const prov = document.getElementById("filterKbliProvinsi")?.value || "Semua Provinsi";
+        const kota = document.getElementById("filterKbliKota")?.value || "Semua Kab/Kota";
+
+        tbody.innerHTML = "";
+
+        let no = 1;
+
+        // 🔥 SORT KBLI A-Z + amanin null
+        data
+            .sort((a, b) => {
+                const kbliA = (a.nama_2_digit || "").toLowerCase();
+                const kbliB = (b.nama_2_digit || "").toLowerCase();
+
+                if (kbliA.includes("tidak")) return 1;
+                if (kbliB.includes("tidak")) return -1;
+
+                return kbliA.localeCompare(kbliB, "id");
+            })
+            .forEach((item) => {
+                tbody.innerHTML += `
+                <tr>
+                    <td>${no++}</td>
+                    <td>${tahun}</td>
+                    <td>${bulan}</td>
+                    <td>${prov}</td>
+                    <td>${kota}</td>
+                    <td>${item.nama_2_digit}</td>
+                    <td><b>${parseInt(item.total).toLocaleString("id-ID")}</b></td>
+                </tr>
+            `;
+            });
+    }
+    const btnToggle = document.getElementById("toggleTableKbli");
+    const tableWrapper = document.getElementById("tableWrapperKbli");
+
+    if (btnToggle && tableWrapper) {
+        btnToggle.addEventListener("click", function() {
+            if (tableWrapper.style.display === "none") {
+                tableWrapper.style.display = "block";
+                btnToggle.innerText = "Tutup Tabel";
+            } else {
+                tableWrapper.style.display = "none";
+                btnToggle.innerText = "Buka Tabel";
+            }
+        });
+    }
+
 </script>

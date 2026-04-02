@@ -431,6 +431,18 @@ function renderTabelKabupaten(data) {
 
     tbody.innerHTML = "";
 
+    // 🔥 CEK: kalau tidak pilih provinsi → jangan tampilkan kabupaten
+    const provinsi = document.getElementById("provinsiKetenagakerjaan")?.value;
+
+    if (!provinsi) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="17">Silakan pilih provinsi terlebih dahulu</td>
+            </tr>
+        `;
+        return;
+    }
+
     const labels = data.p2k3?.labels ?? [];
 
     labels.forEach((kab, i) => {
@@ -440,7 +452,7 @@ function renderTabelKabupaten(data) {
         tbody.innerHTML += `
         <tr>
             <td>${kab}</td>
-             <td>${get(data.p2k3, "sudah")}</td>
+            <td>${get(data.p2k3, "sudah")}</td>
             <td>${get(data.p2k3, "belum")}</td>
 
             <td>${get(data.ahli_k3, "sudah")}</td>
@@ -619,4 +631,126 @@ document.addEventListener("DOMContentLoaded", function () {
         ?.addEventListener("change", function () {
             loadChartKetenagakerjaan(); // refresh tabel
         });
+
+    const btnExport = document.getElementById("downloadPdfKetenagakerjaan");
+
+    if (btnExport) {
+        btnExport.addEventListener("click", async function () {
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF("l", "mm", "a4");
+
+            let y = 10;
+
+            const now = new Date();
+            const tanggal = now.toLocaleDateString("id-ID");
+            const jam = now.toLocaleTimeString("id-ID");
+
+            const addHeader = () => {
+                pdf.setFontSize(9);
+                pdf.text(`Dicetak: ${tanggal} ${jam}`, 280, 8, {
+                    align: "right",
+                });
+            };
+
+            addHeader();
+
+            // =========================
+            // 🔥 AMBIL FILTER AKTIF
+            // =========================
+            const jenis = document.getElementById("jenisSelect")?.value;
+            const provinsi = document.getElementById(
+                "provinsiKetenagakerjaan",
+            )?.value;
+            const kabupaten = document.getElementById(
+                "kabupatenKetenagakerjaan",
+            )?.value;
+
+            pdf.setFontSize(12);
+            pdf.text(
+                `Filter: ${jenis || "semua"} | ${provinsi || "nasional"} | ${kabupaten || "-"}`,
+                10,
+                y,
+            );
+            y += 10;
+
+            // =========================
+            // 🔥 LIST SEMUA CHART
+            // =========================
+            const chartIds = [
+                "barP2K3",
+                "barAhliK3",
+                "barDisabilitas",
+                "barSusu",
+                "barSerikatPekerja",
+                "barBipartitPekerja",
+                "barWkwi",
+                "barPerencanaanTk",
+            ];
+
+            for (let i = 0; i < chartIds.length; i++) {
+                const chart = Chart.getChart(chartIds[i]);
+
+                if (!chart) continue;
+
+                const img = chart.toBase64Image();
+
+                // kalau penuh, tambah halaman
+                if (y > 150) {
+                    pdf.addPage();
+                    addHeader();
+                    y = 15;
+                }
+
+                pdf.setFontSize(11);
+                pdf.text(chartIds[i], 10, y);
+                y += 5;
+
+                pdf.addImage(img, "PNG", 10, y, 270, 80);
+                y += 90;
+            }
+
+            // =========================
+            // 🔥 TABEL (IKUT FILTER)
+            // =========================
+            const tableProv = document.getElementById(
+                "tabelProvinsiKetenagakerjaan",
+            );
+            const tableKab = document.getElementById(
+                "tabelKabupatenKetenagakerjaan",
+            );
+
+            if (tableProv?.style.display !== "none") {
+                pdf.addPage();
+                addHeader();
+
+                pdf.text("Tabel Provinsi", 10, 10);
+
+                pdf.autoTable({
+                    html: "#tabelProvinsiKetenagakerjaan table",
+                    startY: 15,
+                    styles: { fontSize: 6 },
+                    headStyles: { fillColor: [13, 110, 253] },
+                });
+            }
+
+            if (tableKab?.style.display !== "none") {
+                pdf.addPage();
+                addHeader();
+
+                pdf.text("Tabel Kabupaten", 10, 10);
+
+                pdf.autoTable({
+                    html: "#tabelKabupatenKetenagakerjaan table",
+                    startY: 15,
+                    styles: { fontSize: 6 },
+                    headStyles: { fillColor: [220, 53, 69] },
+                });
+            }
+
+            // =========================
+            // SAVE
+            // =========================
+            pdf.save("laporan-ketenagakerjaan.pdf");
+        });
+    }
 });

@@ -408,6 +408,20 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
     }
 
+    const toggle = document.querySelector("#menuToggle");
+    const navLinks = document.querySelector("#navLinks");
+
+
+    if (toggle && navLinks) {
+        toggle.addEventListener("click", () => {
+            navLinks.classList.toggle("active");
+        });
+    }
+    document.querySelectorAll("#navLinks a").forEach((link) => {
+        link.addEventListener("click", () => {
+            navLinks.classList.remove("active");
+        });
+    });
     // --- 1. INISIALISASI CHART UTAMA (PROVINSI) ---
     const provMap = totalProvinsi();
     const totalAll = totalSemuaTenagaKerja();
@@ -954,14 +968,19 @@ document.addEventListener("DOMContentLoaded", function () {
         return isLight ? "#000000" : "#ffffff";
     };
 
-    const totalUpah = window.chartUpahMinimumData.values.reduce(
-        (sum, val) => sum + (val || 0),
-        0,
-    );
-
     if (window.chartUpahMinimumData) {
+        const totalUpah = window.chartUpahMinimumData.values.reduce(
+            (sum, val) => sum + (val || 0),
+            0,
+        );
         const upahCanvas = document.getElementById("upahMinimumChart");
+        const jumlahData = window.chartUpahMinimumData.labels.length;
+        const lebarPerBar = 80; // bisa 70 - 100
 
+        const chartInner = document.querySelector(".chart-inner");
+        if (chartInner) {
+            chartInner.style.minWidth = jumlahData * lebarPerBar + "px";
+        }
         if (upahCanvas) {
             const config = {
                 type: "bar",
@@ -977,6 +996,8 @@ document.addEventListener("DOMContentLoaded", function () {
                             backgroundColor: "#0d6efd",
                             borderRadius: 5,
                             maxBarThickness: 100,
+                            barPercentage: 0.6,
+                            categoryPercentage: 0.7,
                         },
                     ],
                 },
@@ -985,7 +1006,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     responsive: true,
                     maintainAspectRatio: false,
                     layout: {
-                        padding: { top: 30 },
+                        padding: { top: 30, bottom: 80, left: 10, right: 10 },
                     },
                     scales: {
                         y: {
@@ -1004,6 +1025,16 @@ document.addEventListener("DOMContentLoaded", function () {
                         x: {
                             ticks: {
                                 color: getChartTextColor(),
+                                autoSkip: false,
+                                padding: 10, 
+                                maxRotation: 45,
+                                minRotation: 45,
+                                callback: function (value) {
+                                    let label = this.getLabelForValue(value);
+
+                                    if (!label) return "";
+                                    return label;
+                                },
                             },
                             grid: {
                                 color: () =>
@@ -1045,6 +1076,12 @@ document.addEventListener("DOMContentLoaded", function () {
             };
 
             window.upahChart = new Chart(upahCanvas, config);
+            renderTabelUpah(
+                window.chartUpahMinimumData.labels.map((label, i) => ({
+                    provinsi: label,
+                    total: window.chartUpahMinimumData.values[i],
+                })),
+            );
 
             const upahSelect = document.getElementById("provinsiUpahSelect");
 
@@ -1067,6 +1104,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
                                 window.upahChart.data.datasets[0].data =
                                     window.chartUpahMinimumData.values;
+                                renderTabelUpah(
+                                    window.chartUpahMinimumData.labels.map(
+                                        (label, i) => ({
+                                            provinsi: label,
+                                            total: window.chartUpahMinimumData
+                                                .values[i],
+                                        }),
+                                    ),
+                                );
 
                                 // ✅ HITUNG TOTAL DI SINI
                                 const total =
@@ -1105,14 +1151,101 @@ document.addEventListener("DOMContentLoaded", function () {
                                     chartInner.style.maxWidth = "400px";
                                     chartInner.style.margin = "0 auto";
                                 }
+                                renderTabelUpah(data);
                             }
 
                             window.upahChart.update();
                         })
+
                         .catch((err) => console.error("Filter Error:", err));
                 });
             }
         }
+    }
+    const btnUpah = document.getElementById("toggleTableUpah");
+    const tableUpah = document.getElementById("tableWrapperUpah");
+
+    if (btnUpah && tableUpah) {
+        btnUpah.addEventListener("click", function () {
+            if (tableUpah.style.display === "none") {
+                tableUpah.style.display = "block";
+                btnUpah.innerText = "Tutup Tabel";
+            } else {
+                tableUpah.style.display = "none";
+                btnUpah.innerText = "Buka Tabel";
+            }
+        });
+    }
+
+    // DOWNLOAD UPAH MINIMUM
+    const btnDownloadUpah = document.getElementById("downloadPdfUpah");
+
+    if (btnDownloadUpah) {
+        btnDownloadUpah.addEventListener("click", function () {
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF("l", "mm", "a4");
+
+            const now = new Date();
+            const tanggal = now.toLocaleDateString("id-ID");
+            const jam = now.toLocaleTimeString("id-ID", {
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+            });
+
+            const timestamp = `Dicetak: ${tanggal} ${jam}`;
+
+            function addHeader() {
+                const pageWidth = pdf.internal.pageSize.getWidth();
+                pdf.setFontSize(9);
+                pdf.setTextColor(100);
+                pdf.text(timestamp, pageWidth - 10, 8, { align: "right" });
+            }
+
+            // =========================
+            // HALAMAN 1 - CHART UPAH
+            // =========================
+            addHeader();
+
+            const chart = Chart.getChart("upahMinimumChart");
+
+            if (!chart) {
+                alert("Chart tidak ditemukan!");
+                return;
+            }
+
+            const chartImg = chart.toBase64Image();
+
+            pdf.addImage(chartImg, "PNG", 10, 15, 277, 120);
+
+            // =========================
+            // HALAMAN 2 - TABEL
+            // =========================
+            pdf.addPage();
+            addHeader();
+
+            pdf.autoTable({
+                html: "#tableWrapperUpah table",
+                startY: 15,
+                styles: {
+                    fontSize: 8,
+                },
+                headStyles: {
+                    fillColor: [13, 110, 253],
+                },
+            });
+
+            // 🔥 nama file ikut filter
+            const provinsiSelect =
+                document.getElementById("provinsiUpahSelect");
+            let namaFile = "upah-minimum";
+
+            if (provinsiSelect && provinsiSelect.value !== "all") {
+                namaFile += "-" + provinsiSelect.value;
+            }
+
+            pdf.save(namaFile + ".pdf");
+        });
     }
 
     const themeObserver = new MutationObserver(() => {
@@ -1168,6 +1301,34 @@ function renderKBLIChart() {
             <span class="bar-label">${row.nama}</span>
         `;
         barChart.appendChild(bar);
+    });
+}
+
+function renderTabelUpah(data) {
+    const tbody = document.getElementById("tbodyUpah");
+    if (!tbody) return;
+
+    tbody.innerHTML = "";
+
+    let no = 1;
+
+    // 🔥 sorting A-Z + "Tidak Diketahui" di bawah
+    data.sort((a, b) => {
+        const provA = (a.provinsi || "").toLowerCase();
+        const provB = (b.provinsi || "").toLowerCase();
+
+        if (provA.includes("tidak")) return 1;
+        if (provB.includes("tidak")) return -1;
+
+        return provA.localeCompare(provB, "id");
+    }).forEach((item) => {
+        tbody.innerHTML += `
+                <tr>
+                    <td>${no++}</td>
+                    <td>${item.provinsi || "Tidak Diketahui"}</td>
+                    <td><b>${(item.total || 0).toLocaleString("id-ID")}</b></td>
+                </tr>
+            `;
     });
 }
 

@@ -429,43 +429,88 @@ function renderTabelKlasifikasi(filteredData) {
 
     const valTahun = filterTahun.value || "Semua Tahun";
     const valBulan = filterBulan.value || "Semua Bulan";
-    const valProv = filterProvinsi.value || "Semua Provinsi";
-    const valKab = filterKabupaten.value || "Semua Kab/Kota";
 
-    let mikro = 0;
-    let kecil = 0;
-    let menengah = 0;
-    let besar = 0;
-    let tidak = 0;
+    tbody.innerHTML = "";
+
+    let no = 1;
+
+    // 🔥 GROUP BY provinsi + kota
+    const grouped = {};
 
     filteredData.forEach((row) => {
+        const prov = row.provinsi || "Tidak Diketahui";
+        const kab = row.kota || "Tidak Diketahui"; // ✅ FIX DISINI
+        const key = `${prov}||${kab}`;
+
+        if (!grouped[key]) {
+            grouped[key] = {
+                provinsi: prov,
+                kabupaten: kab,
+                mikro: 0,
+                kecil: 0,
+                menengah: 0,
+                besar: 0,
+                tidak: 0,
+            };
+        }
+
         const klas = (row.skala_objek_pengawasan || "").toLowerCase().trim();
         const total = parseInt(row.total) || 0;
 
-        if (klas === "mikro") mikro += total;
-        else if (klas === "kecil") kecil += total;
-        else if (klas === "menengah") menengah += total;
-        else if (klas === "besar") besar += total;
-        else tidak += total;
+        if (klas === "mikro") grouped[key].mikro += total;
+        else if (klas === "kecil") grouped[key].kecil += total;
+        else if (klas === "menengah") grouped[key].menengah += total;
+        else if (klas === "besar") grouped[key].besar += total;
+        else grouped[key].tidak += total;
     });
 
-    const grandTotal = mikro + kecil + menengah + besar + tidak;
+    // 🔥 render tetap pakai template kamu
+    Object.values(grouped)
+    .sort((a, b) => {
+        const provA = (a.provinsi || "").toLowerCase();
+        const provB = (b.provinsi || "").toLowerCase();
 
-    tbody.innerHTML = `
-        <tr>
-            <td>1</td>
-            <td>${valTahun}</td>
-            <td>${valBulan}</td>
-            <td>${valProv}</td>
-            <td>${valKab}</td>
-            <td>${mikro.toLocaleString("id-ID")}</td>
-            <td>${kecil.toLocaleString("id-ID")}</td>
-            <td>${menengah.toLocaleString("id-ID")}</td>
-            <td>${besar.toLocaleString("id-ID")}</td>
-            <td>${tidak.toLocaleString("id-ID")}</td>
-            <td><b>${grandTotal.toLocaleString("id-ID")}</b></td>
-        </tr>
-    `;
+        // 🔥 paksa "tidak diketahui" ke bawah
+        if (provA.includes("tidak")) return 1;
+        if (provB.includes("tidak")) return -1;
+
+        // urutkan normal A-Z
+        const provCompare = provA.localeCompare(provB, "id");
+        if (provCompare !== 0) return provCompare;
+
+        // 🔥 sorting kota juga + "tidak diketahui" di bawah
+        const kabA = (a.kabupaten || "").toLowerCase();
+        const kabB = (b.kabupaten || "").toLowerCase();
+
+        if (kabA.includes("tidak")) return 1;
+        if (kabB.includes("tidak")) return -1;
+
+        return kabA.localeCompare(kabB, "id");
+    })
+    .forEach((item) => {
+        const grandTotal =
+            item.mikro +
+            item.kecil +
+            item.menengah +
+            item.besar +
+            item.tidak;
+
+        tbody.innerHTML += `
+            <tr>
+                <td>${no++}</td>
+                <td>${valTahun}</td>
+                <td>${valBulan}</td>
+                <td>${item.provinsi}</td>
+                <td>${item.kabupaten}</td>
+                <td>${item.mikro.toLocaleString("id-ID")}</td>
+                <td>${item.kecil.toLocaleString("id-ID")}</td>
+                <td>${item.menengah.toLocaleString("id-ID")}</td>
+                <td>${item.besar.toLocaleString("id-ID")}</td>
+                <td>${item.tidak.toLocaleString("id-ID")}</td>
+                <td><b>${grandTotal.toLocaleString("id-ID")}</b></td>
+            </tr>
+        `;
+    });
 }
 
 // 5. PASANG EVENT LISTENER (DI LUAR FUNGSI APAPUN)

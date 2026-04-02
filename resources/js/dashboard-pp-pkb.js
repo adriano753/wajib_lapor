@@ -162,7 +162,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 wrapper.innerHTML = html;
 
-                console.log("TABEL BERHASIL DISET");
+              
 
                 // =========================
                 // TOGGLE TABEL (HANYA SEKALI)

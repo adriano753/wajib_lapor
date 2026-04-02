@@ -43,6 +43,13 @@
         </select>
     </div>
 
+    <div class="filter-group">
+        <label>Download</label>
+        <button id="downloadPdfKetenagakerjaan" class="form-select filter-select">
+            Download PDF
+        </button>
+    </div>
+
 </div>
 <br>
 
@@ -73,7 +80,7 @@
     <div id="chartKabupatenWrapperP2K3" style="display:none;">
         <h5 class="mt-4">P2K3 Per Kabupaten</h5>
         <div style="height: 350px;">
-        <canvas id="barKabupatenP2K3"></canvas>
+            <canvas id="barKabupatenP2K3"></canvas>
         </div>
     </div>
 </div>
@@ -104,7 +111,7 @@
     <div id="chartKabupatenWrapperAhliK3" style="display:none;">
         <h5 class="mt-4">Ahli K3 Per Kabupaten</h5>
         <div style="height: 350px;">
-        <canvas id="barKabupatenAhliK3"></canvas>
+            <canvas id="barKabupatenAhliK3"></canvas>
         </div>
     </div>
 </div>
@@ -134,7 +141,7 @@
     <div id="chartKabupatenWrapperDisabilitas" style="display:none;">
         <h5 class="mt-4">Disabilitas Per Kabupaten</h5>
         <div style="height: 350px;">
-        <canvas id="barKabupatenDisabilitas"></canvas>
+            <canvas id="barKabupatenDisabilitas"></canvas>
         </div>
     </div>
 </div>
@@ -164,7 +171,7 @@
     <div id="chartKabupatenWrapperSusu" style="display:none;">
         <h5 class="mt-4">SUSU Per Kabupaten</h5>
         <div style="height: 350px;">
-        <canvas id="barKabupatenSusu"></canvas>
+            <canvas id="barKabupatenSusu"></canvas>
         </div>
     </div>
 </div>
@@ -191,10 +198,10 @@
             </div>
         </div>
     </div>
-     <div id="chartKabupatenWrapperSerikatPekerja" style="display:none;">
+    <div id="chartKabupatenWrapperSerikatPekerja" style="display:none;">
         <h5 class="mt-4">Serikat Pekerja Per Kabupaten</h5>
         <div style="height: 350px;">
-        <canvas id="barKabupatenSerikatPekerja"></canvas>
+            <canvas id="barKabupatenSerikatPekerja"></canvas>
         </div>
     </div>
 </div>
@@ -224,7 +231,7 @@
     <div id="chartKabupatenWrapperBipartitPekerja" style="display:none;">
         <h5 class="mt-4">Bipartit Per Kabupaten</h5>
         <div style="height: 350px;">
-        <canvas id="barKabupatenBipartitPekerja"></canvas>
+            <canvas id="barKabupatenBipartitPekerja"></canvas>
         </div>
     </div>
 </div>
@@ -254,7 +261,7 @@
     <div id="chartKabupatenWrapperWkwi" style="display:none;">
         <h5 class="mt-4">WKWI Per Kabupaten</h5>
         <div style="height: 350px;">
-        <canvas id="barKabupatenWkwi"></canvas>
+            <canvas id="barKabupatenWkwi"></canvas>
         </div>
     </div>
 </div>
@@ -284,7 +291,7 @@
     <div id="chartKabupatenWrapperPerencanaanTk" style="display:none;">
         <h5 class="mt-4">Perencanaan TK Per Kabupaten</h5>
         <div style="height: 350px;">
-        <canvas id="barKabupatenPerencanaanTk"></canvas>
+            <canvas id="barKabupatenPerencanaanTk"></canvas>
         </div>
     </div>
 </div>

@@ -10,6 +10,9 @@
     {{-- <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script> --}}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/exceljs/dist/exceljs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/file-saver/dist/FileSaver.min.js"></script>
 </head>
 
 
@@ -29,7 +32,10 @@
             <a href="#beranda" class="logo">
                 <img src="{{ asset('images/img.png') }}" width="155">
             </a>
-            <ul class="nav-links">
+            <div class="menu-toggle" id="menuToggle">
+                ☰
+            </div>
+            <ul class="nav-links" id="navLinks">
                 <li><a href="#beranda" class="active">Beranda</a></li>
                 <li><a href="#laporan">Laporan</a></li>
                 <!-- <li><a href="#layanan">Layanan</a></li> -->
@@ -110,6 +116,9 @@
                     <h3 class="chart-title">Laporan Provinsi</h3>
                     <button id="downloadBarPdf" class="form-select filter-select">
                         Download PDF
+                    </button>
+                    <button id="downloadPdfAll" class="form-select filter-select">
+                        Download full
                     </button>
                     <button id="toggleTablelprBtn" class="form-select filter-select">
                         Tampilkan Tabel
@@ -380,7 +389,7 @@
         });
     </script>
 
-    @vite(['resources/js/templatemo-graph-script.js', 'resources/js/dashboard-klasifikasi.js', 'resources/js/dashboard-pp-pkb.js', 'resources/js/download-data.js', 'resources/js/ketenagakerjaan.js', 'resources/js/loader.js'])
+    @vite(['resources/js/templatemo-graph-script.js', 'resources/js/dashboard-klasifikasi.js', 'resources/js/dashboard-pp-pkb.js', 'resources/js/download-data.js', 'resources/js/ketenagakerjaan.js', 'resources/js/loader.js', 'resources/js/download-data-full.js'])
 
     <script>
         const BPJS_FILTER_URL = "{{ route('filter.bpjs') }}";
@@ -390,66 +399,71 @@
     </script>
 
     <script>
-document.getElementById("downloadBarPdf").addEventListener("click", function () {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF("landscape", "mm", "a4");
+        document.getElementById("downloadBarPdf").addEventListener("click", function() {
+            const {
+                jsPDF
+            } = window.jspdf;
+            const doc = new jsPDF("landscape", "mm", "a4");
 
-    doc.setFontSize(16);
-    doc.text("Laporan Provinsi", 14, 15);
+            doc.setFontSize(16);
+            doc.text("Laporan Provinsi", 14, 15);
 
-    const chartElement = document.getElementById("barChart");
+            const chartElement = document.getElementById("barChart");
 
-    html2canvas(chartElement, {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: "#ffffff",
-        width: chartElement.scrollWidth,
-        height: chartElement.scrollHeight,
-        windowWidth: chartElement.scrollWidth,
-        windowHeight: chartElement.scrollHeight
-    }).then((canvas) => {
-        const imgData = canvas.toDataURL("image/png");
+            html2canvas(chartElement, {
+                scale: 2,
+                useCORS: true,
+                backgroundColor: "#ffffff",
+                width: chartElement.scrollWidth,
+                height: chartElement.scrollHeight,
+                windowWidth: chartElement.scrollWidth,
+                windowHeight: chartElement.scrollHeight
+            }).then((canvas) => {
+                const imgData = canvas.toDataURL("image/png");
 
-        const pageWidth = doc.internal.pageSize.getWidth();
-        const pageHeight = doc.internal.pageSize.getHeight();
+                const pageWidth = doc.internal.pageSize.getWidth();
+                const pageHeight = doc.internal.pageSize.getHeight();
 
-        const imgWidth = pageWidth - 20;
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                const imgWidth = pageWidth - 20;
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-        doc.addImage(imgData, "PNG", 10, 25, imgWidth, imgHeight);
+                doc.addImage(imgData, "PNG", 10, 25, imgWidth, imgHeight);
 
-        const rows = [];
-        const tableRows = document.querySelectorAll("#tableProvinsilprWrapper tbody tr");
+                const rows = [];
+                const tableRows = document.querySelectorAll("#tableProvinsilprWrapper tbody tr");
 
-        tableRows.forEach((tr) => {
-            const cells = tr.querySelectorAll("td");
-            rows.push([
-                cells[0]?.innerText || "",
-                cells[1]?.innerText || "",
-                cells[2]?.innerText || ""
-            ]);
+                tableRows.forEach((tr) => {
+                    const cells = tr.querySelectorAll("td");
+                    rows.push([
+                        cells[0]?.innerText || "",
+                        cells[1]?.innerText || "",
+                        cells[2]?.innerText || ""
+                    ]);
+                });
+
+                let tableStartY = imgHeight + 35;
+
+                if (tableStartY > pageHeight - 30) {
+                    doc.addPage();
+                    tableStartY = 20;
+                }
+
+                doc.autoTable({
+                    head: [
+                        ["No", "Provinsi", "Total"]
+                    ],
+                    body: rows,
+                    startY: tableStartY
+                });
+
+                doc.save("laporan-provinsi.pdf");
+            });
         });
-
-        let tableStartY = imgHeight + 35;
-
-        if (tableStartY > pageHeight - 30) {
-            doc.addPage();
-            tableStartY = 20;
-        }
-
-        doc.autoTable({
-            head: [["No", "Provinsi", "Total"]],
-            body: rows,
-            startY: tableStartY
-        });
-
-        doc.save("laporan-provinsi.pdf");
-    });
-});
-</script>
+    </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+
 
 </body>
 

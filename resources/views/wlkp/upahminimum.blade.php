@@ -9,6 +9,18 @@
             @endforeach
         </select>
     </div>
+    <div class="filter-group">
+        <label>Buka / Tutup Tabel</label>
+        <button id="toggleTableUpah" class="form-select filter-select">
+            Buka Tabel
+        </button>
+    </div>
+    <div class="filter-group">
+        <label>Download PDF</label>
+        <button id="downloadPdfUpah" class="form-select filter-select">
+            Download PDF
+        </button>
+    </div>
 </div>
 <br>
 
@@ -21,14 +33,27 @@
         </h3>
     </div>
 
-    <div class="chart-container chart-provinsi">
-        <div class="chart-inner" style="height:400px">
+    <div class="chart-wrapper chart-provinsi">
+        <div class="chart-inner">
             <canvas id="upahMinimumChart"></canvas>
+            <div id="totalUpah" style="margin-top:10px; font-weight:bold;"></div>
         </div>
     </div>
-    <div id="totalUpah" style="margin-top:10px; font-weight:bold;"></div>
-
     {{-- <!-- LABEL DATA UPAH MINIMUM -->
     <div id="upahLabelContainer" class="provinsi-summary mt-3"></div> --}}
 
+</div>
+
+
+<div id="tableWrapperUpah" style="display: none;">
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>Provinsi</th>
+                <th>Jumlah</th>
+            </tr>
+        </thead>
+        <tbody id="tbodyUpah"></tbody>
+    </table>
 </div>
