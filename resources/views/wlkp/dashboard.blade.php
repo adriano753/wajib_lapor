@@ -21,7 +21,10 @@
             <a href="#beranda" class="logo">
                 <img src="{{ asset('images/img.png') }}" width="155">
             </a>
-            <ul class="nav-links">
+            <div class="menu-toggle" id="menuToggle">
+            ☰
+        </div>
+            <ul class="nav-links" id="navLinks">
                 <li><a href="#beranda" class="active">Beranda</a></li>
                 <li><a href="#laporan">Laporan</a></li>
                 <!-- <li><a href="#layanan">Layanan</a></li> -->
@@ -114,49 +117,6 @@
 
         </div>
     </section>
-
-    <!-- LAYANAN
-    <section class="layanan-section" id="layanan">
-        <h2 class="section-title">Layanan</h2>
-
-        <div class="info-grid">
-            <div class="info-card image-card"
-                data-bg="{{ asset('images/pelanggaran.jpg') }}">
-                <div class="card-overlay">
-                    <h3>Pelanggaran Ketenagakerjaan</h3>
-                    <p>Ketidaksesuaian praktik kerja dengan ketentuan yang berlaku.</p>
-                    <a href="#" class="report-btn">Laporkan →</a>
-                </div>
-            </div>
-
-            <div class="info-card image-card"
-                data-bg="{{ asset('images/kecelakaankerja.jpg') }}">
-                <div class="card-overlay">
-                    <h3>Kecelakaan Kerja</h3>
-                    <p>Risiko kecelakaan dan penyakit akibat pekerjaan.</p>
-                    <a href="#" class="report-btn">Laporkan →</a>
-                </div>
-            </div>
-
-            <div class="info-card image-card"
-                data-bg="{{ asset('images/perselisihan.jpg') }}">
-                <div class="card-overlay">
-                    <h3>Perselisihan Hubungan Industrial</h3>
-                    <p>Perbedaan kepentingan tenaga kerja dan perusahaan.</p>
-                    <a href="#" class="report-btn">Laporkan →</a>
-                </div>
-            </div>
-
-            <div class="info-card image-card"
-                data-bg="{{ asset('images/pungli.jpg') }}">
-                <div class="card-overlay">
-                    <h3>Pungli / Gratifikasi</h3>
-                    <p>Praktik pungutan liar dan gratifikasi.</p>
-                    <a href="#" class="report-btn">Laporkan →</a>
-                </div>
-            </div>
-        </div>
-    </section> -->
 
     <!-- TENTANG KAMI -->
     <section class="contact-section" id="kontak">

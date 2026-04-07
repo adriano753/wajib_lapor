@@ -16,9 +16,9 @@
         </button>
     </div>
     <div class="filter-group">
-        <label>Download PDF</label>
+        <label>Download Data</label>
         <button id="downloadPdfUpah" class="form-select filter-select">
-            Download PDF
+            Download
         </button>
     </div>
 </div>
@@ -39,11 +39,7 @@
             <div id="totalUpah" style="margin-top:10px; font-weight:bold;"></div>
         </div>
     </div>
-    {{-- <!-- LABEL DATA UPAH MINIMUM -->
-    <div id="upahLabelContainer" class="provinsi-summary mt-3"></div> --}}
-
 </div>
-
 
 <div id="tableWrapperUpah" style="display: none;">
     <table class="table table-bordered table-striped">

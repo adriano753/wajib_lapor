@@ -175,8 +175,6 @@ class WlkpController extends Controller
                 ->sum('total_wni');
         }
 
-
-
         // Helper mapping data chart
         $mapData = function ($skala) use ($rows, $kota) {
             return $kota->map(function ($kot) use ($rows, $skala) {

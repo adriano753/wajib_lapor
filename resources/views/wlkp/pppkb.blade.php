@@ -5,7 +5,7 @@
         <div class="filter-group">
             <label>Download Data</label>
             <button type="button" id="downloadPdf" class="form-select filter-select">
-                Download PDF
+                Download
             </button>
         </div>
         <div class="filter-group">
@@ -19,8 +19,6 @@
     <h2 class="mb-3">DATA PROVINSI MEMILIKI PERJANJIAN PERUSAHAAN/PERJANJIAN KERJA BERSAMA</h2>
 
     {{-- TABEL PP-PKB --}}
-
-
     <div class="card-body">
         <div style="overflow-x: auto; width: 100%; border: 1px solid #ddd;">
             <div id="pdfContent" class="chart-container" style="position: relative; height: 650px; min-width: 2000px;">

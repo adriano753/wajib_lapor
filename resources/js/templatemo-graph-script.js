@@ -226,7 +226,7 @@ function applyChartTheme(chart) {
     const textColor = isLight ? "#020617" : "#e5e7eb";
     const gridColor = isLight
         ? "rgba(15,23,42,0.15)"
-        : "rgba(255,255,255,0.08)"; // 🔥 lebih soft
+        : "rgba(255,255,255,0.08)";
 
     chart.options.scales.x.ticks.color = textColor;
     chart.options.scales.y.ticks.color = textColor;
@@ -234,7 +234,6 @@ function applyChartTheme(chart) {
     chart.options.scales.x.grid.color = gridColor;
     chart.options.scales.y.grid.color = gridColor;
 
-    // 🔥 legend
     if (chart.options.plugins.legend) {
         chart.options.plugins.legend.labels.color = textColor;
     }
@@ -410,7 +409,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const toggle = document.querySelector("#menuToggle");
     const navLinks = document.querySelector("#navLinks");
-
 
     if (toggle && navLinks) {
         toggle.addEventListener("click", () => {
@@ -776,7 +774,6 @@ document.addEventListener("DOMContentLoaded", function () {
             if (provBpjsSelect) {
                 provBpjsSelect.addEventListener("change", function () {
                     const p = this.value;
-                    // Simulasi fetch atau filter lokal (disesuaikan dengan logic aslimu)
                     fetch(`/filter/bpjs?provinsi=${p}`)
                         .then((res) => res.json())
                         .then((data) => {
@@ -869,15 +866,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 const end = start + itemsPerPage;
                 const labelsSubset = fullLabels.slice(start, end);
                 const valuesSubset = fullValues.slice(start, end);
-
-                // 🔥 PERBAIKAN UTAMA DI SINI 🔥
-                // Cek langsung ke Canvas: "Hei, ada chart nyangkut gak di sini?"
                 const existingChart = Chart.getChart("kbliList");
                 if (existingChart) {
-                    existingChart.destroy(); // Hancurkan chart lama secara paksa
+                    existingChart.destroy();
                 }
 
-                // Baru buat chart baru
                 new Chart(ctxKbli, {
                     type: "bar",
                     data: {
@@ -930,14 +923,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
             // Jalankan pertama kali
             renderKBLIPage(0);
-
-            // Listener tombol
-            // (Kita pakai replace logic agar tidak menumpuk event listener jika re-render)
             const nextBtn = document.getElementById("nextBtnKBLI");
             const prevBtn = document.getElementById("prevBtnKBLI");
 
             if (nextBtn) {
-                nextBtn.replaceWith(nextBtn.cloneNode(true)); // Reset listener lama
+                nextBtn.replaceWith(nextBtn.cloneNode(true));
                 document
                     .getElementById("nextBtnKBLI")
                     .addEventListener("click", () => {
@@ -949,7 +939,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             if (prevBtn) {
-                prevBtn.replaceWith(prevBtn.cloneNode(true)); // Reset listener lama
+                prevBtn.replaceWith(prevBtn.cloneNode(true));
                 document
                     .getElementById("prevBtnKBLI")
                     .addEventListener("click", () => {
@@ -975,7 +965,7 @@ document.addEventListener("DOMContentLoaded", function () {
         );
         const upahCanvas = document.getElementById("upahMinimumChart");
         const jumlahData = window.chartUpahMinimumData.labels.length;
-        const lebarPerBar = 80; // bisa 70 - 100
+        const lebarPerBar = 80;
 
         const chartInner = document.querySelector(".chart-inner");
         if (chartInner) {
@@ -1026,7 +1016,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             ticks: {
                                 color: getChartTextColor(),
                                 autoSkip: false,
-                                padding: 10, 
+                                padding: 10,
                                 maxRotation: 45,
                                 minRotation: 45,
                                 callback: function (value) {
@@ -1055,8 +1045,6 @@ document.addEventListener("DOMContentLoaded", function () {
                         datalabels: {
                             anchor: "end",
                             align: "top",
-
-                            // 🔥 INI KUNCI UTAMA
                             color: (ctx) => {
                                 return getChartTextColor();
                             },
@@ -1114,7 +1102,6 @@ document.addEventListener("DOMContentLoaded", function () {
                                     ),
                                 );
 
-                                // ✅ HITUNG TOTAL DI SINI
                                 const total =
                                     window.chartUpahMinimumData.values.reduce(
                                         (sum, val) => sum + (val || 0),
@@ -1137,7 +1124,6 @@ document.addEventListener("DOMContentLoaded", function () {
                                     data[0].total,
                                 ];
 
-                                // ✅ TOTAL UNTUK 1 PROVINSI
                                 const total = data[0].total || 0;
 
                                 window.upahChart.data.datasets[0].label =
@@ -1235,7 +1221,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 },
             });
 
-            // 🔥 nama file ikut filter
             const provinsiSelect =
                 document.getElementById("provinsiUpahSelect");
             let namaFile = "upah-minimum";
@@ -1252,7 +1237,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (window.upahChart) window.upahChart.update();
         if (window.mainChart) window.mainChart.update();
         if (window.kabChart) window.kabChart.update();
-        if (window.kbliChart) window.KbliChart.update();
+        if (window.KbliChart) window.KbliChart.update();
     });
 
     themeObserver.observe(document.documentElement, {
@@ -1312,7 +1297,6 @@ function renderTabelUpah(data) {
 
     let no = 1;
 
-    // 🔥 sorting A-Z + "Tidak Diketahui" di bawah
     data.sort((a, b) => {
         const provA = (a.provinsi || "").toLowerCase();
         const provB = (b.provinsi || "").toLowerCase();

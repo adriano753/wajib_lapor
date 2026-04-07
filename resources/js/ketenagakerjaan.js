@@ -14,7 +14,7 @@ const barOptions = {
 
     layout: {
         padding: {
-            top: 40, // tambahkan ruang atas supaya label tidak menimpa legend
+            top: 40,
         },
     },
 
@@ -29,7 +29,7 @@ const barOptions = {
         },
         y: {
             beginAtZero: true,
-            grace: "10%", // beri ruang atas pada batang chart
+            grace: "10%",
             ticks: {
                 callback: function (value) {
                     return Number(value).toLocaleString("id-ID");
@@ -206,22 +206,19 @@ function updateBar(chart, data) {
     }
 
     const canvasTag = chart.canvas;
-    const container = canvasTag.closest(".chart-wide"); // Ambil div .chart-wide terkait
+    const container = canvasTag.closest(".chart-wide");
 
     if (container) {
         const jumlahData = chart.data.labels.length;
-        const lebarPerBar = 120; // Atur jarak antar kabupaten disini
+        const lebarPerBar = 120;
         const minLebarContainer =
             document.querySelector(".scroll-wrapper").offsetWidth;
 
         const totalLebarYangDibutuhkan = jumlahData * lebarPerBar;
 
-        // Jika data hanya 1 (filter kabupaten), lebar akan kecil sehingga nempel ke kiri
         if (totalLebarYangDibutuhkan > minLebarContainer) {
             container.style.width = totalLebarYangDibutuhkan + "px";
         } else {
-            // Jika data sedikit, buat lebar container otomatis/100%
-            // tapi flex-start di wrapper akan menjaganya di kiri
             container.style.width = "100%";
         }
     }
@@ -239,7 +236,6 @@ function loadChartKetenagakerjaan() {
     let kabupaten =
         document.getElementById("kabupatenKetenagakerjaan")?.value ?? "";
 
-    console.log("FILTER:", jenis, provinsi, kabupaten);
     fetch(
         `/chart-ketenagakerjaan?jenis=${jenis}&provinsi=${encodeURIComponent(provinsi)}&kabupaten=${encodeURIComponent(kabupaten)}`,
     )
@@ -431,7 +427,6 @@ function renderTabelKabupaten(data) {
 
     tbody.innerHTML = "";
 
-    // 🔥 CEK: kalau tidak pilih provinsi → jangan tampilkan kabupaten
     const provinsi = document.getElementById("provinsiKetenagakerjaan")?.value;
 
     if (!provinsi) {
@@ -591,10 +586,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     loadChartKetenagakerjaan();
 
-    // FILTER EVENT
-    // ==========================
-    // FILTER EVENT
-    // ==========================
     document
         .getElementById("jenisSelect")
         ?.addEventListener("change", loadChartKetenagakerjaan);
@@ -655,7 +646,7 @@ document.addEventListener("DOMContentLoaded", function () {
             addHeader();
 
             // =========================
-            // 🔥 AMBIL FILTER AKTIF
+            // FILTER AKTIF
             // =========================
             const jenis = document.getElementById("jenisSelect")?.value;
             const provinsi = document.getElementById(
@@ -674,7 +665,7 @@ document.addEventListener("DOMContentLoaded", function () {
             y += 10;
 
             // =========================
-            // 🔥 LIST SEMUA CHART
+            // LIST CHART
             // =========================
             const chartIds = [
                 "barP2K3",
@@ -694,7 +685,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 const img = chart.toBase64Image();
 
-                // kalau penuh, tambah halaman
                 if (y > 150) {
                     pdf.addPage();
                     addHeader();
@@ -710,7 +700,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             // =========================
-            // 🔥 TABEL (IKUT FILTER)
+            // TABEL
             // =========================
             const tableProv = document.getElementById(
                 "tabelProvinsiKetenagakerjaan",

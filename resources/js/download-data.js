@@ -10,7 +10,6 @@ document.addEventListener("DOMContentLoaded", function () {
         for (let i = 0; i < sections.length; i++) {
             const rect = sections[i].getBoundingClientRect();
 
-            // SKIP kalau section tidak terlihat / tinggi 0
             if (rect.height === 0) {
                 continue;
             }
@@ -316,9 +315,9 @@ document.addEventListener("DOMContentLoaded", function () {
                     display: "flex",
                     flexDirection: "row",
                     alignItems: "flex-end",
-                    width: `${estimatedWidth}px`, // Lebar dinamis sesuai jumlah data
-                    height: "700px", // Tinggi cukup untuk bar + label miring
-                    padding: "100px 50px 250px 50px", // Padding bawah extra besar untuk teks miring
+                    width: `${estimatedWidth}px`, 
+                    height: "700px", 
+                    padding: "100px 50px 250px 50px", 
                     background: "#ffffff",
                     position: "absolute",
                     left: "-10000px",
@@ -333,7 +332,6 @@ document.addEventListener("DOMContentLoaded", function () {
                         scale: 2,
                         useCORS: true,
                         backgroundColor: "#ffffff",
-                        // Memaksa canvas mengambil ukuran penuh clone meskipun di luar layar
                         width: estimatedWidth,
                         windowWidth: estimatedWidth,
                         logging: false,
@@ -346,7 +344,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     const pdfHeight =
                         (imgProps.height * pdfWidth) / imgProps.width;
 
-                    // Jika pdfHeight melebihi sisa halaman, Anda mungkin perlu mengecilkan margin
+                   
                     pdf.addImage(imgData, "PNG", 10, 30, pdfWidth, pdfHeight);
                 } catch (error) {
                     console.error("Gagal export chart:", error);
@@ -403,7 +401,6 @@ document.addEventListener("DOMContentLoaded", function () {
             const bpjsRows = document.querySelectorAll("#bpjsTable .bpjs-row");
 
             bpjsRows.forEach((row) => {
-                // ✅ SKIP kalau tidak terlihat (terfilter)
                 if (row.offsetParent === null) return;
 
                 const provinsi = row.querySelector(".provinsi-name").innerText;
@@ -430,7 +427,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
     // ===============================
-    // 📄 DOWNLOAD PDF KLASIFIKASI
+    // DOWNLOAD PDF KLASIFIKASI
     // ===============================
     const btnKlasifikasi = document.getElementById("downloadPdfKlasifikasi");
 
@@ -491,10 +488,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 pdf.addImage(kotaImg, "PNG", 10, 15, 277, 120);
             }
-
-            // ====================================
-            // HALAMAN 4 - TABEL HASIL FILTER
-            // ====================================
             // ====================================
             // HALAMAN 4 - TABEL HASIL FILTER (DARI HTML)
             // ====================================
@@ -509,7 +502,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 return;
             }
 
-            // pakai autoTable dari HTML langsung
             pdf.autoTable({
                 html: "#tableKlasifikasi",
                 startY: 15,
@@ -530,9 +522,8 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    //andri
     // ==========================================
-    // DOWNLOAD PDF - BAR CHART HTML (FINAL)
+    // DOWNLOAD PDF - BAR CHART HTML 
     // ==========================================
     const btnBar = document.getElementById("downloadBarPdf");
 
@@ -570,7 +561,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             // =========================
-            // 🔥 CLONE UNTUK RESOLUSI BESAR
+            // CLONE UNTUK RESOLUSI BESAR
             // =========================
             const clone = originalChart.cloneNode(true);
 
@@ -587,12 +578,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
             document.body.appendChild(clone);
 
-            // pastikan bar tidak hidden
             clone.querySelectorAll(".bar").forEach((bar) => {
                 bar.style.overflow = "visible";
             });
 
-            // 🔥 PENTING: paksa tinggi sesuai konten
             clone.style.height = clone.scrollHeight + "px";
 
             setTimeout(() => {
@@ -626,7 +615,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     pdf.save("laporan-provinsi.pdf");
 
-                    // Hapus clone setelah selesai
                     document.body.removeChild(clone);
                 });
             }, 500);

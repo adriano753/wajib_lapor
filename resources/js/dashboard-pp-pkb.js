@@ -67,7 +67,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 },
                 options: {
                     responsive: true,
-                    maintainAspectRatio: false, // Agar mengikuti tinggi div container
+                    maintainAspectRatio: false, 
                     interaction: {
                         mode: "index",
                         intersect: false,
@@ -99,7 +99,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     },
                     scales: {
                         x: {
-                            stacked: true, // Aktifkan tumpukan di sumbu X
+                            stacked: true, 
                             ticks: {
                                 autoSkip: false,
                                 maxRotation: 45,
@@ -107,7 +107,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             },
                         },
                         y: {
-                            stacked: true, // Aktifkan tumpukan di sumbu Y
+                            stacked: true,
                             beginAtZero: true,
                             title: {
                                 display: true,

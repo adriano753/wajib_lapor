@@ -5,7 +5,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (!loader) return;
 
-    // 🔥 LANGSUNG HILANG (GAK NUNGGU SERVER)
     loader.style.opacity = "0";
 
     setTimeout(() => {

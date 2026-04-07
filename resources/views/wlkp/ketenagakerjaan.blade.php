@@ -46,7 +46,7 @@
     <div class="filter-group">
         <label>Download</label>
         <button id="downloadPdfKetenagakerjaan" class="form-select filter-select">
-            Download PDF
+            Download
         </button>
     </div>
 
@@ -298,7 +298,7 @@
 <br>
 
 <!-- ========================= -->
-<!-- TABEL PROVINSI -->
+<!-- TABEL PROVINSI
 <!-- ========================= -->
 <div id="tabelProvinsiKetenagakerjaan" style="display:none" class="mt-4">
 
@@ -350,7 +350,7 @@
 
 
 <!-- ========================= -->
-<!-- TABEL KABUPATEN -->
+<!-- TABEL KABUPATEN
 <!-- ========================= -->
 <div id="tabelKabupatenKetenagakerjaan" style="display:none" class="mt-4">
 

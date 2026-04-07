@@ -1,44 +1,9 @@
-{{-- <!-- Data -->
-<div class="metrics-grid">
-    <div class="metric-item">
-        <div class="metric-value">{{ $totalTk ?? 0 }}</div>
-        <div class="metric-label">total tenaga kerja</div>
-    </div>
-
-    <div class="metric-item">
-        <div class="metric-value">{{ $totalLlmb ?? 0 }}</div>
-        <div class="metric-label">Total Laki - laki Masih Bekerja</div>
-    </div>
-
-    <div class="metric-item">
-        <div class="metric-value">{{ $totalPmb ?? 0 }}</div>
-        <div class="metric-label">Total Perempuan Masih Bekerja</div>
-    </div>
-
-    <div class="metric-item">
-        <div class="metric-value">{{ $totalJaksel ?? 0 }}</div>
-        <div class="metric-label">Jakarta Selatan</div>
-    </div>
-
-    <div class="metric-item">
-        <div class="metric-value">{{ $besar ?? 0 }}</div>
-        <div class="metric-label">Besar</div>
-    </div>
-
-    <div class="metric-item">
-        <div class="metric-value">{{ $tidak_terident ?? 0 }}</div>
-        <div class="metric-label">Tidak Teridentifikasi</div>
-    </div>
-</div> --}}
-
 <section class="container-provinsi-fluid py-4">
     <br>
     <div class="d-flex justify-content-end mb-3">
 
     </div>
     <h2 class="mb-3">DATA TENAGA KERJA</h2>
-
-
 
     <!-- Filter Provinsi -->
     <div class="filter-panel mb-4">
@@ -87,7 +52,7 @@
         <div class="filter-group">
             <label>Download Data</label>
             <button type="button" id="downloadPdfTenagaKerja" class="form-select filter-select">
-                Download Laporan Tenaga Kerja
+                Download
             </button>
         </div>
     </div>

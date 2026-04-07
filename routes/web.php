@@ -14,9 +14,6 @@ use Illuminate\Support\Facades\DB;
 Route::get('/', function () {
     return redirect('/wlkp');
 });
-// Route::get('/', function () {
-//     return view('welcome');
-// });
 
 
 /*
@@ -36,12 +33,6 @@ Route::get('/wlkp/chart-kabupaten', [WlkpController::class, 'chartKabupaten']);
 Route::get('/filter/bpjs', [BpjsFilterController::class, 'filter'])->name('filter.bpjs');
 Route::get('/filter/upah-minimum', [UpahMinimumFilterController::class, 'filter'])->name('filter.upah-minimum');
 
-
-/*
-|--------------------------------------------------------------------------
-| KBLI (CONTROLLER TERPISAH)
-|--------------------------------------------------------------------------
-*/
 Route::get('/wlkp/kbli', [KbliController::class, 'index'])
     ->name('wlkp.kbli');
 Route::get('/kbli', [KbliController::class, 'index'])->name('kbli.index');
@@ -64,13 +55,6 @@ Route::get('/get-kabupaten', function(Request $request){
         ->pluck('kota');
 
 });
-
-
-/*
-|--------------------------------------------------------------------------
-| KBLI (CONTROLLER TERPISAH)
-|--------------------------------------------------------------------------
-*/
 Route::get('/wlkp/kbli', [KbliController::class, 'index'])
     ->name('wlkp.kbli');
 Route::get('/kbli/filter', [KbliController::class, 'filter']);

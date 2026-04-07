@@ -301,7 +301,7 @@
     </script>
 
     <!-- ============================
-     Ini untuk memanggil data dan menampilkan data KBLI
+     memanggil data dan menampilkan data KBLI
      ================================ -->
     <script>
         document.addEventListener("DOMContentLoaded", function() {
@@ -329,7 +329,7 @@
                         label: "Jumlah Perusahaan",
                         data: values,
                         backgroundColor: '#42A5F5',
-                        barThickness: 40, // Lebar batang tetap 40px
+                        barThickness: 40,
                     }]
                 },
                 options: {
@@ -342,7 +342,6 @@
                         datalabels: {
                             anchor: 'end',
                             align: 'top',
-                            // color: 'white',
                             font: {
                                 weight: 'bold'
                             },
@@ -355,16 +354,13 @@
                                 display: false
                             },
                             ticks: {
-                                // color: 'white',
                                 maxRotation: 45,
                                 minRotation: 45,
-                                autoSkip: false // Tampilkan semua label karena sudah bisa di-scroll
+                                autoSkip: false
                             }
                         },
                         y: {
                             beginAtZero: true,
-                            // ticks: { color: 'white' },
-                            // grid: { color: 'rgba(255,255,255,0.1)' }
                         }
                     }
                 },

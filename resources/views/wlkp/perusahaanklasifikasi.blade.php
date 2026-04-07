@@ -73,15 +73,15 @@
         </div>
 
         <div class="filter-group">
-            <label>Download Data</label>
-            <button type="button" id="downloadPdfKlasifikasi" class="form-select filter-select">
-                Download PDF Klasifikasi
+            <label>Tabel</label>
+            <button id="toggleTableBtnKlasifikasi" class="form-select filter-select">
+                Buka Tabel
             </button>
         </div>
         <div class="filter-group">
             <label>Download Data</label>
-            <button id="toggleTableBtnKlasifikasi" class="form-select filter-select">
-                Buka Tabel
+            <button type="button" id="downloadPdfKlasifikasi" class="form-select filter-select">
+                Download
             </button>
         </div>
     </div>
@@ -122,20 +122,8 @@
             <div id="tableWrapper" style="overflow-x:auto; display:none;">
                 <h3 class="mb-0">Tabel Data Klasifikasi</h3>
                 <table class="table table-bordered table-striped" id="tableKlasifikasi">
-                    <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>Tahun</th>
-                            <th>Bulan</th>
-                            <th>Provinsi</th>
-                            <th>Kab/Kota</th>
-                            <th>Mikro</th>
-                            <th>Kecil</th>
-                            <th>Menengah</th>
-                            <th>Besar</th>
-                            <th>Tidak Teridentifikasi</th>
-                            <th>Total</th>
-                        </tr>
+                    <thead id="theadKlasifikasi">
+                        <tr id="headerRow"></tr>
                     </thead>
                     <tbody id="tbodyKlasifikasi">
                         <tr>

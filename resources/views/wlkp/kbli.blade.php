@@ -40,10 +40,12 @@
                 Buka Tabel
             </button>
         </div>
-        <div class="filter-group"></div>
-        <button id="downloadPdfKbli" class="form-select filter-select">
-            Download PDF KBLI
-        </button>
+        <div class="filter-group">
+            <label for="">Download Data</label>
+            <button id="downloadPdfKbli" class="form-select filter-select">
+                Download
+            </button>
+        </div>
     </div>
     </div>
     <br>
@@ -221,7 +223,7 @@
             await new Promise(resolve => setTimeout(resolve, 300));
 
             // =========================
-            // 📊 CHART (SUPER HD)
+            // CHART
             // =========================
             addHeader();
 
@@ -237,7 +239,7 @@
             pdf.addImage(chartImg, "PNG", 10, 15, 277, 120);
 
             // =========================
-            // 📋 TABEL
+            // TABEL
             // =========================
             pdf.addPage();
             addHeader();
@@ -280,7 +282,7 @@
             const provinsi = this.value;
             const kotaSelect = document.getElementById("filterKbliKota");
 
-            // reset dulu
+            
             kotaSelect.innerHTML = `<option value="">Semua Kabupaten</option>`;
 
             if (!provinsi) return;
@@ -335,7 +337,6 @@
 
         let no = 1;
 
-        // 🔥 SORT KBLI A-Z + amanin null
         data
             .sort((a, b) => {
                 const kbliA = (a.nama_2_digit || "").toLowerCase();
@@ -374,5 +375,4 @@
             }
         });
     }
-
 </script>

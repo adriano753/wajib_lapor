@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const jam = now.toLocaleTimeString("id-ID");
 
             // =========================
-            // 🏢 KOP
+            // KOP SURAT
             // =========================
             function addKop() {
                 pdf.setFont("helvetica", "bold");
@@ -59,7 +59,7 @@ Data ini menggambarkan kondisi perusahaan terkait indikator tersebut sebagai bah
             }
 
             // =========================
-            // 📄 COVER
+            // COVER
             // =========================
             addKop();
 
@@ -80,23 +80,22 @@ Data ini menggambarkan kondisi perusahaan terkait indikator tersebut sebagai bah
                 { align: "center", maxWidth: 200 },
             );
 
-            // 🔥 tunggu chart siap
             await new Promise((r) => setTimeout(r, 800));
 
             // =========================
-            // 🔥 MAPPING CHART + TABEL
+            // MAPPING CHART + TABEL
             // =========================
             const chartTableMap = [
                 {
                     chartId: "barChart",
                     title: "Perusahaan",
-                    table: "#tableProvinsilprWrapper",
                 },
                 { chartId: "provinsiChart", title: "Klasifikasi Perusahaan" },
                 {
                     chartId: "klasifikasiChart",
                     title: "Klasifikasi Jenis Perusahaan",
                     table: "#tableKlasifikasi",
+                    mode: "full",
                 },
                 {
                     chartId: "kbliChartCanvas",
@@ -144,12 +143,16 @@ Data ini menggambarkan kondisi perusahaan terkait indikator tersebut sebagai bah
             ];
 
             // =========================
-            // 🔥 LOOP CHART + TABEL
+            // LOOP CHART + TABEL
             // =========================
             for (let item of chartTableMap) {
-                // ⏳ delay biar smooth
                 await new Promise((r) => setTimeout(r, 300));
-
+                if (item.table === "#tableKlasifikasi") {
+                    renderTabelKlasifikasi(
+                        window.chartMasterData,
+                        item.mode || "single",
+                    );
+                }
                 pdf.addPage();
                 addKop();
                 addFooter();
@@ -161,9 +164,6 @@ Data ini menggambarkan kondisi perusahaan terkait indikator tersebut sebagai bah
 
                 const chart = Chart.getChart(item.chartId);
 
-                // =========================
-                // ✅ CASE 1: Chart.js
-                // =========================
                 if (chart) {
                     try {
                         const img = chart.toBase64Image("image/png", 1.5);
@@ -171,12 +171,7 @@ Data ini menggambarkan kondisi perusahaan terkait indikator tersebut sebagai bah
                     } catch (err) {
                         console.error("Error chart:", item.chartId, err);
                     }
-                }
-
-                // =========================
-                // ✅ CASE 2: HTML (barChart kamu)
-                // =========================
-                else {
+                } else {
                     const el = document.getElementById(item.chartId);
 
                     if (!el) {
@@ -232,7 +227,7 @@ Data ini menggambarkan kondisi perusahaan terkait indikator tersebut sebagai bah
                 }
 
                 // =========================
-                // 📋 TABEL DI BAWAH CHART
+                // TABEL DI BAWAH CHART
                 // =========================
                 if (item.table) {
                     const el = document.querySelector(item.table);
@@ -244,7 +239,7 @@ Data ini menggambarkan kondisi perusahaan terkait indikator tersebut sebagai bah
                         );
                     } else {
                         // =========================
-                        // 🔥 KHUSUS BPJS TABLE
+                        // KHUSUS BPJS TABLE
                         // =========================
                         if (item.table === "#bpjsTable") {
                             const rows = [];
@@ -286,7 +281,7 @@ Data ini menggambarkan kondisi perusahaan terkait indikator tersebut sebagai bah
                         }
 
                         // =========================
-                        // ✅ TABLE HTML NORMAL
+                        // TABLE HTML NORMAL
                         // =========================
                         else if (el.tagName === "TABLE") {
                             pdf.autoTable({
@@ -297,7 +292,7 @@ Data ini menggambarkan kondisi perusahaan terkait indikator tersebut sebagai bah
                         }
 
                         // =========================
-                        // ✅ ADA TABLE DI DALAM DIV
+                        // ADA TABLE DI DALAM DIV
                         // =========================
                         else {
                             const tableInside = el.querySelector("table");
@@ -307,6 +302,26 @@ Data ini menggambarkan kondisi perusahaan terkait indikator tersebut sebagai bah
                                     html: tableInside,
                                     startY: 155,
                                     styles: { fontSize: 6 },
+
+                                    // 🔥 cegah header dobel
+                                    headStyles: { halign: "center" },
+                                    didParseCell: function (data) {
+                                        if (
+                                            data.section === "body" &&
+                                            data.row.index === 0
+                                        ) {
+                                            // skip kalau row pertama isinya header lagi
+                                            const text = data.cell.text
+                                                .join("")
+                                                .toLowerCase();
+                                            if (
+                                                text.includes("no") ||
+                                                text.includes("tahun")
+                                            ) {
+                                                data.cell.text = "";
+                                            }
+                                        }
+                                    },
                                 });
                             } else {
                                 // fallback (gambar)
@@ -332,7 +347,7 @@ Data ini menggambarkan kondisi perusahaan terkait indikator tersebut sebagai bah
             }
 
             // =========================
-            // 💾 SAVE
+            // SAVE
             // =========================
             pdf.save("laporan-lengkap-ketenagakerjaan.pdf");
         } catch (err) {

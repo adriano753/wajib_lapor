@@ -15,7 +15,7 @@
     <div class="filter-group">
         <label>Download Data</label>
         <button type="button" id="downloadPdfJaminan" class="form-select filter-select">
-            Download PDF
+            Download
         </button>
     </div>
 </div>
