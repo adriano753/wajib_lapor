@@ -67,7 +67,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 },
                 options: {
                     responsive: true,
-                    maintainAspectRatio: false, 
+                    maintainAspectRatio: false,
                     interaction: {
                         mode: "index",
                         intersect: false,
@@ -99,7 +99,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     },
                     scales: {
                         x: {
-                            stacked: true, 
+                            stacked: true,
                             ticks: {
                                 autoSkip: false,
                                 maxRotation: 45,
@@ -122,77 +122,84 @@ document.addEventListener("DOMContentLoaded", function () {
             // =========================
             // RENDER TABEL + TOGGLE
             // =========================
-            const wrapper = document.getElementById(
-                "tableProvinsiPPPKBWrapper",
-            );
-
-            if (wrapper) {
-                let html = `
-        <div id="tableContent">
-            <table class="table table-bordered table-striped">
-                <thead class="table-primary">
-                    <tr>
-                        <th>Provinsi</th>
-                        <th>PP - Ada</th>
-                        <th>PP - Belum Ada</th>
-                        <th>PKB - Ada</th>
-                        <th>PKB - Belum Ada</th>
-                    </tr>
-                </thead>
-                <tbody>
-    `;
-
-                rawData.forEach((item) => {
-                    html += `
-            <tr>
-                <td>${item.provinsi ?? "-"}</td>
-                <td>${(parseInt(item.pp_ada) || 0).toLocaleString("id-ID")}</td>
-                <td>${(parseInt(item.pp_tidak_ada) || 0).toLocaleString("id-ID")}</td>
-                <td>${(parseInt(item.pkb_ada) || 0).toLocaleString("id-ID")}</td>
-                <td>${(parseInt(item.pkb_tidak_ada) || 0).toLocaleString("id-ID")}</td>
-            </tr>
-        `;
-                });
-
-                html += `
-                </tbody>
-            </table>
-        </div>
-    `;
-
-                wrapper.innerHTML = html;
-
-              
-
-                // =========================
-                // TOGGLE TABEL (HANYA SEKALI)
-                // =========================
-                const toggleBtn = document.getElementById("toggleTableBtn");
-                const tableContent = document.getElementById("tableContent");
-
-                if (toggleBtn && tableContent) {
-                    // default hidden kalau tombolnya "Buka Tabel"
-                    if (toggleBtn.innerText.trim() === "Buka Tabel") {
-                        tableContent.style.display = "none";
-                    }
-
-                    toggleBtn.addEventListener("click", function () {
-                        const isHidden = tableContent.style.display === "none";
-
-                        tableContent.style.display = isHidden
-                            ? "block"
-                            : "none";
-                        toggleBtn.innerText = isHidden
-                            ? "Tutup Tabel"
-                            : "Buka Tabel";
-
-                        toggleBtn.classList.toggle("btn-success", !isHidden);
-                        toggleBtn.classList.toggle("btn-secondary", isHidden);
-                    });
-                }
-            } else {
-                console.error("Wrapper tabel tidak ditemukan!");
-            }
         }
+        renderTablePPPKB("single");
     }
+    document.getElementById("toggleTableBtn").onclick = function () {
+        const tableWrapper = document.getElementById("tableProvinsiPPPKBWrapper");
+
+        const isHidden = tableWrapper.style.display === "none";
+
+        tableWrapper.style.display = isHidden ? "block" : "none";
+
+        this.innerText = isHidden ? "Tutup Tabel" : "Buka Tabel";
+    };
 });
+
+function renderTablePPPKB(mode = "single") {
+    const tbody = document.getElementById("tablePPPKBBody");
+    const header = document.getElementById("headerPPPKB");
+
+    if (!tbody || !header) return;
+
+    const data = window.chartData?.PPPKBValues || [];
+
+    // 🔥 RESET
+    tbody.innerHTML = "";
+
+    // =========================
+    // HEADER DINAMIS
+    // =========================
+    if (mode === "single") {
+        header.innerHTML = `
+            <th>No</th>
+            <th>Provinsi</th>
+            <th>PP - Ada</th>
+            <th>PP - Belum Ada</th>
+            <th>PKB - Ada</th>
+            <th>PKB - Belum Ada</th>
+        `;
+    } else {
+        header.innerHTML = `
+            <th>No</th>
+            <th>Provinsi</th>
+            <th>PP</th>
+            <th>PKB</th>
+        `;
+    }
+
+    // =========================
+    // BODY
+    // =========================
+    let no = 1;
+    data.forEach((item) => {
+        const ppAda = parseInt(item.pp_ada) || 0;
+        const ppTidak = parseInt(item.pp_tidak_ada) || 0;
+        const pkbAda = parseInt(item.pkb_ada) || 0;
+        const pkbTidak = parseInt(item.pkb_tidak_ada) || 0;
+
+        if (mode === "single") {
+            tbody.innerHTML += `
+                <tr>
+                    <td>${no++}</td>
+                    <td>${item.provinsi ?? "-"}</td>
+                    <td>${ppAda.toLocaleString("id-ID")}</td>
+                    <td>${ppTidak.toLocaleString("id-ID")}</td>
+                    <td>${pkbAda.toLocaleString("id-ID")}</td>
+                    <td>${pkbTidak.toLocaleString("id-ID")}</td>
+                </tr>
+            `;
+        } else {
+            tbody.innerHTML += `
+                <tr>
+                    <td>${no++}</td>
+                    <td>${item.provinsi ?? "-"}</td>
+                    <td>${ppAda.toLocaleString("id-ID")}</td>
+                    <td>${pkbAda.toLocaleString("id-ID")}</td>
+                </tr>
+            `;
+        }
+    });
+}
+
+window.renderTablePPPKB = renderTablePPPKB;

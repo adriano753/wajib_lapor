@@ -80,10 +80,7 @@
 
             <table class="table table-bordered table-sm table-hover">
                 <thead>
-                    <tr>
-                        <th>Nama Provinsi</th>
-                        <th>Total Tenaga Kerja</th>
-                    </tr>
+                    <tr id="headerProvinsi"></tr>
                 </thead>
                 <tbody id="tableProvinsiBody"></tbody>
             </table>

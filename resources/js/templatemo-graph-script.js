@@ -1339,27 +1339,106 @@ function updateKabupatenDropdown(provinsi) {
     });
 }
 
-function renderTableProvinsi() {
+function renderTableProvinsi(mode = "single") {
     const tbody = document.getElementById("tableProvinsiBody");
-    if (!tbody) return;
+    const header = document.getElementById("headerProvinsi");
+
+    if (!tbody || !header) return;
+
     tbody.innerHTML = "";
 
     const provinsiSelected = document.getElementById("provinsiSelect")?.value;
-    const provMap = totalProvinsi();
+    const data = window.provData || [];
 
+    // 🔥 HEADER DINAMIS
+    if (mode === "single") {
+        header.innerHTML = `
+            <th>Nama Provinsi</th>
+            <th>Total Tenaga Kerja</th>
+        `;
+    } else {
+        header.innerHTML = `
+             <th style="width: 30%">Nama Provinsi</th>
+    <th style="width: 17%">Laki-laki</th>
+    <th style="width: 17%">Perempuan</th>
+    <th style="width: 18%">TKA</th>
+    <th style="width: 18%">Total</th>
+        `;
+    }
+
+    const grouped = {};
+
+    data.forEach((row) => {
+        const prov = row.provinsi || "Tidak Teridentifikasi";
+
+        if (!grouped[prov]) {
+            grouped[prov] = {
+                total: 0,
+                laki: 0,
+                perempuan: 0,
+                tka: 0,
+            };
+        }
+
+        // ✅ TOTAL ikut filter sistem
+        grouped[prov].total += getTotalByJenis(row);
+
+        // ✅ FULL MODE
+        if (mode === "full") {
+            const wniL = safeNumber(row.total_laki);
+            const wniP = safeNumber(row.total_perempuan);
+            const wnaL = safeNumber(row.total_tka_laki);
+            const wnaP = safeNumber(row.total_tka_perempuan);
+
+            // 🔥 sesuai request kamu
+            grouped[prov].laki += wniL; // hanya WNI laki
+            grouped[prov].perempuan += wniP; // hanya WNI perempuan
+            grouped[prov].tka += wnaL + wnaP; // semua TKA
+        }
+    });
+
+    const renderRow = (prov, item) => {
+        if (mode === "single") {
+            return `
+                <tr>
+                    <td>${prov}</td>
+                    <td>${item.total.toLocaleString("id-ID")}</td>
+                </tr>
+            `;
+        } else {
+            return `
+                <tr>
+                    <td>${prov}</td>
+                    <td>${item.laki.toLocaleString("id-ID")}</td>
+                    <td>${item.perempuan.toLocaleString("id-ID")}</td>
+                    <td>${item.tka.toLocaleString("id-ID")}</td>
+                    <td>${item.total.toLocaleString("id-ID")}</td>
+                </tr>
+            `;
+        }
+    };
+
+    // 🔥 JIKA PILIH 1 PROVINSI
     if (provinsiSelected) {
-        const total = provMap[provinsiSelected] || 0;
-        tbody.innerHTML = `<tr><td>${provinsiSelected}</td><td>${total.toLocaleString("id-ID")}</td></tr>`;
+        const item = grouped[provinsiSelected] || {
+            total: 0,
+            laki: 0,
+            perempuan: 0,
+            tka: 0,
+        };
+
+        tbody.innerHTML = renderRow(provinsiSelected, item);
         return;
     }
 
-    Object.keys(provMap).forEach((prov) => {
-        const total = provMap[prov];
-        const tr = document.createElement("tr");
-        tr.innerHTML = `<td>${prov}</td><td>${total.toLocaleString("id-ID")}</td>`;
-        tbody.appendChild(tr);
-    });
+    // 🔥 SEMUA PROVINSI
+    Object.keys(grouped)
+        .sort((a, b) => a.localeCompare(b, "id"))
+        .forEach((prov) => {
+            tbody.innerHTML += renderRow(prov, grouped[prov]);
+        });
 }
+window.renderTableProvinsi = renderTableProvinsi;
 
 function renderTableKabupaten() {
     const tbody = document.getElementById("tableKabupatenBody");

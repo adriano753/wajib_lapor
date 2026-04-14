@@ -51,4 +51,9 @@ class KbliController extends Controller
 
         return response()->json($data);
     }
+    public function filterTopProvinsi(Request $request)
+{
+    $data = $this->service->getRekapKbliTopProvinsi($request);
+    return response()->json($data);
+}
 }

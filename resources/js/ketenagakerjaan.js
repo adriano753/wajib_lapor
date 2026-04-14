@@ -268,6 +268,13 @@ function loadChartKetenagakerjaan() {
             // isi tabel
             renderTabelProvinsi(data);
             renderTabelKabupaten(data);
+            renderTableP2K3Only(data);
+            renderTableSerikatOnly(data);
+            renderTableSusuOnly(data);
+            renderTableBipartitOnly(data);
+            renderTableRencanaTKOnly(data);
+            renderTableDisabilitasOnly(data);
+            renderTableAhliK3Only(data);
         })
         .catch((err) => console.error("Fetch error:", err));
 }
@@ -420,7 +427,152 @@ function renderTabelProvinsi(data) {
         tbody.innerHTML += row;
     });
 }
+function renderTableP2K3Only(data) {
+    const tbody = document.getElementById("tbodyP2K3");
+    if (!tbody) return;
 
+    tbody.innerHTML = "";
+
+    const labels = (data.p2k3?.labels ?? []).filter((v) => v !== null);
+
+    labels.forEach((provinsi, i) => {
+        const sudah = Number(data.p2k3?.sudah?.[i] ?? 0);
+        const belum = Number(data.p2k3?.belum?.[i] ?? 0);
+
+        tbody.innerHTML += `
+            <tr>
+                <td>${provinsi}</td>
+                <td>${sudah.toLocaleString("id-ID")}</td>
+                <td>${belum.toLocaleString("id-ID")}</td>
+            </tr>
+        `;
+    });
+}
+
+function renderTableSerikatOnly(data) {
+    const tbody = document.getElementById("tbodySerikat");
+    if (!tbody) return;
+
+    tbody.innerHTML = "";
+
+    const labels = (data.serikat?.labels ?? []).filter((v) => v !== null);
+
+    labels.forEach((provinsi, i) => {
+        const sudah = Number(data.serikat?.sudah?.[i] ?? 0);
+        const belum = Number(data.serikat?.belum?.[i] ?? 0);
+
+        tbody.innerHTML += `
+            <tr>
+                <td>${provinsi}</td>
+                <td>${sudah.toLocaleString("id-ID")}</td>
+                <td>${belum.toLocaleString("id-ID")}</td>
+            </tr>
+        `;
+    });
+}
+function renderTableSusuOnly(data) {
+    const tbody = document.getElementById("tbodySusu");
+    if (!tbody) return;
+
+    tbody.innerHTML = "";
+
+    const labels = (data.susu?.labels ?? []).filter((v) => v !== null);
+
+    labels.forEach((provinsi, i) => {
+        const sudah = Number(data.susu?.sudah?.[i] ?? 0);
+        const belum = Number(data.susu?.belum?.[i] ?? 0);
+
+        tbody.innerHTML += `
+            <tr>
+                <td>${provinsi}</td>
+                <td>${sudah.toLocaleString("id-ID")}</td>
+                <td>${belum.toLocaleString("id-ID")}</td>
+            </tr>
+        `;
+    });
+}
+function renderTableBipartitOnly(data) {
+    const tbody = document.getElementById("tbodyBipartit");
+    if (!tbody) return;
+
+    tbody.innerHTML = "";
+
+    const labels = (data.bipartit?.labels ?? []).filter((v) => v !== null);
+
+    labels.forEach((provinsi, i) => {
+        const sudah = Number(data.bipartit?.sudah?.[i] ?? 0);
+        const belum = Number(data.bipartit?.belum?.[i] ?? 0);
+
+        tbody.innerHTML += `
+            <tr>
+                <td>${provinsi}</td>
+                <td>${sudah.toLocaleString("id-ID")}</td>
+                <td>${belum.toLocaleString("id-ID")}</td>
+            </tr>
+        `;
+    });
+}
+function renderTableRencanaTKOnly(data) {
+    const tbody = document.getElementById("tbodyRencanaTK");
+    if (!tbody) return;
+
+    tbody.innerHTML = "";
+
+    const labels = (data.rencana_tk?.labels ?? []).filter((v) => v !== null);
+
+    labels.forEach((provinsi, i) => {
+        const sudah = Number(data.rencana_tk?.sudah?.[i] ?? 0);
+
+        tbody.innerHTML += `
+            <tr>
+                <td>${provinsi}</td>
+                <td>${sudah.toLocaleString("id-ID")}</td>
+            </tr>
+        `;
+    });
+}
+function renderTableDisabilitasOnly(data) {
+    const tbody = document.getElementById("tbodyDisabilitas");
+    if (!tbody) return;
+
+    tbody.innerHTML = "";
+
+    const labels = (data.disabilitas?.labels ?? []).filter((v) => v !== null);
+
+    labels.forEach((provinsi, i) => {
+        const sudah = Number(data.disabilitas?.sudah?.[i] ?? 0);
+        const total = Number(data.disabilitas?.total?.[i] ?? 0);
+
+        tbody.innerHTML += `
+            <tr>
+                <td>${provinsi}</td>
+                <td>${sudah.toLocaleString("id-ID")}</td>
+                <td>${total.toLocaleString("id-ID")}</td>
+            </tr>
+        `;
+    });
+}
+function renderTableAhliK3Only(data) {
+    const tbody = document.getElementById("tbodyAhliK3");
+    if (!tbody) return;
+
+    tbody.innerHTML = "";
+
+    const labels = (data.ahli_k3?.labels ?? []).filter((v) => v !== null);
+
+    labels.forEach((provinsi, i) => {
+        const sudah = Number(data.ahli_k3?.sudah?.[i] ?? 0);
+        const total = Number(data.ahli_k3?.total?.[i] ?? 0);
+
+        tbody.innerHTML += `
+            <tr>
+                <td>${provinsi}</td>
+                <td>${sudah.toLocaleString("id-ID")}</td>
+                <td>${total.toLocaleString("id-ID")}</td>
+            </tr>
+        `;
+    });
+}
 function renderTabelKabupaten(data) {
     const tbody = document.getElementById("tbodyKabupaten");
     if (!tbody) return;
@@ -630,7 +782,9 @@ document.addEventListener("DOMContentLoaded", function () {
             const { jsPDF } = window.jspdf;
             const pdf = new jsPDF("l", "mm", "a4");
 
-            let y = 10;
+           const KOP_Y = 35;
+const FILTER_Y = KOP_Y + 12;
+let y = FILTER_Y + 8;
 
             const now = new Date();
             const tanggal = now.toLocaleDateString("id-ID");
@@ -638,11 +792,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
             const addHeader = () => {
                 pdf.setFontSize(9);
-                pdf.text(`Dicetak: ${tanggal} ${jam}`, 280, 8, {
+                pdf.setTextColor(100);
+                pdf.text(`Dicetak: ${tanggal} ${jam}`, 280, KOP_Y, {
                     align: "right",
                 });
             };
 
+            await addKop(pdf);
             addHeader();
 
             // =========================
@@ -656,13 +812,16 @@ document.addEventListener("DOMContentLoaded", function () {
                 "kabupatenKetenagakerjaan",
             )?.value;
 
-            pdf.setFontSize(12);
-            pdf.text(
-                `Filter: ${jenis || "semua"} | ${provinsi || "nasional"} | ${kabupaten || "-"}`,
-                10,
-                y,
-            );
-            y += 10;
+            pdf.setFontSize(11);
+pdf.setFont(undefined, "normal");
+
+pdf.text(
+    `Filter: ${jenis || "semua"} | ${provinsi || "nasional"} | ${kabupaten || "-"}`,
+    10,
+    FILTER_Y
+);
+
+y = FILTER_Y + 10;
 
             // =========================
             // LIST CHART
@@ -678,26 +837,30 @@ document.addEventListener("DOMContentLoaded", function () {
                 "barPerencanaanTk",
             ];
 
-            for (let i = 0; i < chartIds.length; i++) {
-                const chart = Chart.getChart(chartIds[i]);
+           for (let i = 0; i < chartIds.length; i++) {
+    const chart = Chart.getChart(chartIds[i]);
+    if (!chart) continue;
 
-                if (!chart) continue;
+    // page baru untuk chart selain chart pertama
+    if (i > 0) {
+        pdf.addPage();
+    }
 
-                const img = chart.toBase64Image();
+    await addKop(pdf);
+    addHeader();
 
-                if (y > 150) {
-                    pdf.addPage();
-                    addHeader();
-                    y = 15;
-                }
+    const img = chart.toBase64Image("image/png", 4);
 
-                pdf.setFontSize(11);
-                pdf.text(chartIds[i], 10, y);
-                y += 5;
+    const chartTitle =
+        chart.canvas.closest(".card")?.querySelector(".card-title")
+            ?.innerText || chartIds[i];
 
-                pdf.addImage(img, "PNG", 10, y, 270, 80);
-                y += 90;
-            }
+    pdf.setFontSize(12);
+    pdf.setFont(undefined, "bold");
+    pdf.text(chartTitle, 10, KOP_Y + 8);
+
+    pdf.addImage(img, "PNG", 10, KOP_Y + 20, 270, 105);
+}
 
             // =========================
             // TABEL
@@ -711,13 +874,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (tableProv?.style.display !== "none") {
                 pdf.addPage();
+                await addKop(pdf);
                 addHeader();
 
-                pdf.text("Tabel Provinsi", 10, 10);
+                pdf.text("Tabel Provinsi", 10, KOP_Y + 5);
 
                 pdf.autoTable({
                     html: "#tabelProvinsiKetenagakerjaan table",
-                    startY: 15,
+                    startY: KOP_Y + 10,
                     styles: { fontSize: 6 },
                     headStyles: { fillColor: [13, 110, 253] },
                 });
@@ -725,13 +889,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (tableKab?.style.display !== "none") {
                 pdf.addPage();
+                await addKop(pdf);
                 addHeader();
 
-                pdf.text("Tabel Kabupaten", 10, 10);
+                pdf.text("Tabel Kabupaten", 10, KOP_Y + 5);
 
                 pdf.autoTable({
                     html: "#tabelKabupatenKetenagakerjaan table",
-                    startY: 15,
+                    startY: KOP_Y + 10,
                     styles: { fontSize: 6 },
                     headStyles: { fillColor: [220, 53, 69] },
                 });

@@ -15,6 +15,14 @@ document.addEventListener("DOMContentLoaded", function () {
             const pdf = new jsPDF("l", "mm", "a4");
             const pageWidth = pdf.internal.pageSize.getWidth();
 
+            let isP2K3Download = true;
+            let isSerikatDownload = true;
+            let isSusuDownload = true;
+            let isBipartitDownload = true;
+            let isRencanaTKDownload = true;
+            let isDisabilitasDownload = true;
+            let isAhliK3Download = true;
+            let isKBLIDownload = true;
             // 🔥 loading button
             btnAll.innerText = "Generating PDF...";
             btnAll.disabled = true;
@@ -26,20 +34,49 @@ document.addEventListener("DOMContentLoaded", function () {
             // =========================
             // KOP SURAT
             // =========================
-            function addKop() {
+            async function addKop() {
+                const loadImage = (src) => {
+                    return new Promise((resolve) => {
+                        const img = new Image();
+                        img.src = src;
+                        img.onload = () => resolve(img);
+                    });
+                };
+
+                const imgKiri = await loadImage("/images/kemnaker_logo.png");
+                const imgKanan = await loadImage("/images/binwas.png");
+
+                const imgWidth = 18;
+                const imgHeight = 18;
+
+                // kiri
+                pdf.addImage(imgKiri, "PNG", 10, 5, imgWidth, imgHeight);
+
+                // kanan
+                pdf.addImage(
+                    imgKanan,
+                    "PNG",
+                    pageWidth - 28,
+                    5,
+                    imgWidth,
+                    imgHeight,
+                );
+
+                // text
                 pdf.setFont("helvetica", "bold");
                 pdf.setFontSize(14);
-                pdf.text("KEMENTERIAN KETENAGAKERJAAN", pageWidth / 2, 10, {
+                pdf.text("KEMENTERIAN KETENAGAKERJAAN", pageWidth / 2, 12, {
                     align: "center",
                 });
 
                 pdf.setFontSize(11);
-                pdf.text("LAPORAN DATA KETENAGAKERJAAN", pageWidth / 2, 16, {
+                pdf.text("LAPORAN DATA KETENAGAKERJAAN", pageWidth / 2, 18, {
                     align: "center",
                 });
 
-                pdf.setLineWidth(0.5);
-                pdf.line(10, 20, pageWidth - 10, 20);
+                // garis (lebih bawah biar ga nabrak)
+                pdf.setLineWidth(0.7);
+                pdf.line(10, 28, pageWidth - 10, 28);
             }
 
             function addFooter() {
@@ -55,13 +92,13 @@ Data ini menggambarkan kondisi perusahaan terkait indikator tersebut sebagai bah
 
                 pdf.setFontSize(10);
                 pdf.setFont("helvetica", "normal");
-                pdf.text(text, 10, 30, { maxWidth: 270 });
+                pdf.text(text, 10, 40, { maxWidth: 270 });
             }
 
             // =========================
             // COVER
             // =========================
-            addKop();
+            await addKop();
 
             pdf.setFontSize(16);
             pdf.text("LAPORAN ANALISIS KETENAGAKERJAAN", pageWidth / 2, 60, {
@@ -74,7 +111,7 @@ Data ini menggambarkan kondisi perusahaan terkait indikator tersebut sebagai bah
             });
 
             pdf.text(
-                "Laporan ini berisi hasil visualisasi data ketenagakerjaan berdasarkan sistem WLKP.",
+                "Laporan ini berisi hasil visualisasi data ketenagakerjaan berdasarkan sistem WLKP. Data yang disajikan mencerminkan kondisi aktual perusahaan terkait berbagai indikator ketenagakerjaan secara komprehensif. Informasi ini diharapkan dapat menjadi dasar dalam pengambilan kebijakan serta evaluasi kinerja di bidang ketenagakerjaan.",
                 pageWidth / 2,
                 85,
                 { align: "center", maxWidth: 200 },
@@ -100,16 +137,18 @@ Data ini menggambarkan kondisi perusahaan terkait indikator tersebut sebagai bah
                 {
                     chartId: "kbliChartCanvas",
                     title: "Data Lapangan Usaha",
+                },
+                {
+                    chartId: "barChartKbli",
+                    title: "Sebaran Tenaga Kerja Berdasarkan KBLI",
                     table: "#tableWrapperKbli",
+                    mode: "full",
                 },
                 {
                     chartId: "tenagaKerjaProvChart",
                     title: "Data Tenaga Kerja per Provinsi",
                     table: "#tableProvinsiWrapper",
-                },
-                {
-                    chartId: "barChartKbli",
-                    title: "Sebaran Tenaga Kerja Berdasarkan KBLI",
+                    mode: "full",
                 },
                 {
                     chartId: "provinsiLineChartJaminan",
@@ -120,25 +159,56 @@ Data ini menggambarkan kondisi perusahaan terkait indikator tersebut sebagai bah
                     chartId: "chartPPPKB",
                     title: "PPPKB",
                     table: "#tableProvinsiPPPKBWrapper",
+                    mode: "full",
+                    KBLIOnly: true,
+                },
+                // {
+                //     chartId: "upahMinimumChart",
+                //     title: "Upah Minimum",
+                //     table: "#tableWrapperUpah",
+                // },
+                {
+                    chartId: "barP2K3",
+                    title: "P2K3",
+                    table: "#tableP2K3Wrapper",
+                    p2k3Only: true,
                 },
                 {
-                    chartId: "upahMinimumChart",
-                    title: "Upah Minimum",
-                    table: "#tableWrapperUpah",
+                    chartId: "barAhliK3",
+                    title: "Ahli K3",
+                    table: "#tableAhliK3Wrapper",
+                    AhliK3Only: true,
                 },
-                { chartId: "barAhliK3", title: "Ahli K3" },
                 {
                     chartId: "barDisabilitas",
                     title: "Tenaga Kerja Disabilitas",
+                    table: "#tableDisabilitasWrapper",
+                    DisabilitasOnly: true,
                 },
-                { chartId: "barSusu", title: "Struktur Skala Upah" },
-                { chartId: "barSerikatPekerja", title: "Serikat Pekerja" },
-                { chartId: "barBipartitPekerja", title: "LKS Bipartit" },
+                {
+                    chartId: "barSusu",
+                    title: "Struktur Skala Upah",
+                    table: "#tableSusuWrapper",
+                    SusuOnly: true,
+                },
+                {
+                    chartId: "barSerikatPekerja",
+                    title: "Serikat Pekerja",
+                    table: "#tableSerikatWrapper",
+                    SerikatOnly: true,
+                },
+                {
+                    chartId: "barBipartitPekerja",
+                    title: "LKS Bipartit",
+                    table: "#tableBipartitWrapper",
+                    BipartitOnly: true,
+                },
                 { chartId: "barWkwi", title: "Waktu Kerja & Istirahat" },
                 {
                     chartId: "barPerencanaanTk",
                     title: "Perencanaan Tenaga Kerja",
-                    table: "#tabelProvinsiKetenagakerjaan",
+                    table: "#tableRencanaTKWrapper",
+                    RencanaTKOnly: true,
                 },
             ];
 
@@ -146,6 +216,15 @@ Data ini menggambarkan kondisi perusahaan terkait indikator tersebut sebagai bah
             // LOOP CHART + TABEL
             // =========================
             for (let item of chartTableMap) {
+                if (item.p2k3Only && !isP2K3Download) continue;
+                if (item.SusuOnly && !isSusuDownload) continue;
+                if (item.SerikatOnly && !isSerikatDownload) continue;
+                if (item.BipartitOnly && !isBipartitDownload) continue;
+                if (item.RencanaTKOnly && !isRencanaTKDownload) continue;
+                if (item.DisabilitasOnly && !isDisabilitasDownload) continue;
+                if (item.AhliK3Only && !isAhliK3Download) continue;
+                if (item.KBLIOnly && !isKBLIDownload) continue;
+
                 await new Promise((r) => setTimeout(r, 300));
                 if (item.table === "#tableKlasifikasi") {
                     renderTabelKlasifikasi(
@@ -153,12 +232,13 @@ Data ini menggambarkan kondisi perusahaan terkait indikator tersebut sebagai bah
                         item.mode || "single",
                     );
                 }
+
                 pdf.addPage();
-                addKop();
+                await addKop();
                 addFooter();
 
                 pdf.setFontSize(12);
-                pdf.text(item.title, 10, 25);
+                pdf.text(item.title, 10, 35);
 
                 addNarasi(item.title);
 
@@ -167,7 +247,7 @@ Data ini menggambarkan kondisi perusahaan terkait indikator tersebut sebagai bah
                 if (chart) {
                     try {
                         const img = chart.toBase64Image("image/png", 1.5);
-                        pdf.addImage(img, "PNG", 10, 60, 270, 90);
+                        pdf.addImage(img, "PNG", 10, 70, 270, 90);
                     } catch (err) {
                         console.error("Error chart:", item.chartId, err);
                     }
@@ -225,11 +305,45 @@ Data ini menggambarkan kondisi perusahaan terkait indikator tersebut sebagai bah
                         }
                     }
                 }
+                let finalY;
+
+                // 🔥 hitung posisi dari chart
+                let chartBottomY = 70 + 90; // posisi chart kamu
+                finalY = chartBottomY + 10;
 
                 // =========================
                 // TABEL DI BAWAH CHART
                 // =========================
                 if (item.table) {
+                    if (item.table === "#tableProvinsiWrapper") {
+                        renderTableProvinsi(item.mode || "full");
+                    }
+                    if (item.table === "#tableProvinsiPPPKBWrapper") {
+                        renderTablePPPKB("full");
+                    }
+                    if (item.table === "#tableWrapperKbli") {
+                        const tahun =
+                            document.getElementById("filterKbliTahun")?.value ||
+                            "";
+                        const bulan =
+                            document.getElementById("filterKbliBulan")?.value ||
+                            "";
+                        const prov =
+                            document.getElementById("filterKbliProvinsi")
+                                ?.value || "";
+                        const kota =
+                            document.getElementById("filterKbliKota")?.value ||
+                            "";
+
+                        const resTop = await fetch(
+                            `/kbli/top-provinsi?tahun=${tahun}&bulan=${bulan}&provinsi=${prov}&kota=${kota}`,
+                        );
+
+                        const dataTop = await resTop.json();
+
+                        renderTabelKbli(dataTop, "full");
+                    }
+
                     const el = document.querySelector(item.table);
 
                     if (!el) {
@@ -243,6 +357,8 @@ Data ini menggambarkan kondisi perusahaan terkait indikator tersebut sebagai bah
                         // =========================
                         if (item.table === "#bpjsTable") {
                             const rows = [];
+                            const temp = [];
+
                             const bpjsRows = document.querySelectorAll(
                                 "#bpjsTable .bpjs-row",
                             );
@@ -254,29 +370,80 @@ Data ini menggambarkan kondisi perusahaan terkait indikator tersebut sebagai bah
                                 const provinsi =
                                     row.querySelector(".provinsi-name")
                                         ?.innerText || "";
+
                                 const values = row.querySelectorAll(
                                     ".provinsi-values span",
                                 );
 
-                                rows.push([
+                                // 🔥 ambil angka bersih
+                                const jkk =
+                                    parseInt(
+                                        values[0]?.innerText.replace(/\D/g, ""),
+                                    ) || 0;
+                                const jht =
+                                    parseInt(
+                                        values[1]?.innerText.replace(/\D/g, ""),
+                                    ) || 0;
+                                const jkm =
+                                    parseInt(
+                                        values[2]?.innerText.replace(/\D/g, ""),
+                                    ) || 0;
+                                const jp =
+                                    parseInt(
+                                        values[3]?.innerText.replace(/\D/g, ""),
+                                    ) || 0;
+
+                                // 🔥 hitung total (buat sorting)
+                                const total = jkk + jht + jkm + jp;
+
+                                temp.push({
                                     provinsi,
-                                    values[0]?.innerText.replace("JKK: ", "") ||
-                                        "0",
-                                    values[1]?.innerText.replace("JHT: ", "") ||
-                                        "0",
-                                    values[2]?.innerText.replace("JKM: ", "") ||
-                                        "0",
-                                    values[3]?.innerText.replace("JP: ", "") ||
-                                        "0",
+                                    jkk,
+                                    jht,
+                                    jkm,
+                                    jp,
+                                    total,
+                                });
+                            });
+
+                            // =========================
+                            // 🔥 SORT TERBESAR → TERKECIL
+                            // =========================
+                            temp.sort((a, b) => b.total - a.total);
+
+                            // =========================
+                            // 🔥 CONVERT KE TABLE
+                            // =========================
+                            temp.forEach((item) => {
+                                rows.push([
+                                    item.provinsi,
+                                    item.jkk.toLocaleString("id-ID"),
+                                    item.jht.toLocaleString("id-ID"),
+                                    item.jkm.toLocaleString("id-ID"),
+                                    item.jp.toLocaleString("id-ID"),
                                 ]);
                             });
+
+                            // =========================
+                            // 🔥 RENDER PDF TABLE
+                            // =========================
 
                             pdf.autoTable({
                                 head: [["Provinsi", "JKK", "JHT", "JKM", "JP"]],
                                 body: rows,
-                                startY: 155,
-                                styles: { fontSize: 7 },
-                                headStyles: { fillColor: [220, 53, 69] },
+                                startY: finalY,
+                                margin: { top: 35 },
+                                styles: {
+                                    fontSize: 7,
+                                    halign: "center",
+                                },
+                                columnStyles: {
+                                    0: { halign: "left" }, // provinsi rata kiri
+                                },
+                                headStyles: {
+                                    fillColor: [220, 53, 69],
+                                    halign: "center",
+                                },
                             });
                         }
 
@@ -286,7 +453,8 @@ Data ini menggambarkan kondisi perusahaan terkait indikator tersebut sebagai bah
                         else if (el.tagName === "TABLE") {
                             pdf.autoTable({
                                 html: el,
-                                startY: 155,
+                                startY: finalY,
+                                margin: { top: 35 },
                                 styles: { fontSize: 6 },
                             });
                         }
@@ -298,22 +466,52 @@ Data ini menggambarkan kondisi perusahaan terkait indikator tersebut sebagai bah
                             const tableInside = el.querySelector("table");
 
                             if (tableInside) {
+                                // 🔥 khusus title KBLI
+                                if (item.table === "#tableWrapperKbli") {
+                                    const judulText =
+                                        document.getElementById(
+                                            "judulTabelKbli",
+                                        )?.innerText ||
+                                        "TABEL DATA LAPANGAN KERJA BERDASARKAN KBLI";
+
+                                    const lines = pdf.splitTextToSize(
+                                        judulText,
+                                        250,
+                                    );
+
+                                    // 🔥 cek kalau ruang halaman tidak cukup
+                                    if (finalY > 165) {
+                                        pdf.addPage();
+                                        await addKop();
+                                        addFooter();
+                                        finalY = 40;
+                                    }
+
+                                    // 🔥 judul tepat di atas tabel
+                                    pdf.setFontSize(11);
+                                    pdf.setFont("helvetica", "bold");
+                                    pdf.text(lines, 148, finalY, {
+                                        align: "center",
+                                    });
+
+                                    finalY += lines.length * 6 + 4;
+                                }
+
                                 pdf.autoTable({
                                     html: tableInside,
-                                    startY: 155,
+                                    startY: finalY,
+                                    margin: { top: 35 },
                                     styles: { fontSize: 6 },
-
-                                    // 🔥 cegah header dobel
                                     headStyles: { halign: "center" },
                                     didParseCell: function (data) {
                                         if (
                                             data.section === "body" &&
                                             data.row.index === 0
                                         ) {
-                                            // skip kalau row pertama isinya header lagi
                                             const text = data.cell.text
                                                 .join("")
                                                 .toLowerCase();
+
                                             if (
                                                 text.includes("no") ||
                                                 text.includes("tahun")
@@ -323,23 +521,6 @@ Data ini menggambarkan kondisi perusahaan terkait indikator tersebut sebagai bah
                                         }
                                     },
                                 });
-                            } else {
-                                // fallback (gambar)
-                                try {
-                                    const canvas = await html2canvas(el, {
-                                        scale: 2,
-                                        useCORS: true,
-                                    });
-
-                                    const img = canvas.toDataURL("image/png");
-                                    pdf.addImage(img, "PNG", 10, 155, 270, 40);
-                                } catch (err) {
-                                    console.error(
-                                        "Gagal render element:",
-                                        item.table,
-                                        err,
-                                    );
-                                }
                             }
                         }
                     }
@@ -349,6 +530,13 @@ Data ini menggambarkan kondisi perusahaan terkait indikator tersebut sebagai bah
             // =========================
             // SAVE
             // =========================
+            const totalPages = pdf.internal.getNumberOfPages();
+
+            for (let i = 1; i <= totalPages; i++) {
+                pdf.setPage(i);
+                await addKop();
+                addFooter();
+            }
             pdf.save("laporan-lengkap-ketenagakerjaan.pdf");
         } catch (err) {
             console.error("FATAL ERROR:", err);

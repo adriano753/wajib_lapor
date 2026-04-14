@@ -396,5 +396,88 @@
 
         </table>
     </div>
+    <div id="tableP2K3Wrapper" style="display:none;">
+        <table>
+            <thead>
+                <tr>
+                    <th>Provinsi</th>
+                    <th>P2K3 Sudah</th>
+                    <th>P2K3 Belum</th>
+                </tr>
+            </thead>
+            <tbody id="tbodyP2K3"></tbody>
+        </table>
+    </div>
+    <div id="tableSerikatWrapper" style="display:none;">
+        <table>
+            <thead>
+                <tr>
+                    <th>Provinsi</th>
+                    <th>Serikat Sudah</th>
+                    <th>Serikat Belum</th>
+                </tr>
+            </thead>
+            <tbody id="tbodySerikat"></tbody>
+        </table>
+    </div>
+    <div id="tableSusuWrapper" style="display:none;">
+        <table>
+            <thead>
+                <tr>
+                    <th>Provinsi</th>
+                    <th>SUSU Sudah</th>
+                    <th>SUSU Belum</th>
+                </tr>
+            </thead>
+            <tbody id="tbodySusu"></tbody>
+        </table>
+    </div>
+    <div id="tableBipartitWrapper" style="display:none;">
+        <table>
+            <thead>
+                <tr>
+                    <th>Provinsi</th>
+                    <th>Sudah</th>
+                    <th>Belum</th>
+                </tr>
+            </thead>
+            <tbody id="tbodyBipartit"></tbody>
+        </table>
+    </div>
+    <div id="tableRencanaTKWrapper" style="display:none;">
+        <table>
+            <thead>
+                <tr>
+                    <th>Provinsi</th>
+                    <th>Perusahaan</th>
+                </tr>
+            </thead>
+            <tbody id="tbodyRencanaTK"></tbody>
+        </table>
+    </div>
+    <div id="tableDisabilitasWrapper" style="display:none;">
+        <table>
+            <thead>
+                <tr>
+                    <th>Provinsi</th>
+                    <th>Perusahaan</th>
+                    <th>Total Disabilitas</th>
+                </tr>
+            </thead>
+            <tbody id="tbodyDisabilitas"></tbody>
+        </table>
+    </div>
+    <div id="tableAhliK3Wrapper" style="display:none;">
+        <table>
+            <thead>
+                <tr>
+                    <th>Provinsi</th>
+                    <th>Perusahaan</th>
+                    <th>Total Ahli K3</th>
+                </tr>
+            </thead>
+            <tbody id="tbodyAhliK3"></tbody>
+        </table>
+    </div>
 
 </div>

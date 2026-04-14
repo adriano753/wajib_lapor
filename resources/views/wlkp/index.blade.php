@@ -395,66 +395,66 @@
     </script>
 
     <script>
-        document.getElementById("downloadBarPdf").addEventListener("click", function() {
-            const {
-                jsPDF
-            } = window.jspdf;
-            const doc = new jsPDF("landscape", "mm", "a4");
+        // document.getElementById("downloadBarPdf").addEventListener("click", function() {
+        //     const {
+        //         jsPDF
+        //     } = window.jspdf;
+        //     const doc = new jsPDF("landscape", "mm", "a4");
 
-            doc.setFontSize(16);
-            doc.text("Laporan Provinsi", 14, 15);
+        //     doc.setFontSize(16);
+        //     doc.text("Laporan Provinsi", 14, 15);
 
-            const chartElement = document.getElementById("barChart");
+        //     const chartElement = document.getElementById("barChart");
 
-            html2canvas(chartElement, {
-                scale: 2,
-                useCORS: true,
-                backgroundColor: "#ffffff",
-                width: chartElement.scrollWidth,
-                height: chartElement.scrollHeight,
-                windowWidth: chartElement.scrollWidth,
-                windowHeight: chartElement.scrollHeight
-            }).then((canvas) => {
-                const imgData = canvas.toDataURL("image/png");
+        //     html2canvas(chartElement, {
+        //         scale: 2,
+        //         useCORS: true,
+        //         backgroundColor: "#ffffff",
+        //         width: chartElement.scrollWidth,
+        //         height: chartElement.scrollHeight,
+        //         windowWidth: chartElement.scrollWidth,
+        //         windowHeight: chartElement.scrollHeight
+        //     }).then((canvas) => {
+        //         const imgData = canvas.toDataURL("image/png");
 
-                const pageWidth = doc.internal.pageSize.getWidth();
-                const pageHeight = doc.internal.pageSize.getHeight();
+        //         const pageWidth = doc.internal.pageSize.getWidth();
+        //         const pageHeight = doc.internal.pageSize.getHeight();
 
-                const imgWidth = pageWidth - 20;
-                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        //         const imgWidth = pageWidth - 20;
+        //         const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-                doc.addImage(imgData, "PNG", 10, 25, imgWidth, imgHeight);
+        //         doc.addImage(imgData, "PNG", 10, 25, imgWidth, imgHeight);
 
-                const rows = [];
-                const tableRows = document.querySelectorAll("#tableProvinsilprWrapper tbody tr");
+        //         const rows = [];
+        //         const tableRows = document.querySelectorAll("#tableProvinsilprWrapper tbody tr");
 
-                tableRows.forEach((tr) => {
-                    const cells = tr.querySelectorAll("td");
-                    rows.push([
-                        cells[0]?.innerText || "",
-                        cells[1]?.innerText || "",
-                        cells[2]?.innerText || ""
-                    ]);
-                });
+        //         tableRows.forEach((tr) => {
+        //             const cells = tr.querySelectorAll("td");
+        //             rows.push([
+        //                 cells[0]?.innerText || "",
+        //                 cells[1]?.innerText || "",
+        //                 cells[2]?.innerText || ""
+        //             ]);
+        //         });
 
-                let tableStartY = imgHeight + 35;
+        //         let tableStartY = imgHeight + 35;
 
-                if (tableStartY > pageHeight - 30) {
-                    doc.addPage();
-                    tableStartY = 20;
-                }
+        //         if (tableStartY > pageHeight - 30) {
+        //             doc.addPage();
+        //             tableStartY = 20;
+        //         }
 
-                doc.autoTable({
-                    head: [
-                        ["No", "Provinsi", "Total"]
-                    ],
-                    body: rows,
-                    startY: tableStartY
-                });
+        //         doc.autoTable({
+        //             head: [
+        //                 ["No", "Provinsi", "Total"]
+        //             ],
+        //             body: rows,
+        //             startY: tableStartY
+        //         });
 
-                doc.save("laporan-provinsi.pdf");
-            });
-        });
+        //         doc.save("laporan-provinsi.pdf");
+        //     });
+        // });
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>

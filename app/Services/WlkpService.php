@@ -156,5 +156,66 @@ public function getRekapPPPKB()
         ->orderBy('provinsi')
         ->get();
 }
+public function getRekapKbliTopProvinsi($request = null)
+{
+    // =========================
+    // QUERY DASAR
+    // =========================
+    $query = DB::table('wajiblapor.report_detil_wlkp_binwas')
+        ->select(
+            'provinsi',
+            'nama_2_digit',
+            DB::raw('COUNT(*) as total')
+        )
+        ->whereNotNull('nama_2_digit');
+
+    // filter sama seperti chart
+    if ($request) {
+        $query->when($request->tahun, function ($q) use ($request) {
+            $q->whereYear('tgl_pendaftaran', $request->tahun);
+        })
+        ->when($request->bulan, function ($q) use ($request) {
+            $q->whereMonth('tgl_pendaftaran', $request->bulan);
+        })
+        ->when($request->provinsi, function ($q) use ($request) {
+            $q->where('provinsi', $request->provinsi);
+        })
+        ->when($request->kota, function ($q) use ($request) {
+            $q->where('kota', $request->kota);
+        });
+    }
+
+    // 🔥 WAJIB GROUP DULU
+    $base = $query
+        ->groupBy('provinsi', 'nama_2_digit');
+
+    // =========================
+    // MAX TOTAL PER PROVINSI
+    // =========================
+    $sub = DB::table(DB::raw("({$base->toSql()}) as t"))
+        ->mergeBindings($base)
+        ->select(
+            'provinsi',
+            DB::raw('MAX(total) as max_total')
+        )
+        ->groupBy('provinsi');
+
+    // =========================
+    // JOIN AMBIL KBLI TERTINGGI
+    // =========================
+    return DB::table(DB::raw("({$base->toSql()}) as a"))
+        ->mergeBindings($base)
+        ->joinSub($sub, 'b', function ($join) {
+            $join->on('a.provinsi', '=', 'b.provinsi')
+                 ->on('a.total', '=', 'b.max_total');
+        })
+        ->select(
+            'a.provinsi',
+            'a.nama_2_digit',
+            'a.total'
+        )
+        ->orderByDesc('a.total')
+        ->get();
+}
 
 }

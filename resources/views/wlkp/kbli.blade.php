@@ -54,18 +54,11 @@
             <canvas id="kbliChartCanvas"></canvas>
         </div>
     </div>
+    <h4 id="judulTabelKbli" class="table-title"></h4>
     <div id="tableWrapperKbli" style="display: none;">
         <table class="table table-bordered table-striped">
             <thead>
-                <tr>
-                    <th>No</th>
-                    <th>Tahun</th>
-                    <th>Bulan</th>
-                    <th>Provinsi</th>
-                    <th>Kab/Kota</th>
-                    <th>KBLI</th>
-                    <th>Jumlah</th>
-                </tr>
+                <tr id="headerKbli"></tr>
             </thead>
             <tbody id="tbodyKbli"></tbody>
         </table>
@@ -76,7 +69,7 @@
     window.kbliChart = null;
 
 
-    function renderKbliChart() {
+    function renderKbliLPChart() {
 
         const tahun = document.getElementById("filterKbliTahun")?.value;
         const bulan = document.getElementById("filterKbliBulan")?.value;
@@ -86,9 +79,23 @@
         fetch(`/kbli/filter?tahun=${tahun || ''}&bulan=${bulan || ''}&provinsi=${prov || ''}&kota=${kota || ''}`)
             .then(res => res.json())
             .then(data => {
+                console.log(data);
 
-                const labels = data.map(d => d.nama_2_digit);
-                const values = data.map(d => parseInt(d.total));
+                window.kbliData = data;
+
+                // 🔥 KHUSUS CHART → GLOBAL (tanpa provinsi)
+                const groupedChart = {};
+
+                data.forEach(item => {
+                    const key = item.nama_2_digit;
+
+                    if (!groupedChart[key]) groupedChart[key] = 0;
+
+                    groupedChart[key] += Number(item.total) || 0;
+                });
+
+                const labels = Object.keys(groupedChart);
+                const values = Object.values(groupedChart);
                 const titleText = generateTitle(tahun, bulan, prov, kota);
 
                 const canvas = document.getElementById("kbliChartCanvas");
@@ -186,11 +193,11 @@
 
     document.addEventListener("DOMContentLoaded", () => {
 
-        renderKbliChart();
+        renderKbliLPChart();
 
         document.querySelectorAll(".filter-select")
             .forEach(el => {
-                el.addEventListener("change", renderKbliChart);
+                el.addEventListener("change", renderKbliLPChart);
             });
 
         const btnKbli = document.getElementById("downloadPdfKbli");
@@ -214,7 +221,7 @@
                 const pageWidth = pdf.internal.pageSize.getWidth();
                 pdf.setFontSize(9);
                 pdf.setTextColor(100);
-                pdf.text(timestamp, pageWidth - 10, 8, {
+                pdf.text(timestamp, pageWidth - 10, 35, {
                     align: "right"
                 });
             }
@@ -225,6 +232,7 @@
             // =========================
             // CHART
             // =========================
+            await addKop(pdf);
             addHeader();
 
             const chart = Chart.getChart("kbliChartCanvas");
@@ -236,12 +244,13 @@
 
             const chartImg = chart.toBase64Image("image/png", 4);
 
-            pdf.addImage(chartImg, "PNG", 10, 15, 277, 120);
+            pdf.addImage(chartImg, "PNG", 10, 55, 277, 120);
 
             // =========================
             // TABEL
             // =========================
             pdf.addPage();
+            await addKop(pdf);
             addHeader();
 
             const tableWrapper = document.getElementById("tableWrapperKbli");
@@ -257,9 +266,26 @@
             tableWrapper.style.display = "block";
             tableWrapper.style.visibility = "visible";
 
+            const judulText =
+                document.getElementById("judulTabelKbli")?.innerText ||
+                "TABEL DATA LAPANGAN KERJA BERDASARKAN KBLI";
+
+            const lines = pdf.splitTextToSize(judulText, 250);
+
+            pdf.setFontSize(14);
+            pdf.setFont(undefined, "bold");
+
+            const judulY = 48;
+
+            pdf.text(lines, 148, judulY, {
+                align: "center"
+            });
+
+            const tableStartY = judulY + (lines.length * 6);
+
             pdf.autoTable({
                 html: table,
-                startY: 15,
+                startY: tableStartY + 8,
                 styles: {
                     fontSize: 8
                 },
@@ -267,9 +293,11 @@
                     fillColor: [66, 165, 245],
                     textColor: 255,
                 },
-                didDrawPage: () => addHeader(),
+                didDrawPage: async () => {
+                    await addKop(pdf);
+                    addHeader();
+                },
             });
-
             tableWrapper.style.display = originalDisplay;
 
             pdf.save("laporan-kbli.pdf");
@@ -282,7 +310,7 @@
             const provinsi = this.value;
             const kotaSelect = document.getElementById("filterKbliKota");
 
-            
+
             kotaSelect.innerHTML = `<option value="">Semua Kabupaten</option>`;
 
             if (!provinsi) return;
@@ -324,9 +352,17 @@
         return text;
     }
 
-    function renderTabelKbli(data) {
+    function renderTabelKbli(data, mode = "single") {
         const tbody = document.getElementById("tbodyKbli");
-        if (!tbody) return;
+        const header = document.getElementById("headerKbli");
+        const judul = document.getElementById("judulTabelKbli");
+
+        if (!tbody || !header || !judul) return;
+
+        if (!Array.isArray(data)) {
+            console.error("Data KBLI bukan array:", data);
+            return;
+        }
 
         const tahun = document.getElementById("filterKbliTahun")?.value || "Semua Tahun";
         const bulan = document.getElementById("filterKbliBulan")?.value || "Semua Bulan";
@@ -337,36 +373,119 @@
 
         let no = 1;
 
-        data
-            .sort((a, b) => {
-                const kbliA = (a.nama_2_digit || "").toLowerCase();
-                const kbliB = (b.nama_2_digit || "").toLowerCase();
+        // =========================
+        // JUDUL TABEL
+        // =========================
+        if (mode === "single") {
+            judul.innerHTML = `
+            TABEL DATA LAPANGAN KERJA BERDASARKAN KBLI
+            <br>
+            <small>${tahun} - ${bulan} | ${prov} | ${kota}</small>
+        `;
+        } else {
+            judul.innerHTML = `
+            TABEL DATA LAPANGAN KERJA BERDASARKAN KBLI
+            <br>
+            <small>KBLI Tertinggi per Provinsi</small>
+        `;
+        }
 
-                if (kbliA.includes("tidak")) return 1;
-                if (kbliB.includes("tidak")) return -1;
+        // =========================
+        // HEADER
+        // =========================
+        if (mode === "single") {
+            header.innerHTML = `
+            <th>No</th>
+            <th>Tahun</th>
+            <th>Bulan</th>
+            <th>Provinsi</th>
+            <th>Kab/Kota</th>
+            <th>KBLI</th>
+            <th>Total</th>
+        `;
+        } else {
+            header.innerHTML = `
+            <th>No</th>
+            <th>Provinsi</th>
+            <th>KBLI Tertinggi</th>
+            <th>Total</th>
+        `;
+        }
 
-                return kbliA.localeCompare(kbliB, "id");
-            })
-            .forEach((item) => {
-                tbody.innerHTML += `
-                <tr>
-                    <td>${no++}</td>
-                    <td>${tahun}</td>
-                    <td>${bulan}</td>
-                    <td>${prov}</td>
-                    <td>${kota}</td>
-                    <td>${item.nama_2_digit}</td>
-                    <td><b>${parseInt(item.total).toLocaleString("id-ID")}</b></td>
-                </tr>
-            `;
+        // =========================
+        // MODE SINGLE
+        // =========================
+        if (mode === "single") {
+            data
+                .sort((a, b) => (parseInt(b.total) || 0) - (parseInt(a.total) || 0))
+                .forEach((item) => {
+                    tbody.innerHTML += `
+                    <tr>
+                        <td>${no++}</td>
+                        <td>${tahun}</td>
+                        <td>${bulan}</td>
+                        <td>${prov}</td>
+                        <td>${kota}</td>
+                        <td>${item.nama_2_digit ?? "-"}</td>
+                        <td><b>${parseInt(item.total || 0).toLocaleString("id-ID")}</b></td>
+                    </tr>
+                `;
+                });
+        }
+
+        // =========================
+        // MODE FULL
+        // =========================
+        else {
+            const grouped = {};
+
+            data.forEach((row) => {
+                const provinsi = row.provinsi || "Tidak Diketahui";
+
+                if (!grouped[provinsi]) {
+                    grouped[provinsi] = {
+                        provinsi,
+                        maxTotal: 0,
+                        nama_2_digit: "-",
+                    };
+                }
+
+                const total = parseInt(row.total) || 0;
+                const nama = row.nama_2_digit || "-";
+
+                if (
+                    total > grouped[provinsi].maxTotal &&
+                    nama !== "-" &&
+                    nama.trim() !== ""
+                ) {
+                    grouped[provinsi].maxTotal = total;
+                    grouped[provinsi].nama_2_digit = nama;
+                }
             });
+
+            Object.values(grouped)
+                .sort((a, b) => b.maxTotal - a.maxTotal)
+                .forEach((item) => {
+                    tbody.innerHTML += `
+                    <tr>
+                        <td>${no++}</td>
+                        <td>${item.provinsi}</td>
+                        <td>${item.nama_2_digit}</td>
+                        <td><b>${item.maxTotal.toLocaleString("id-ID")}</b></td>
+                    </tr>
+                `;
+                });
+        }
     }
+
+
     const btnToggle = document.getElementById("toggleTableKbli");
     const tableWrapper = document.getElementById("tableWrapperKbli");
 
     if (btnToggle && tableWrapper) {
         btnToggle.addEventListener("click", function() {
             if (tableWrapper.style.display === "none") {
+                renderTabelKbli(window.kbliData, "single");
                 tableWrapper.style.display = "block";
                 btnToggle.innerText = "Tutup Tabel";
             } else {

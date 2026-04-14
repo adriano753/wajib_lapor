@@ -441,10 +441,10 @@ function renderTabelKlasifikasi(filteredData, mode = "single") {
         headerRow.innerHTML = `
             <th>No</th>
             <th>Provinsi</th>
-            <th>Mikro</th>
-            <th>Kecil</th>
-            <th>Menengah</th>
             <th>Besar</th>
+            <th>Menengah</th>
+            <th>Kecil</th>
+            <th>Mikro</th>
             <th>Tidak Teridentifikasi</th>
             <th>Total</th>
         `;
@@ -540,10 +540,10 @@ function renderTabelKlasifikasi(filteredData, mode = "single") {
                     <tr>
                         <td>${no++}</td>
                         <td>${item.provinsi}</td>
-                        <td>${item.mikro.toLocaleString("id-ID")}</td>
-                        <td>${item.kecil.toLocaleString("id-ID")}</td>
-                        <td>${item.menengah.toLocaleString("id-ID")}</td>
                         <td>${item.besar.toLocaleString("id-ID")}</td>
+                        <td>${item.menengah.toLocaleString("id-ID")}</td>
+                        <td>${item.kecil.toLocaleString("id-ID")}</td>
+                        <td>${item.mikro.toLocaleString("id-ID")}</td>
                         <td>${item.tidak.toLocaleString("id-ID")}</td>
                         <td><b>${grandTotal.toLocaleString("id-ID")}</b></td>
                     </tr>

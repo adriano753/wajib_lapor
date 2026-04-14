@@ -59,3 +59,4 @@ Route::get('/wlkp/kbli', [KbliController::class, 'index'])
     ->name('wlkp.kbli');
 Route::get('/kbli/filter', [KbliController::class, 'filter']);
 Route::get('/get-kabupaten', [KbliController::class, 'getKabupaten']);
+Route::get('/kbli/top-provinsi', [KbliController::class, 'filterTopProvinsi']);
