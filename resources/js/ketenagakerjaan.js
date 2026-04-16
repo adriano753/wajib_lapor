@@ -135,7 +135,7 @@ function createBarChart(canvasId, indikator = null) {
                     const index = elements[0].index;
                     const provinsi = this.data.labels[index];
 
-                    console.log("Klik provinsi:", provinsi, indikator);
+                 
 
                     loadChartKabupaten(indikator, provinsi);
                 }
@@ -366,7 +366,6 @@ function loadKabupaten(provinsi) {
     fetch(`/get-kabupaten?provinsi=${encodeURIComponent(provinsi)}`)
         .then((res) => res.json())
         .then((data) => {
-            console.log(data);
             kabupatenKetenagakerjaan.innerHTML = `<option value="">Semua Kabupaten</option>`;
 
             data.forEach((kab) => {
@@ -782,9 +781,9 @@ document.addEventListener("DOMContentLoaded", function () {
             const { jsPDF } = window.jspdf;
             const pdf = new jsPDF("l", "mm", "a4");
 
-           const KOP_Y = 35;
-const FILTER_Y = KOP_Y + 12;
-let y = FILTER_Y + 8;
+            const KOP_Y = 35;
+            const FILTER_Y = KOP_Y + 12;
+            let y = FILTER_Y + 8;
 
             const now = new Date();
             const tanggal = now.toLocaleDateString("id-ID");
@@ -813,15 +812,15 @@ let y = FILTER_Y + 8;
             )?.value;
 
             pdf.setFontSize(11);
-pdf.setFont(undefined, "normal");
+            pdf.setFont(undefined, "normal");
 
-pdf.text(
-    `Filter: ${jenis || "semua"} | ${provinsi || "nasional"} | ${kabupaten || "-"}`,
-    10,
-    FILTER_Y
-);
+            pdf.text(
+                `Filter: ${jenis || "semua"} | ${provinsi || "nasional"} | ${kabupaten || "-"}`,
+                10,
+                FILTER_Y,
+            );
 
-y = FILTER_Y + 10;
+            y = FILTER_Y + 10;
 
             // =========================
             // LIST CHART
@@ -837,30 +836,30 @@ y = FILTER_Y + 10;
                 "barPerencanaanTk",
             ];
 
-           for (let i = 0; i < chartIds.length; i++) {
-    const chart = Chart.getChart(chartIds[i]);
-    if (!chart) continue;
+            for (let i = 0; i < chartIds.length; i++) {
+                const chart = Chart.getChart(chartIds[i]);
+                if (!chart) continue;
 
-    // page baru untuk chart selain chart pertama
-    if (i > 0) {
-        pdf.addPage();
-    }
+                // page baru untuk chart selain chart pertama
+                if (i > 0) {
+                    pdf.addPage();
+                }
 
-    await addKop(pdf);
-    addHeader();
+                await addKop(pdf);
+                addHeader();
 
-    const img = chart.toBase64Image("image/png", 4);
+                const img = chart.toBase64Image("image/png", 4);
 
-    const chartTitle =
-        chart.canvas.closest(".card")?.querySelector(".card-title")
-            ?.innerText || chartIds[i];
+                const chartTitle =
+                    chart.canvas.closest(".card")?.querySelector(".card-title")
+                        ?.innerText || chartIds[i];
 
-    pdf.setFontSize(12);
-    pdf.setFont(undefined, "bold");
-    pdf.text(chartTitle, 10, KOP_Y + 8);
+                pdf.setFontSize(12);
+                pdf.setFont(undefined, "bold");
+                pdf.text(chartTitle, 10, KOP_Y + 8);
 
-    pdf.addImage(img, "PNG", 10, KOP_Y + 20, 270, 105);
-}
+                pdf.addImage(img, "PNG", 10, KOP_Y + 20, 270, 105);
+            }
 
             // =========================
             // TABEL

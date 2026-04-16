@@ -3,6 +3,50 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (!btnAll) return;
 
+    function setChartThemeForPDF(chart) {
+        if (!chart) return;
+
+        const isDark =
+            document.documentElement.classList.contains("dark") ||
+            document.body.classList.contains("dark");
+
+        const textColor = isDark ? "#ffffff" : "#111827";
+        const gridColor = isDark
+            ? "rgba(255,255,255,0.15)"
+            : "rgba(0,0,0,0.08)";
+
+        // legend
+        if (chart.options.plugins?.legend?.labels) {
+            chart.options.plugins.legend.labels.color = textColor;
+        }
+
+        // title
+        if (chart.options.plugins?.title) {
+            chart.options.plugins.title.color = textColor;
+        }
+
+        // scales
+        if (chart.options.scales) {
+            Object.keys(chart.options.scales).forEach((key) => {
+                const scale = chart.options.scales[key];
+
+                if (scale.ticks) {
+                    scale.ticks.color = textColor;
+                }
+
+                if (scale.grid) {
+                    scale.grid.color = gridColor;
+                }
+
+                if (scale.title) {
+                    scale.title.color = textColor;
+                }
+            });
+        }
+
+        chart.update("none");
+    }
+
     btnAll.addEventListener("click", async function () {
         try {
             const { jsPDF } = window.jspdf;
@@ -245,11 +289,16 @@ Data ini menggambarkan kondisi perusahaan terkait indikator tersebut sebagai bah
                 const chart = Chart.getChart(item.chartId);
 
                 if (chart) {
+                    setChartThemeForPDF(chart);
+                    const oldBg = chart.canvas.style.backgroundColor;
+                    chart.canvas.style.backgroundColor = "#ffffff";
                     try {
                         const img = chart.toBase64Image("image/png", 1.5);
                         pdf.addImage(img, "PNG", 10, 70, 270, 90);
                     } catch (err) {
                         console.error("Error chart:", item.chartId, err);
+                    } finally {
+                        chart.canvas.style.backgroundColor = oldBg;
                     }
                 } else {
                     const el = document.getElementById(item.chartId);
@@ -259,7 +308,11 @@ Data ini menggambarkan kondisi perusahaan terkait indikator tersebut sebagai bah
                     } else {
                         try {
                             const clone = el.cloneNode(true);
-
+                            clone
+                                .querySelectorAll(".bar-label, .bar-value")
+                                .forEach((label) => {
+                                    label.style.color = "#111827";
+                                });
                             const barCount =
                                 clone.querySelectorAll(".bar").length;
                             const estimatedWidth = Math.max(

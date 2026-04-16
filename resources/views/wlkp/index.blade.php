@@ -73,9 +73,9 @@
     </section>
 
     <!-- LAPORAN -->
+    <h2 class="section-title">Laporan</h2>
     <section class="laporan-section" id="laporan">
         <div class="beranda-container">
-            <h2 class="section-title">Laporan</h2>
 
             <!-- Data -->
             <div class="metrics-grid">
@@ -109,20 +109,29 @@
                     <div class="metric-label">Tidak Teridentifikasi</div>
                 </div>
             </div>
-
+            <div class="filter-panel mb-4">
+                 <h3 class="chart-title">Filter Laporan Provinsi</h3>
+                <div class="filter-group">
+                    <button id="downloadBarPdf" class="form-select filter-select">
+                        Download PDF
+                    </button>
+                </div>
+                <div class="filter-group">
+                    <button id="downloadPdfAll" class="form-select filter-select">
+                        Download full
+                    </button>
+                </div>
+                <div class="filter-group">
+                    <button id="toggleTablelprBtn" class="form-select filter-select">
+                        Tampilkan Tabel
+                    </button>
+                </div>
+            </div>
             <!-- GRAFIK PROVINSI -->
             <div class="chart-card full-width">
                 <div class="chart-header">
                     <h3 class="chart-title">Laporan Provinsi</h3>
-                    <button id="downloadBarPdf" class="form-select filter-select">
-                        Download PDF
-                    </button>
-                    <button id="downloadPdfAll" class="form-select filter-select">
-                        Download full
-                    </button>
-                    <button id="toggleTablelprBtn" class="form-select filter-select">
-                        Tampilkan Tabel
-                    </button>
+
                 </div>
 
                 <div class="chart-container">

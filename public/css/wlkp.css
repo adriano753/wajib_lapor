@@ -1540,8 +1540,83 @@ footer {
     background: #020617;
     border-radius: 12px;
     border: 1px solid rgba(255, 255, 255, 0.1);
+
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+#tableProvinsiWrapper table,
+#tableKabupatenWrapper table{
+    min-width: 900px;
+}
+#tableProvinsilprWrapper {
+    margin-top: 20px;
+    padding: 0;
+    border-radius: 12px;
+     background: transparent;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+#tableProvinsilprWrapper table {
+    min-width: 900px;
+    width: 100%;
+     margin: 0;
 }
 
+#tableWrapperKbli {
+    margin-top: 20px;
+    padding: 0;
+    border-radius: 12px;
+     background: transparent;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+#tableWrapperKbli table {
+     min-width: 900px;
+    width: 100%;
+     margin: 0;
+}
+
+#tableProvinsiPPPKBWrapper {
+    margin-top: 20px;
+    padding: 0;
+    border-radius: 12px;
+     background: transparent;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+#tableProvinsiPPPKBWrapper table {
+     min-width: 900px;
+    width: 100%;
+     margin: 0;
+}
+#tableWrapperUpah {
+   margin-top: 20px;
+    padding: 0;
+    border-radius: 12px;
+     background: transparent;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+#tableWrapperUpah table {
+   min-width: 900px;
+    width: 100%;
+     margin: 0;
+}
+#tabelProvinsiKetenagakerjaan,
+#tabelKabupatenKetenagakerjaan {
+    margin-top: 20px;
+    padding: 0;
+    border-radius: 12px;
+     background: transparent;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+#tabelProvinsiKetenagakerjaan table,
+#tabelKabupatenKetenagakerjaan table {
+     min-width: 900px;
+    width: 100%;
+     margin: 0;
+}
 /* Judul tabel */
 #tableProvinsiWrapper h6,
 #tableKabupatenWrapper h6 {
@@ -1554,16 +1629,22 @@ footer {
 .table {
     border-collapse: collapse;
     text-align: center;
-    table-layout: fixed;
+    table-layout: auto; /* ganti ini */
     width: 100%;
+    min-width: 600px; /* biar bisa scroll kalau sempit */
 }
-
+@media (max-width: 768px) {
+    .table {
+        min-width: 800px; /* paksa lebih lebar dari layar HP */
+    }
+}
 /* Border semua cell */
 .table th,
 .table td {
     border: 1px solid rgba(255, 255, 255, 0.15) !important;
     padding: 10px;
     vertical-align: middle;
+    white-space: nowrap;
 }
 
 /* Header */
@@ -1602,6 +1683,25 @@ footer {
 /* 75% */
 .kab-chart {
     flex: 1;
+    width: 100%;
+    position: relative;
+    height: 400px; /* fix tinggi normal */
+}
+
+.kab-chart canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+@media (max-width: 768px) {
+    .kab-chart {
+        height: 280px;
+    }
+}
+
+@media (max-width: 480px) {
+    .kab-chart {
+        height: 250px;
+    }
 }
 
 /* Tabel summary */
@@ -2143,17 +2243,32 @@ body.light-mode .hero-text h1 {
 
 #kbliOuterWrapper {
     width: 100%;
-    height: 450px;
-    overflow: auto;
-    border-radius: 10px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 #kbliChartWrapper {
-    min-height: 400px;
+    position: relative;
+    min-width: 600px; /* default */
 }
 
 #kbliChartCanvas {
-    height: 100% !important;
+    width: 100% !important;
+    height: 400px !important;
+}
+@media (max-width: 768px) {
+    #kbliChartWrapper {
+        min-width: 900px;
+    }
+
+    #kbliChartCanvas {
+        height: 300px !important;
+    }
+}
+#tableWrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch; /* smooth scroll di iOS */
+    width: 100%;
 }
 @media (max-width: 768px) {
     .menu-toggle {

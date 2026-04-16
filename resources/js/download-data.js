@@ -44,8 +44,8 @@ window.addKop = async function (pdf) {
 
     pdf.setLineWidth(0.7);
     pdf.line(10, 28, pageWidth - 10, 28);
-}
-window.addTimestamp = function (pdf) {  
+};
+window.addTimestamp = function (pdf) {
     const pageWidth = pdf.internal.pageSize.getWidth();
 
     const now = new Date();
@@ -67,7 +67,7 @@ window.addTimestamp = function (pdf) {
     pdf.text(`Dicetak: ${tanggal} ${jam} WIB`, pageWidth - 10, 35, {
         align: "right",
     });
-}
+};
 document.addEventListener("DOMContentLoaded", async function () {
     await preloadLogos();
     const { jsPDF } = window.jspdf;
@@ -206,6 +206,43 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
 
     //DATA TENAGA KERJA
+    function prepareChartForPdf(chart) {
+        if (!chart) return () => {};
+
+        const oldBg = chart.canvas.style.backgroundColor;
+        chart.canvas.style.backgroundColor = "#ffffff";
+
+        const oldTickColors = {};
+
+        if (chart.options.scales) {
+            Object.keys(chart.options.scales).forEach((key) => {
+                const scale = chart.options.scales[key];
+                oldTickColors[key] = scale.ticks?.color;
+
+                if (scale.ticks) {
+                    scale.ticks.color = "#111827";
+                }
+            });
+        }
+
+        chart.update("none");
+
+        return function restoreChart() {
+            chart.canvas.style.backgroundColor = oldBg;
+
+            if (chart.options.scales) {
+                Object.keys(chart.options.scales).forEach((key) => {
+                    const scale = chart.options.scales[key];
+
+                    if (scale.ticks) {
+                        scale.ticks.color = oldTickColors[key];
+                    }
+                });
+            }
+
+            chart.update("none");
+        };
+    }
     document
         .getElementById("downloadPdfTenagaKerja")
         .addEventListener("click", async function () {
@@ -227,7 +264,10 @@ document.addEventListener("DOMContentLoaded", async function () {
             addTimestamp(pdf);
 
             const provChart = Chart.getChart("tenagaKerjaProvChart");
+            const restoreProv = prepareChartForPdf(provChart);
+
             const provImg = provChart.toBase64Image();
+            restoreProv();
             pdf.addImage(provImg, "PNG", 10, 45, 277, 120);
 
             // =========================
@@ -262,7 +302,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 
             // Chart
             const kabChart = Chart.getChart("tenagaKerjaKabChart");
+            const restoreKab = prepareChartForPdf(kabChart);
+
             const kabImg = kabChart.toBase64Image();
+            restoreKab();
 
             // Chart ditaruh agak ke bawah sedikit
             pdf.addImage(kabImg, "PNG", 10, 50, 277, 60);
@@ -280,7 +323,9 @@ document.addEventListener("DOMContentLoaded", async function () {
             if (summaryElement) {
                 // clone supaya tidak ganggu layout asli
                 const clone = summaryElement.cloneNode(true);
-
+                clone.querySelectorAll("*").forEach((el) => {
+                    el.style.color = "#111827";
+                });
                 clone.style.width = "1000px"; // biar proporsional
                 clone.style.background = "#ffffff";
                 clone.style.padding = "40px";
@@ -328,6 +373,16 @@ document.addEventListener("DOMContentLoaded", async function () {
 
             if (kbliChart) {
                 const clone = kbliChart.cloneNode(true);
+                clone
+                    .querySelectorAll(".bar-label, .bar-value")
+                    .forEach((label) => {
+                        label.style.color = "#111827";
+                    });
+                clone
+                    .querySelectorAll(".bar-label, .bar-value")
+                    .forEach((label) => {
+                        label.style.color = "#111827";
+                    });
 
                 // Hitung estimasi lebar berdasarkan jumlah bar (asumsi 1 bar butuh min 60px agar label muat)
                 const barCount = clone.querySelectorAll(".bar").length;
@@ -563,7 +618,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     // ==========================================
     // DOWNLOAD PDF - BAR CHART HTML
     // ==========================================
-    console.log("downloadBarPdf script loaded");
+
     const btnBar = document.getElementById("downloadBarPdf");
 
     if (btnBar) {
@@ -585,6 +640,16 @@ document.addEventListener("DOMContentLoaded", async function () {
             // CLONE CHART
             // =========================
             const clone = originalChart.cloneNode(true);
+            clone
+                .querySelectorAll(".bar-label, .bar-value")
+                .forEach((label) => {
+                    label.style.color = "#111827";
+                });
+            clone
+                .querySelectorAll(".bar-label, .bar-value")
+                .forEach((label) => {
+                    label.style.color = "#111827";
+                });
 
             Object.assign(clone.style, {
                 width: "2800px",

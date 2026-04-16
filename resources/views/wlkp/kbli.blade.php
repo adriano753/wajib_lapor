@@ -54,8 +54,8 @@
             <canvas id="kbliChartCanvas"></canvas>
         </div>
     </div>
-    <h4 id="judulTabelKbli" class="table-title"></h4>
     <div id="tableWrapperKbli" style="display: none;">
+        <h4 id="judulTabelKbli" class="table-title"></h4>
         <table class="table table-bordered table-striped">
             <thead>
                 <tr id="headerKbli"></tr>
@@ -79,7 +79,7 @@
         fetch(`/kbli/filter?tahun=${tahun || ''}&bulan=${bulan || ''}&provinsi=${prov || ''}&kota=${kota || ''}`)
             .then(res => res.json())
             .then(data => {
-                console.log(data);
+
 
                 window.kbliData = data;
 
@@ -109,9 +109,11 @@
                 const totalWidth = labels.length * barWidth;
                 const totalHeight = 400 + (labels.length * 2);
 
-                wrapper.style.width = totalWidth > 1000 ?
-                    totalWidth + "px" :
-                    "100%";
+                if (labels.length > 8) {
+                    wrapper.style.width = (labels.length * 90) + "px"; // paksa melebar
+                } else {
+                    wrapper.style.width = "100%";
+                }
                 wrapper.style.height = totalHeight > 400 ? totalHeight + "px" : "400px";
 
                 const oldChart = Chart.getChart(canvas);

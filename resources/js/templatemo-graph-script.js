@@ -164,25 +164,36 @@ function sumTidakTeridentifikasiKab(kota = null) {
 // --- KBLI Logic ---
 
 function getKBLIByProvinsi(provinsi) {
-    const map = {};
-    if (!window.kbliData) return [];
+    let filtered = window.masterKBLIData || [];
 
-    window.kbliData.forEach((d) => {
-        if (provinsi && d.provinsi !== provinsi) return;
-        const kode = d.kode_2_digit;
-        const nama = d.nama_2_digit || "Tidak Teridentifikasi";
+    if (provinsi && provinsi.trim() !== "") {
+        const selectedProv = provinsi.trim().toLowerCase();
 
-        if (!map[kode]) {
-            map[kode] = { nama: nama, total: 0 };
+        filtered = filtered.filter((row) => {
+            const rowProv = (row.provinsi || "")
+                .trim()
+                .toLowerCase();
+
+            return rowProv === selectedProv;
+        });
+    }
+
+    const grouped = {};
+
+    filtered.forEach((row) => {
+        const nama = row.nama_2_digit || row.nama;
+
+        if (!grouped[nama]) {
+            grouped[nama] = 0;
         }
-        map[kode].total += Number(d.total);
+
+        grouped[nama] += Number(row.total || 0);
     });
 
-    return Object.values(map).sort((a, b) => {
-        if (a.nama.toUpperCase() < b.nama.toUpperCase()) return -1;
-        if (a.nama.toUpperCase() > b.nama.toUpperCase()) return 1;
-        return 0;
-    });
+    return Object.keys(grouped).map((key) => ({
+        nama: key,
+        total: grouped[key],
+    }));
 }
 
 // --- Update Summary HTML ---
@@ -514,54 +525,75 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // A. Filter Provinsi Dropdown
     const dropdownProvinsi = document.getElementById("provinsiSelect");
-    if (dropdownProvinsi) {
-        dropdownProvinsi.addEventListener("change", function () {
-            const provinsi = this.value;
-            renderKBLIChart();
 
-            // Trigger update tabel
-            const tableFilter = document.getElementById("tableFilter");
-            if (tableFilter) tableFilter.dispatchEvent(new Event("change"));
+if (dropdownProvinsi) {
+    dropdownProvinsi.addEventListener("change", async function () {
+        const provinsi = this.value;
 
-            updateKabupatenDropdown(provinsi);
+        // =========================
+        // UPDATE CHART KBLI
+        // =========================
+        try {
+            const res = await fetch(
+                `/kbli/filter?provinsi=${encodeURIComponent(provinsi)}`
+            );
 
-            // Reset Chart Kabupaten
-            window.kabChart.data.datasets[0].label = "Pilih Kab/Kota";
-            window.kabChart.data.datasets[0].data = [0, 0, 0, 0, 0];
-            window.kabChart.update();
-            updateKabChartSummary(null);
-
-            // Logic Switch Chart Utama
-            if (!provinsi) {
-                // Tampilkan Semua Provinsi
-                const pMap = totalProvinsi();
-                const tAll = totalSemuaProvinsi();
-                window.mainChart.data.labels = Object.keys(pMap);
-                window.mainChart.data.datasets[0].label =
-                    "Total " +
-                    getLabelJenis() +
-                    " (Semua Provinsi: " +
-                    tAll.toLocaleString("id-ID") +
-                    " orang)";
-                window.mainChart.data.datasets[0].data = Object.values(pMap);
-            } else {
-                // Tampilkan Detail Kota dalam Provinsi
-                const kMap = totalKotaByProvinsi(provinsi);
-                const tTk = totalTenagaKerjaProvinsi(provinsi);
-                window.mainChart.data.labels = Object.keys(kMap);
-                window.mainChart.data.datasets[0].label =
-                    "Total " +
-                    getLabelJenis() +
-                    " - " +
-                    provinsi +
-                    " (" +
-                    tTk.toLocaleString("id-ID") +
-                    " orang)";
-                window.mainChart.data.datasets[0].data = Object.values(kMap);
+            if (!res.ok) {
+                throw new Error("Response API gagal");
             }
-            window.mainChart.update();
-        });
-    }
+
+            window.masterKBLIData = await res.json();
+            renderKBLIChart();
+        } catch (err) {
+            console.error("Gagal load data KBLI:", err);
+            document.getElementById("barChartKbli").innerHTML =
+                "<p>Gagal memuat data</p>";
+        }
+
+        // =========================
+        // LOGIC LAMA
+        // =========================
+        const tableFilter = document.getElementById("tableFilter");
+        if (tableFilter) tableFilter.dispatchEvent(new Event("change"));
+
+        updateKabupatenDropdown(provinsi);
+
+        window.kabChart.data.datasets[0].label = "Pilih Kab/Kota";
+        window.kabChart.data.datasets[0].data = [0, 0, 0, 0, 0];
+        window.kabChart.update();
+        updateKabChartSummary(null);
+
+        if (!provinsi) {
+            const pMap = totalProvinsi();
+            const tAll = totalSemuaProvinsi();
+
+            window.mainChart.data.labels = Object.keys(pMap);
+            window.mainChart.data.datasets[0].label =
+                "Total " +
+                getLabelJenis() +
+                " (Semua Provinsi: " +
+                tAll.toLocaleString("id-ID") +
+                " orang)";
+            window.mainChart.data.datasets[0].data = Object.values(pMap);
+        } else {
+            const kMap = totalKotaByProvinsi(provinsi);
+            const tTk = totalTenagaKerjaProvinsi(provinsi);
+
+            window.mainChart.data.labels = Object.keys(kMap);
+            window.mainChart.data.datasets[0].label =
+                "Total " +
+                getLabelJenis() +
+                " - " +
+                provinsi +
+                " (" +
+                tTk.toLocaleString("id-ID") +
+                " orang)";
+            window.mainChart.data.datasets[0].data = Object.values(kMap);
+        }
+
+        window.mainChart.update();
+    });
+}
 
     // B. Filter Kabupaten Dropdown
     const dropdownKab = document.getElementById("kabupatenSelect");
@@ -1164,6 +1196,71 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // DOWNLOAD UPAH MINIMUM
+    function prepareChartForPdf(chart) {
+        if (!chart) return () => {};
+
+        const oldBg = chart.canvas.style.backgroundColor;
+        chart.canvas.style.backgroundColor = "#ffffff";
+
+        const oldTickColors = {};
+        const oldDataLabelColor = chart.options.plugins?.datalabels?.color;
+        const oldLegendColor = chart.options.plugins?.legend?.labels?.color;
+        const oldTitleColor = chart.options.plugins?.title?.color;
+
+        if (chart.options.scales) {
+            Object.keys(chart.options.scales).forEach((key) => {
+                const scale = chart.options.scales[key];
+                oldTickColors[key] = scale.ticks?.color;
+
+                if (scale.ticks) {
+                    scale.ticks.color = "#111827";
+                }
+            });
+        }
+
+        if (chart.options.plugins?.datalabels) {
+            chart.options.plugins.datalabels.color = "#111827";
+        }
+
+        if (chart.options.plugins?.legend?.labels) {
+            chart.options.plugins.legend.labels.color = "#111827";
+        }
+
+        // 🔥 title chart
+        if (chart.options.plugins?.title) {
+            chart.options.plugins.title.color = "#111827";
+        }
+
+        chart.update("none");
+
+        return function restoreChart() {
+            chart.canvas.style.backgroundColor = oldBg;
+
+            if (chart.options.scales) {
+                Object.keys(chart.options.scales).forEach((key) => {
+                    const scale = chart.options.scales[key];
+
+                    if (scale.ticks) {
+                        scale.ticks.color = oldTickColors[key];
+                    }
+                });
+            }
+
+            if (chart.options.plugins?.datalabels) {
+                chart.options.plugins.datalabels.color = oldDataLabelColor;
+            }
+
+            if (chart.options.plugins?.legend?.labels) {
+                chart.options.plugins.legend.labels.color = oldLegendColor;
+            }
+
+            if (chart.options.plugins?.title) {
+                chart.options.plugins.title.color = oldTitleColor;
+            }
+
+            chart.update("none");
+        };
+    }
     const btnDownloadUpah = document.getElementById("downloadPdfUpah");
 
     if (btnDownloadUpah) {
@@ -1200,8 +1297,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 return;
             }
 
-            const chartImg = chart.toBase64Image();
+            const restoreChart = prepareChartForPdf(chart);
 
+            const chartImg = chart.toBase64Image();
+            restoreChart();
             pdf.addImage(chartImg, "PNG", 10, 15, 277, 120);
 
             // =========================
@@ -1268,26 +1367,43 @@ function renderKBLIChart() {
             "Laporan Sebaran Tenaga Kerja Berdasarkan KBLI (" + provinsi + ")";
     }
 
-    const data = getKBLIByProvinsi(provinsi);
+    // 🔥 langsung pakai data hasil fetch backend
+    const data = window.masterKBLIData || [];
+
     if (!data.length) {
         barChart.innerHTML = "<p>Tidak ada data</p>";
         return;
     }
 
-    const maxVal = Math.max(...data.map((d) => d.total), 1);
+    const maxVal = Math.max(...data.map((d) => Number(d.total)), 1);
+
     data.forEach((row) => {
-        const height = (row.total / maxVal) * 100;
+        const height = (Number(row.total) / maxVal) * 100;
+
         const bar = document.createElement("div");
         bar.className = "bar";
         bar.style.height = height + "%";
-        bar.title = row.nama;
+        bar.title = row.nama_2_digit;
+
         bar.innerHTML = `
-            <span class="bar-value">${row.total.toLocaleString("id-ID")}</span>
-            <span class="bar-label">${row.nama}</span>
+            <span class="bar-value">${Number(row.total).toLocaleString("id-ID")}</span>
+            <span class="bar-label">${row.nama_2_digit}</span>
         `;
+
         barChart.appendChild(bar);
     });
 }
+
+// 🔥 load pertama kali
+document.addEventListener("DOMContentLoaded", async function () {
+    try {
+        const res = await fetch("/kbli/filter");
+        window.masterKBLIData = await res.json();
+        renderKBLIChart();
+    } catch (err) {
+        console.error("Init KBLI gagal:", err);
+    }
+});
 
 function renderTabelUpah(data) {
     const tbody = document.getElementById("tbodyUpah");
