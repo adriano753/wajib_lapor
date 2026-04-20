@@ -32,6 +32,7 @@ class WlkpController extends Controller
     {
         // 1. Definisikan Filters
         $filters = $request->only(['tahun', 'bulan', 'kota', 'provinsi', 'kbli']);
+<<<<<<< HEAD
         // 2. Ambil Data dari Service
         $masterData   = $this->service->getMasterData();
         $dropdowns    = $this->service->getDropdowns();
@@ -43,6 +44,18 @@ class WlkpController extends Controller
         $optProvinsi = $dropdownKBLI['provinsi'];
         $optKota = $dropdownKBLI['kota'];
         $optKBLI = $dropdownKBLI['kbli'];
+=======
+
+        // 2. Ambil Data dari Service
+        $masterData   = $this->service->getMasterData();
+        $dropdowns    = $this->service->getDropdowns();
+        $dropdownKBLI = $this->service->getDropdownsKBLI();
+        $kbliChart = $this->service->getRekapKBLI($filters);
+        $kbliLabels = $kbliChart->pluck('nama_2_digit')->values();
+        $kbliValues = $kbliChart->pluck('total')->values();
+        $rowsPPPKB = $this->service->getRekapPPPKB();
+
+>>>>>>> eae76cc (codingan jamsos dan upah minimum)
 
         /* ===============================
         DROPDOWN KAB/KOTA DINAMIS
@@ -57,7 +70,11 @@ class WlkpController extends Controller
             ->orderBy('kota')
             ->pluck('kota');
 
+<<<<<<< HEAD
         /* ===============================;i8
+=======
+        /* ===============================
+>>>>>>> eae76cc (codingan jamsos dan upah minimum)
            TOTAL KESELURUHAN
         =============================== */
         $totalRaw = DB::table('wajiblapor.report_detil_wlkp_binwas')->count();
@@ -292,12 +309,21 @@ class WlkpController extends Controller
         =========================================================== */
         $rowsKodeTk = DB::table('wajiblapor.report_detil_wlkp_binwas')
             ->select(
+<<<<<<< HEAD
+=======
+                'kode_2_digit',
+>>>>>>> eae76cc (codingan jamsos dan upah minimum)
                 'nama_2_digit',
                 'provinsi',
                 DB::raw('SUM(COALESCE(jumlah_karyawan_masih_bekerja,0)) as total')
             )
+<<<<<<< HEAD
             ->groupBy('nama_2_digit', 'provinsi')
             ->orderBy('nama_2_digit')
+=======
+            ->groupBy('kode_2_digit', 'nama_2_digit', 'provinsi')
+            ->orderBy('kode_2_digit')
+>>>>>>> eae76cc (codingan jamsos dan upah minimum)
             ->get();
 
         $maxValTk = $rowsKodeTk->max('total');
@@ -324,6 +350,10 @@ class WlkpController extends Controller
         =============================== */
         return view('wlkp.index', compact(
             'masterData',
+<<<<<<< HEAD
+=======
+            'kbliChart',
+>>>>>>> eae76cc (codingan jamsos dan upah minimum)
             'totalSemua',
             'mikro',
             'kecil',
@@ -352,10 +382,17 @@ class WlkpController extends Controller
             'mikroChart',
             'kecilChart',
             'menengahChart',
+<<<<<<< HEAD
+=======
+            'kbliChart',
+            'kbliLabels',
+            'kbliValues',
+>>>>>>> eae76cc (codingan jamsos dan upah minimum)
             'mikroProv',
             'kecilProv',
             'menengahProv',
             'besarProv',
+<<<<<<< HEAD
             'besarChart',
             'kbliFullData',
             'optTahun',
@@ -363,6 +400,9 @@ class WlkpController extends Controller
             'optProvinsi',
             'optKota',
             'optKBLI'
+=======
+            'besarChart'
+>>>>>>> eae76cc (codingan jamsos dan upah minimum)
         ), [
             'optTahun'       => $dropdowns['tahun'],
             'optProvinsi'    => $dropdowns['provinsi'],

@@ -41,4 +41,7 @@ Route::get('/filter/upah-minimum', [UpahMinimumFilterController::class, 'filter'
 */
 Route::get('/wlkp/kbli', [KbliController::class, 'index'])
     ->name('wlkp.kbli');
+<<<<<<< HEAD
 Route::get('/kbli/filter', [KbliController::class, 'filter']);
+=======
+>>>>>>> eae76cc (codingan jamsos dan upah minimum)

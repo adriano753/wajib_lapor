@@ -11,9 +11,18 @@ function safeNumber(val) {
 
 // --- Fungsi Mendapatkan Label Berdasarkan Filter ---
 function getLabelJenis() {
+<<<<<<< HEAD
     const jenisTenaga = document.getElementById("jenisTenagaKerja")?.value || "all";
     const jenisKelamin = document.getElementById("jenisKelamin")?.value || "all";
     const perjanjianKerja = document.getElementById("perjanjianKerja")?.value || "all";
+=======
+    const jenisTenaga =
+        document.getElementById("jenisTenagaKerja")?.value || "all";
+    const jenisKelamin =
+        document.getElementById("jenisKelamin")?.value || "all";
+    const perjanjianKerja =
+        document.getElementById("perjanjianKerja")?.value || "all";
+>>>>>>> eae76cc (codingan jamsos dan upah minimum)
 
     let labelTenaga = "";
     let labelGender = "";
@@ -38,9 +47,18 @@ function getLabelJenis() {
 
 // --- Core Calculation: Hitung Total Berdasarkan Filter ---
 function getTotalByJenis(d) {
+<<<<<<< HEAD
     const jenisTenaga = document.getElementById("jenisTenagaKerja")?.value || "all";
     const jenisKelamin = document.getElementById("jenisKelamin")?.value || "all";
     const perjanjianKerja = document.getElementById("perjanjianKerja")?.value || "all";
+=======
+    const jenisTenaga =
+        document.getElementById("jenisTenagaKerja")?.value || "all";
+    const jenisKelamin =
+        document.getElementById("jenisKelamin")?.value || "all";
+    const perjanjianKerja =
+        document.getElementById("perjanjianKerja")?.value || "all";
+>>>>>>> eae76cc (codingan jamsos dan upah minimum)
 
     const totalWni = safeNumber(d.total_wni);
     const totalWna = safeNumber(d.total_wna);
@@ -56,7 +74,12 @@ function getTotalByJenis(d) {
     // Filter Tenaga Kerja & Gender
     if (jenisTenaga === "all") {
         if (jenisKelamin === "l") total = totalWniLaki + totalWnaLaki;
+<<<<<<< HEAD
         else if (jenisKelamin === "p") total = totalWniPerempuan + totalWnaPerempuan;
+=======
+        else if (jenisKelamin === "p")
+            total = totalWniPerempuan + totalWnaPerempuan;
+>>>>>>> eae76cc (codingan jamsos dan upah minimum)
         else total = totalWni + totalWna;
     } else if (jenisTenaga === "wni") {
         if (jenisKelamin === "l") total = totalWniLaki;
@@ -134,16 +157,32 @@ function totalTenagaKerjaProvinsi(provinsi) {
 function sumBySkalaKab(skala, kota = null) {
     if (!window.kabData) return 0;
     return window.kabData
+<<<<<<< HEAD
         .filter((d) => d.skala_objek_pengawasan === skala && (!kota || d.kota === kota))
+=======
+        .filter(
+            (d) =>
+                d.skala_objek_pengawasan === skala &&
+                (!kota || d.kota === kota),
+        )
+>>>>>>> eae76cc (codingan jamsos dan upah minimum)
         .reduce((sum, d) => sum + getTotalByJenis(d), 0);
 }
 
 function sumTidakTeridentifikasiKab(kota = null) {
     if (!window.kabData) return 0;
     return window.kabData
+<<<<<<< HEAD
         .filter((d) =>
             (!d.skala_objek_pengawasan || d.skala_objek_pengawasan.trim() === "") &&
             (!kota || d.kota === kota)
+=======
+        .filter(
+            (d) =>
+                (!d.skala_objek_pengawasan ||
+                    d.skala_objek_pengawasan.trim() === "") &&
+                (!kota || d.kota === kota),
+>>>>>>> eae76cc (codingan jamsos dan upah minimum)
         )
         .reduce((sum, d) => sum + getTotalByJenis(d), 0);
 }
@@ -153,11 +192,20 @@ function sumTidakTeridentifikasiKab(kota = null) {
 function getKBLIByProvinsi(provinsi) {
     const map = {};
     if (!window.kbliData) return [];
+<<<<<<< HEAD
     
     window.kbliData.forEach((d) => {
         if (provinsi && d.provinsi !== provinsi) return;
         const kode = d.nama_2_digit;
         const nama = d.nama_2_digit || "Tidak Teridentifikasi";
+=======
+
+    window.kbliData.forEach((d) => {
+        if (provinsi && d.provinsi !== provinsi) return;
+        const kode = d.kode_2_digit;
+        const nama = d.nama_2_digit || "Tidak Teridentifikasi";
+
+>>>>>>> eae76cc (codingan jamsos dan upah minimum)
         if (!map[kode]) {
             map[kode] = { nama: nama, total: 0 };
         }
@@ -172,7 +220,19 @@ function getKBLIByProvinsi(provinsi) {
 }
 
 // --- Update Summary HTML ---
+<<<<<<< HEAD
 function updateKabChartSummary(kota, total = 0, tidakTeridentifikasi = 0, mikro = 0, kecil = 0, menengah = 0, besar = 0) {
+=======
+function updateKabChartSummary(
+    kota,
+    total = 0,
+    tidakTeridentifikasi = 0,
+    mikro = 0,
+    kecil = 0,
+    menengah = 0,
+    besar = 0,
+) {
+>>>>>>> eae76cc (codingan jamsos dan upah minimum)
     const summaryDiv = document.getElementById("dataSummary");
     if (!summaryDiv) return;
 
@@ -200,13 +260,20 @@ function applyChartTheme(chart) {
     if (!chart) return;
     const isLight = document.body.classList.contains("light-mode");
     const textColor = isLight ? "#020617" : "#e5e7eb";
+<<<<<<< HEAD
     const gridColor = isLight ? "rgba(15,23,42,0.15)" : "rgba(255,255,255,0.15)";
+=======
+    const gridColor = isLight
+        ? "rgba(15,23,42,0.15)"
+        : "rgba(255,255,255,0.15)";
+>>>>>>> eae76cc (codingan jamsos dan upah minimum)
 
     chart.options.scales.x.ticks.color = textColor;
     chart.options.scales.y.ticks.color = textColor;
     chart.options.scales.x.grid.color = gridColor;
     chart.options.scales.y.grid.color = gridColor;
 
+<<<<<<< HEAD
     if (chart.options.plugins?.title) chart.options.plugins.title.color = textColor;
     if (chart.options.plugins?.legend?.labels) chart.options.plugins.legend.labels.color = textColor;
     if (chart.options.plugins?.tooltip) {
@@ -217,6 +284,18 @@ function applyChartTheme(chart) {
 }
 
 
+=======
+    // Set global tooltip default
+    Chart.defaults.plugins.tooltip.backgroundColor = "rgba(17, 24, 39, 0.95)";
+    Chart.defaults.plugins.tooltip.titleColor = "#ffffff";
+    Chart.defaults.plugins.tooltip.bodyColor = "#ffffff";
+    Chart.defaults.plugins.tooltip.footerColor = "#ffffff";
+    Chart.defaults.plugins.tooltip.borderColor = "#374151";
+    Chart.defaults.plugins.tooltip.borderWidth = 1;
+    chart.update();
+}
+
+>>>>>>> eae76cc (codingan jamsos dan upah minimum)
 /* ==========================================================================
    BAGIAN 2: UI INTERACTIONS & ANIMATIONS
    ========================================================================== */
@@ -253,7 +332,11 @@ window.addEventListener("scroll", function () {
     const sections = document.querySelectorAll("section[id]");
     const navLinks = document.querySelectorAll(".nav-links a");
     const mobileNavLinks = document.querySelectorAll(".nav-links-mobile a");
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> eae76cc (codingan jamsos dan upah minimum)
     let scrollY = window.pageYOffset;
     sections.forEach((section) => {
         const sectionHeight = section.offsetHeight;
@@ -263,11 +346,21 @@ window.addEventListener("scroll", function () {
         if (scrollY > sectionTop && scrollY <= sectionTop + sectionHeight) {
             navLinks.forEach((link) => {
                 link.classList.remove("active");
+<<<<<<< HEAD
                 if (link.getAttribute("href") === `#${sectionId}`) link.classList.add("active");
             });
             mobileNavLinks.forEach((link) => {
                 link.classList.remove("active");
                 if (link.getAttribute("href") === `#${sectionId}`) link.classList.add("active");
+=======
+                if (link.getAttribute("href") === `#${sectionId}`)
+                    link.classList.add("active");
+            });
+            mobileNavLinks.forEach((link) => {
+                link.classList.remove("active");
+                if (link.getAttribute("href") === `#${sectionId}`)
+                    link.classList.add("active");
+>>>>>>> eae76cc (codingan jamsos dan upah minimum)
             });
         }
     });
@@ -295,7 +388,11 @@ function drawMiniChart(canvasId, color) {
     const ctx = canvas.getContext("2d");
     canvas.width = canvas.offsetWidth;
     canvas.height = canvas.offsetHeight;
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> eae76cc (codingan jamsos dan upah minimum)
     const points = [];
     for (let i = 0; i < 10; i++) points.push(Math.random() * canvas.height);
 
@@ -343,7 +440,13 @@ const observer = new IntersectionObserver((entries) => {
     });
 }, observerOptions);
 
+<<<<<<< HEAD
 document.querySelectorAll(".bar-chart").forEach((chart) => observer.observe(chart));
+=======
+document
+    .querySelectorAll(".bar-chart")
+    .forEach((chart) => observer.observe(chart));
+>>>>>>> eae76cc (codingan jamsos dan upah minimum)
 
 // --- Contact Form ---
 const contactForm = document.getElementById("contactForm");
@@ -354,16 +457,29 @@ if (contactForm) {
         if (!submitBtn) return;
         const originalText = submitBtn.textContent;
         submitBtn.textContent = "Message Sent! ✓";
+<<<<<<< HEAD
         submitBtn.style.background = "linear-gradient(135deg, #4ade80, #22c55e)";
         this.reset();
         setTimeout(() => {
             submitBtn.textContent = originalText;
             submitBtn.style.background = "linear-gradient(135deg, #ff6b6b, #ff8e53)";
+=======
+        submitBtn.style.background =
+            "linear-gradient(135deg, #4ade80, #22c55e)";
+        this.reset();
+        setTimeout(() => {
+            submitBtn.textContent = originalText;
+            submitBtn.style.background =
+                "linear-gradient(135deg, #ff6b6b, #ff8e53)";
+>>>>>>> eae76cc (codingan jamsos dan upah minimum)
         }, 3000);
     });
 }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> eae76cc (codingan jamsos dan upah minimum)
 /* ==========================================================================
    BAGIAN 3: MAIN INITIALIZATION (CHART & DATA)
    ========================================================================== */
@@ -374,6 +490,7 @@ document.addEventListener("DOMContentLoaded", function () {
         console.error("Chart.js belum ke-load");
         return;
     }
+<<<<<<< HEAD
     
     
     // --- 1. INISIALISASI CHART UTAMA (PROVINSI) ---
@@ -438,11 +555,104 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         },
     });
+=======
+
+    // --- 1. INISIALISASI CHART UTAMA (PROVINSI) ---
+    const provMap = totalProvinsi();
+    const totalAll = totalSemuaTenagaKerja();
+
+    // Assign ke window agar bisa diakses toggle theme
+    window.mainChart = new Chart(
+        document.getElementById("tenagaKerjaProvChart"),
+        {
+            type: "line",
+            data: {
+                labels: Object.keys(provMap),
+                datasets: [
+                    {
+                        label:
+                            "Total " +
+                            getLabelJenis() +
+                            " Semua Provinsi : " +
+                            totalAll.toLocaleString("id-ID") +
+                            " Orang",
+                        data: Object.values(provMap),
+                        tension: 0.4,
+                        borderWidth: 3,
+                    },
+                ],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {},
+                    tooltip: {
+                        callbacks: {
+                            title: (context) => context[0].label,
+                            label: (context) =>
+                                "Jumlah: " +
+                                (context.raw || 0).toLocaleString("id-ID") +
+                                " orang",
+                        },
+                    },
+                },
+                scales: {
+                    x: { ticks: { maxRotation: 45, minRotation: 45 } },
+                },
+            },
+        },
+    );
+
+    // --- 2. INISIALISASI CHART KABUPATEN ---
+    window.kabChart = new Chart(
+        document.getElementById("tenagaKerjaKabChart"),
+        {
+            type: "line",
+            data: {
+                labels: [
+                    "Tidak Teridentifikasi",
+                    "Mikro",
+                    "Kecil",
+                    "Menengah",
+                    "Besar",
+                ],
+                datasets: [
+                    {
+                        label: "Tenaga Kerja (Pilih Kab/Kota)",
+                        data: [0, 0, 0, 0, 0],
+                        tension: 0.4,
+                        borderWidth: 3,
+                    },
+                ],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {},
+                    tooltip: {
+                        callbacks: {
+                            label: (context) =>
+                                "Jumlah: " +
+                                (context.raw || 0).toLocaleString("id-ID") +
+                                " orang",
+                        },
+                    },
+                },
+                scales: {
+                    x: { ticks: { maxRotation: 45, minRotation: 45 } },
+                },
+            },
+        },
+    );
+>>>>>>> eae76cc (codingan jamsos dan upah minimum)
 
     // --- 3. EVENT LISTENERS FILTER ---
 
     // A. Filter Provinsi Dropdown
     const dropdownProvinsi = document.getElementById("provinsiSelect");
+<<<<<<< HEAD
     if(dropdownProvinsi) {
         dropdownProvinsi.addEventListener("change", function () {
             const provinsi = this.value;
@@ -451,6 +661,16 @@ document.addEventListener("DOMContentLoaded", function () {
             // Trigger update tabel
             const tableFilter = document.getElementById("tableFilter");
             if(tableFilter) tableFilter.dispatchEvent(new Event("change"));
+=======
+    if (dropdownProvinsi) {
+        dropdownProvinsi.addEventListener("change", function () {
+            const provinsi = this.value;
+            renderKBLIChart();
+
+            // Trigger update tabel
+            const tableFilter = document.getElementById("tableFilter");
+            if (tableFilter) tableFilter.dispatchEvent(new Event("change"));
+>>>>>>> eae76cc (codingan jamsos dan upah minimum)
 
             updateKabupatenDropdown(provinsi);
 
@@ -466,14 +686,34 @@ document.addEventListener("DOMContentLoaded", function () {
                 const pMap = totalProvinsi();
                 const tAll = totalSemuaProvinsi();
                 window.mainChart.data.labels = Object.keys(pMap);
+<<<<<<< HEAD
                 window.mainChart.data.datasets[0].label = "Total " + getLabelJenis() + " (Semua Provinsi: " + tAll.toLocaleString("id-ID") + " orang)";
+=======
+                window.mainChart.data.datasets[0].label =
+                    "Total " +
+                    getLabelJenis() +
+                    " (Semua Provinsi: " +
+                    tAll.toLocaleString("id-ID") +
+                    " orang)";
+>>>>>>> eae76cc (codingan jamsos dan upah minimum)
                 window.mainChart.data.datasets[0].data = Object.values(pMap);
             } else {
                 // Tampilkan Detail Kota dalam Provinsi
                 const kMap = totalKotaByProvinsi(provinsi);
                 const tTk = totalTenagaKerjaProvinsi(provinsi);
                 window.mainChart.data.labels = Object.keys(kMap);
+<<<<<<< HEAD
                 window.mainChart.data.datasets[0].label = "Total " + getLabelJenis() + " - " + provinsi + " (" + tTk.toLocaleString("id-ID") + " orang)";
+=======
+                window.mainChart.data.datasets[0].label =
+                    "Total " +
+                    getLabelJenis() +
+                    " - " +
+                    provinsi +
+                    " (" +
+                    tTk.toLocaleString("id-ID") +
+                    " orang)";
+>>>>>>> eae76cc (codingan jamsos dan upah minimum)
                 window.mainChart.data.datasets[0].data = Object.values(kMap);
             }
             window.mainChart.update();
@@ -482,12 +722,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // B. Filter Kabupaten Dropdown
     const dropdownKab = document.getElementById("kabupatenSelect");
+<<<<<<< HEAD
     if(dropdownKab) {
+=======
+    if (dropdownKab) {
+>>>>>>> eae76cc (codingan jamsos dan upah minimum)
         dropdownKab.addEventListener("change", function () {
             const kota = this.value;
             if (!kota) {
                 updateKabChartSummary(null);
+<<<<<<< HEAD
                 window.kabChart.data.datasets[0].label = "Tenaga Kerja - Pilih Kab/Kota";
+=======
+                window.kabChart.data.datasets[0].label =
+                    "Tenaga Kerja - Pilih Kab/Kota";
+>>>>>>> eae76cc (codingan jamsos dan upah minimum)
                 window.kabChart.data.datasets[0].data = [0, 0, 0, 0, 0];
                 window.kabChart.update();
                 return;
@@ -498,26 +747,60 @@ document.addEventListener("DOMContentLoaded", function () {
             const menengah = sumBySkalaKab("Menengah", kota);
             const kecil = sumBySkalaKab("Kecil", kota);
             const tidakTeridentifikasi = sumTidakTeridentifikasiKab(kota);
+<<<<<<< HEAD
             const total = mikro + besar + menengah + kecil + tidakTeridentifikasi;
 
             window.kabChart.data.datasets[0].label = "Tenaga Kerja - " + kota;
             window.kabChart.data.datasets[0].data = [tidakTeridentifikasi, mikro, kecil, menengah, besar];
             window.kabChart.update();
             updateKabChartSummary(kota, total, tidakTeridentifikasi, mikro, kecil, menengah, besar);
+=======
+            const total =
+                mikro + besar + menengah + kecil + tidakTeridentifikasi;
+
+            window.kabChart.data.datasets[0].label = "Tenaga Kerja - " + kota;
+            window.kabChart.data.datasets[0].data = [
+                tidakTeridentifikasi,
+                mikro,
+                kecil,
+                menengah,
+                besar,
+            ];
+            window.kabChart.update();
+            updateKabChartSummary(
+                kota,
+                total,
+                tidakTeridentifikasi,
+                mikro,
+                kecil,
+                menengah,
+                besar,
+            );
+>>>>>>> eae76cc (codingan jamsos dan upah minimum)
         });
     }
 
     // C. Filter Jenis & Perjanjian
+<<<<<<< HEAD
     ["jenisTenagaKerja", "jenisKelamin", "perjanjianKerja"].forEach(id => {
         const el = document.getElementById(id);
         if(el) {
             el.addEventListener("change", function () {
                 // Logic disable fields jika PKWT/PKWTT
                 if(id === "perjanjianKerja") {
+=======
+    ["jenisTenagaKerja", "jenisKelamin", "perjanjianKerja"].forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.addEventListener("change", function () {
+                // Logic disable fields jika PKWT/PKWTT
+                if (id === "perjanjianKerja") {
+>>>>>>> eae76cc (codingan jamsos dan upah minimum)
                     const val = this.value.toLowerCase();
                     const jt = document.getElementById("jenisTenagaKerja");
                     const jk = document.getElementById("jenisKelamin");
                     if (val === "pkwt" || val === "pkwtt") {
+<<<<<<< HEAD
                         if(jt) { jt.value = "wni"; jt.disabled = true; }
                         if(jk) { jk.value = "all"; jk.disabled = true; }
                     } else {
@@ -527,17 +810,40 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
                 // Trigger update chart utama via provinsi select
                 if(dropdownProvinsi) dropdownProvinsi.dispatchEvent(new Event("change"));
+=======
+                        if (jt) {
+                            jt.value = "wni";
+                            jt.disabled = true;
+                        }
+                        if (jk) {
+                            jk.value = "all";
+                            jk.disabled = true;
+                        }
+                    } else {
+                        if (jt) jt.disabled = false;
+                        if (jk) jk.disabled = false;
+                    }
+                }
+                // Trigger update chart utama via provinsi select
+                if (dropdownProvinsi)
+                    dropdownProvinsi.dispatchEvent(new Event("change"));
+>>>>>>> eae76cc (codingan jamsos dan upah minimum)
             });
         }
     });
 
     // --- 4. TABLE RENDER LOGIC ---
     const tableFilter = document.getElementById("tableFilter");
+<<<<<<< HEAD
     if(tableFilter) {
+=======
+    if (tableFilter) {
+>>>>>>> eae76cc (codingan jamsos dan upah minimum)
         tableFilter.addEventListener("change", function () {
             const val = this.value;
             const provWrap = document.getElementById("tableProvinsiWrapper");
             const kabWrap = document.getElementById("tableKabupatenWrapper");
+<<<<<<< HEAD
             
             if(provWrap) provWrap.style.display = "none";
             if(kabWrap) kabWrap.style.display = "none";
@@ -548,6 +854,18 @@ document.addEventListener("DOMContentLoaded", function () {
             } else if (val === "kabupaten") {
                 renderTableKabupaten();
                 if(kabWrap) kabWrap.style.display = "block";
+=======
+
+            if (provWrap) provWrap.style.display = "none";
+            if (kabWrap) kabWrap.style.display = "none";
+
+            if (val === "provinsi") {
+                renderTableProvinsi();
+                if (provWrap) provWrap.style.display = "block";
+            } else if (val === "kabupaten") {
+                renderTableKabupaten();
+                if (kabWrap) kabWrap.style.display = "block";
+>>>>>>> eae76cc (codingan jamsos dan upah minimum)
             }
         });
         // Init state
@@ -568,7 +886,11 @@ document.addEventListener("DOMContentLoaded", function () {
             const isLight = document.body.classList.contains("light-mode");
             toggleBtn.innerHTML = isLight ? "☀ Light" : "🌙 Dark";
             localStorage.setItem("theme", isLight ? "light" : "dark");
+<<<<<<< HEAD
             
+=======
+
+>>>>>>> eae76cc (codingan jamsos dan upah minimum)
             if (window.kabChart) applyChartTheme(window.kabChart);
             if (window.mainChart) applyChartTheme(window.mainChart);
             if (window.bpjsMainChart) applyChartTheme(window.bpjsMainChart);
@@ -582,16 +904,43 @@ document.addEventListener("DOMContentLoaded", function () {
     // --- 6. CHART BPJS (JAMINAN SOSIAL) ---
     if (window.chartJaminanData) {
         const ctxBpjs = document.getElementById("provinsiLineChartJaminan");
+<<<<<<< HEAD
         if(ctxBpjs) {
+=======
+        if (ctxBpjs) {
+>>>>>>> eae76cc (codingan jamsos dan upah minimum)
             window.bpjsMainChart = new Chart(ctxBpjs, {
                 type: "bar",
                 data: {
                     labels: window.chartJaminanData.labels,
                     datasets: [
+<<<<<<< HEAD
                         { label: "JKK", data: window.chartJaminanData.jkk, backgroundColor: "#3B82F6" },
                         { label: "JHT", data: window.chartJaminanData.jht, backgroundColor: "#22C55E" },
                         { label: "JKM", data: window.chartJaminanData.jkm, backgroundColor: "#F97316" },
                         { label: "JP", data: window.chartJaminanData.jp, backgroundColor: "#A855F7" },
+=======
+                        {
+                            label: "JKK",
+                            data: window.chartJaminanData.jkk,
+                            backgroundColor: "#3B82F6",
+                        },
+                        {
+                            label: "JHT",
+                            data: window.chartJaminanData.jht,
+                            backgroundColor: "#22C55E",
+                        },
+                        {
+                            label: "JKM",
+                            data: window.chartJaminanData.jkm,
+                            backgroundColor: "#F97316",
+                        },
+                        {
+                            label: "JP",
+                            data: window.chartJaminanData.jp,
+                            backgroundColor: "#A855F7",
+                        },
+>>>>>>> eae76cc (codingan jamsos dan upah minimum)
                     ],
                 },
                 options: {
@@ -599,6 +948,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     maintainAspectRatio: false,
                     interaction: { mode: "index", axis: "x", intersect: false },
                     plugins: {
+<<<<<<< HEAD
                         tooltip: { mode: "index", intersect: false },
                         legend: { position: "top" }
                     },
@@ -606,10 +956,41 @@ document.addEventListener("DOMContentLoaded", function () {
                         x: { ticks: { maxRotation: 45, minRotation: 45 } },
                         y: { beginAtZero: true }
                     }
+=======
+                        title: {
+                            display: true,
+                            text: "Perbandingan Status BPJS Provinsi per Provinsi",
+                            font: {
+                                size: 16,
+                            },
+                        },
+                        tooltip: {
+                            callbacks: {
+                                footer: function (tooltipItems) {
+                                    let total = 0;
+                                    tooltipItems.forEach(
+                                        function (tooltipItem) {
+                                            total += tooltipItem.parsed.y;
+                                        },
+                                    );
+                                    return (
+                                        "Total: " +
+                                        total.toLocaleString("id-ID")
+                                    );
+                                },
+                            },
+                        },
+                    },
+                    scales: {
+                        x: { ticks: { maxRotation: 45, minRotation: 45 } },
+                        y: { beginAtZero: true },
+                    },
+>>>>>>> eae76cc (codingan jamsos dan upah minimum)
                 },
             });
 
             // Filter BPJS Logic
+<<<<<<< HEAD
             const provBpjsSelect = document.getElementById("provinsiBpjsSelect");
             if(provBpjsSelect) {
                 provBpjsSelect.addEventListener("change", function () {
@@ -637,6 +1018,54 @@ document.addEventListener("DOMContentLoaded", function () {
                     const rows = document.querySelectorAll("#bpjsTable .bpjs-row");
                     rows.forEach(row => {
                         if (p === "all" || row.dataset.provinsi === p) row.style.display = "block";
+=======
+            const provBpjsSelect =
+                document.getElementById("provinsiBpjsSelect");
+            if (provBpjsSelect) {
+                provBpjsSelect.addEventListener("change", function () {
+                    const p = this.value;
+                    // Simulasi fetch atau filter lokal (disesuaikan dengan logic aslimu)
+                    fetch(`/filter/bpjs?provinsi=${p}`)
+                        .then((res) => res.json())
+                        .then((data) => {
+                            if (p === "all") {
+                                window.bpjsMainChart.data.labels =
+                                    window.chartJaminanData.labels;
+                                window.bpjsMainChart.data.datasets[0].data =
+                                    window.chartJaminanData.jkk;
+                                window.bpjsMainChart.data.datasets[1].data =
+                                    window.chartJaminanData.jht;
+                                window.bpjsMainChart.data.datasets[2].data =
+                                    window.chartJaminanData.jkm;
+                                window.bpjsMainChart.data.datasets[3].data =
+                                    window.chartJaminanData.jp;
+                            } else {
+                                const r = data[0];
+                                window.bpjsMainChart.data.labels = [r.provinsi];
+                                window.bpjsMainChart.data.datasets[0].data = [
+                                    r.jkk,
+                                ];
+                                window.bpjsMainChart.data.datasets[1].data = [
+                                    r.jht,
+                                ];
+                                window.bpjsMainChart.data.datasets[2].data = [
+                                    r.jkm,
+                                ];
+                                window.bpjsMainChart.data.datasets[3].data = [
+                                    r.jp,
+                                ];
+                            }
+                            window.bpjsMainChart.update();
+                        });
+
+                    // Filter Table Rows
+                    const rows = document.querySelectorAll(
+                        "#bpjsTable .bpjs-row",
+                    );
+                    rows.forEach((row) => {
+                        if (p === "all" || row.dataset.provinsi === p)
+                            row.style.display = "block";
+>>>>>>> eae76cc (codingan jamsos dan upah minimum)
                         else row.style.display = "none";
                     });
                 });
@@ -662,8 +1091,13 @@ document.addEventListener("DOMContentLoaded", function () {
             : "Tampilkan Detail Provinsi";
     });
 
+<<<<<<< HEAD
      if (!window.chartJaminanData) {
         console.warn('chartJaminanData kosong');
+=======
+    if (!window.chartJaminanData) {
+        console.warn("chartJaminanData kosong");
+>>>>>>> eae76cc (codingan jamsos dan upah minimum)
         return;
     }
 
@@ -672,25 +1106,153 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
     }
 
+<<<<<<< HEAD
     renderKbliChart();
     
     // --- 8. CHART UPAH MINIMUM ---
     if (window.chartUpahMinimumData) {
         const upahCanvas = document.getElementById("upahMinimumChart");
         if(upahCanvas) {
+=======
+    // --- 7. CHART KBLI (PAGINATION) ---
+    if (window.chartData && window.chartData.kbliLabels) {
+        const fullLabels = window.chartData.kbliLabels;
+        const fullValues = window.chartData.kbliValues;
+        let currentPage = 0;
+        const itemsPerPage = 10;
+        const totalPages = Math.ceil(fullLabels.length / itemsPerPage);
+
+        // Kita tidak lagi butuh variabel global 'kbliChartInstance' yang rentan error
+        const ctxKbli = document.getElementById("kbliList");
+
+        if (ctxKbli) {
+            function renderKBLIPage(page) {
+                const start = page * itemsPerPage;
+                const end = start + itemsPerPage;
+                const labelsSubset = fullLabels.slice(start, end);
+                const valuesSubset = fullValues.slice(start, end);
+
+                // 🔥 PERBAIKAN UTAMA DI SINI 🔥
+                // Cek langsung ke Canvas: "Hei, ada chart nyangkut gak di sini?"
+                const existingChart = Chart.getChart("kbliList");
+                if (existingChart) {
+                    existingChart.destroy(); // Hancurkan chart lama secara paksa
+                }
+
+                // Baru buat chart baru
+                new Chart(ctxKbli, {
+                    type: "bar",
+                    data: {
+                        labels: labelsSubset,
+                        datasets: [
+                            {
+                                label: "Jumlah Perusahaan",
+                                data: valuesSubset,
+                                backgroundColor: "#42A5F5",
+                                barPercentage: 0.6,
+                            },
+                        ],
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: true },
+                            datalabels: {
+                                anchor: "end",
+                                align: "top",
+                                formatter: (val) => val.toLocaleString("id-ID"),
+                            },
+                        },
+                        scales: {
+                            y: { beginAtZero: true },
+                            x: { grid: { display: false } },
+                        },
+                    },
+                    plugins: [ChartDataLabels],
+                });
+
+                // Update UI tombol & halaman
+                const indicator = document.getElementById("pageIndicatorKBLI");
+                if (indicator)
+                    indicator.innerText = `Halaman ${page + 1} dari ${totalPages}`;
+
+                const btnPrev = document.getElementById("prevBtnKBLI");
+                const btnNext = document.getElementById("nextBtnKBLI");
+                if (btnPrev) {
+                    btnPrev.disabled = page === 0;
+                    btnPrev.style.opacity = page === 0 ? "0.5" : "1";
+                }
+                if (btnNext) {
+                    btnNext.disabled = page === totalPages - 1;
+                    btnNext.style.opacity =
+                        page === totalPages - 1 ? "0.5" : "1";
+                }
+            }
+
+            // Jalankan pertama kali
+            renderKBLIPage(0);
+
+            // Listener tombol
+            // (Kita pakai replace logic agar tidak menumpuk event listener jika re-render)
+            const nextBtn = document.getElementById("nextBtnKBLI");
+            const prevBtn = document.getElementById("prevBtnKBLI");
+
+            if (nextBtn) {
+                nextBtn.replaceWith(nextBtn.cloneNode(true)); // Reset listener lama
+                document
+                    .getElementById("nextBtnKBLI")
+                    .addEventListener("click", () => {
+                        if (currentPage < totalPages - 1) {
+                            currentPage++;
+                            renderKBLIPage(currentPage);
+                        }
+                    });
+            }
+
+            if (prevBtn) {
+                prevBtn.replaceWith(prevBtn.cloneNode(true)); // Reset listener lama
+                document
+                    .getElementById("prevBtnKBLI")
+                    .addEventListener("click", () => {
+                        if (currentPage > 0) {
+                            currentPage--;
+                            renderKBLIPage(currentPage);
+                        }
+                    });
+            }
+        }
+    }
+
+    // --- 8. CHART UPAH MINIMUM ---
+    if (window.chartUpahMinimumData) {
+        const upahCanvas = document.getElementById("upahMinimumChart");
+        if (upahCanvas) {
+>>>>>>> eae76cc (codingan jamsos dan upah minimum)
             window.upahChart = new Chart(upahCanvas, {
                 type: "bar",
                 data: {
                     labels: window.chartUpahMinimumData.labels,
+<<<<<<< HEAD
                     datasets: [{
                         label: "Upah Minimum",
                         data: window.chartUpahMinimumData.values,
                         backgroundColor: "#0d6efd"
                     }]
+=======
+                    datasets: [
+                        {
+                            label: "Upah Minimum",
+                            data: window.chartUpahMinimumData.values,
+                            backgroundColor: "#0d6efd",
+                        },
+                    ],
+>>>>>>> eae76cc (codingan jamsos dan upah minimum)
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+<<<<<<< HEAD
                     scales: { y: { beginAtZero: true } }
                 }
             });
@@ -709,6 +1271,34 @@ document.addEventListener("DOMContentLoaded", function () {
                         }
                         window.upahChart.update();
                     });
+=======
+                    scales: { y: { beginAtZero: true } },
+                },
+            });
+
+            const upahSelect = document.getElementById("provinsiUpahSelect");
+            if (upahSelect) {
+                upahSelect.addEventListener("change", function () {
+                    const p = this.value;
+                    fetch(`/filter/upah-minimum?provinsi=${p}`)
+                        .then((res) => res.json())
+                        .then((data) => {
+                            if (p === "all") {
+                                window.upahChart.data.labels =
+                                    window.chartUpahMinimumData.labels;
+                                window.upahChart.data.datasets[0].data =
+                                    window.chartUpahMinimumData.values;
+                            } else if (data.length) {
+                                window.upahChart.data.labels = [
+                                    data[0].provinsi,
+                                ];
+                                window.upahChart.data.datasets[0].data = [
+                                    data[0].total,
+                                ];
+                            }
+                            window.upahChart.update();
+                        });
+>>>>>>> eae76cc (codingan jamsos dan upah minimum)
                 });
             }
         }
@@ -716,7 +1306,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // --- Execute Initial Render for KBLI & Tables ---
     renderKBLIChart();
+<<<<<<< HEAD
 
+=======
+>>>>>>> eae76cc (codingan jamsos dan upah minimum)
 }); // END DOMContentLoaded
 
 /* ==========================================================================
@@ -732,9 +1325,17 @@ function renderKBLIChart() {
     barChart.innerHTML = "";
 
     if (!provinsi) {
+<<<<<<< HEAD
         title.innerText = "Laporan Sebaran Tenaga Kerja Berdasarkan KBLI (Semua Provinsi)";
     } else {
         title.innerText = "Laporan Sebaran Tenaga Kerja Berdasarkan KBLI (" + provinsi + ")";
+=======
+        title.innerText =
+            "Laporan Sebaran Tenaga Kerja Berdasarkan KBLI (Semua Provinsi)";
+    } else {
+        title.innerText =
+            "Laporan Sebaran Tenaga Kerja Berdasarkan KBLI (" + provinsi + ")";
+>>>>>>> eae76cc (codingan jamsos dan upah minimum)
     }
 
     const data = getKBLIByProvinsi(provinsi);
@@ -760,14 +1361,28 @@ function renderKBLIChart() {
 
 function updateKabupatenDropdown(provinsi) {
     const kabSelect = document.getElementById("kabupatenSelect");
+<<<<<<< HEAD
     if(!kabSelect) return;
+=======
+    if (!kabSelect) return;
+>>>>>>> eae76cc (codingan jamsos dan upah minimum)
 
     kabSelect.innerHTML = '<option value="">-- Pilih Kab/Kota --</option>';
     if (!provinsi || !window.kabData) return;
 
+<<<<<<< HEAD
     const kotaList = [...new Set(
         window.kabData.filter((d) => d.provinsi === provinsi).map((d) => d.kota)
     )];
+=======
+    const kotaList = [
+        ...new Set(
+            window.kabData
+                .filter((d) => d.provinsi === provinsi)
+                .map((d) => d.kota),
+        ),
+    ];
+>>>>>>> eae76cc (codingan jamsos dan upah minimum)
 
     kotaList.forEach((kota) => {
         const opt = document.createElement("option");
@@ -779,7 +1394,11 @@ function updateKabupatenDropdown(provinsi) {
 
 function renderTableProvinsi() {
     const tbody = document.getElementById("tableProvinsiBody");
+<<<<<<< HEAD
     if(!tbody) return;
+=======
+    if (!tbody) return;
+>>>>>>> eae76cc (codingan jamsos dan upah minimum)
     tbody.innerHTML = "";
 
     const provinsiSelected = document.getElementById("provinsiSelect")?.value;
@@ -801,12 +1420,21 @@ function renderTableProvinsi() {
 
 function renderTableKabupaten() {
     const tbody = document.getElementById("tableKabupatenBody");
+<<<<<<< HEAD
     if(!tbody) return;
     tbody.innerHTML = "";
 
     const provinsi = document.getElementById("provinsiSelect")?.value;
     if(!window.kabData) return;
     
+=======
+    if (!tbody) return;
+    tbody.innerHTML = "";
+
+    const provinsi = document.getElementById("provinsiSelect")?.value;
+    if (!window.kabData) return;
+
+>>>>>>> eae76cc (codingan jamsos dan upah minimum)
     let kotaList = window.kabData;
     if (provinsi) {
         kotaList = kotaList.filter((d) => d.provinsi === provinsi);
@@ -835,6 +1463,7 @@ function renderTableKabupaten() {
         tbody.appendChild(tr);
     });
 }
+<<<<<<< HEAD
   
 // Gunakan ID yang sesuai dengan di blade
 function refreshKbliChart() {
@@ -913,3 +1542,5 @@ document.addEventListener("DOMContentLoaded",function(){ refreshKbliChart();
 document.querySelectorAll(".kbli-select-filter").forEach(el=>{el.addEventListener("change",refreshKbliChart);
 });
 });
+=======
+>>>>>>> eae76cc (codingan jamsos dan upah minimum)

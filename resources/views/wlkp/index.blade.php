@@ -255,11 +255,16 @@
             besar: @json($besarChart),
             provinsi: @json($dataProvinsi->pluck('provinsi')),
             klasifikasi: @json($dataKlasifikasi),
+<<<<<<< HEAD
+=======
+            totalProvinsiKlas: @json($dataProvinsi->pluck('total')),
+>>>>>>> eae76cc (codingan jamsos dan upah minimum)
             provinsi: @json($provinsi),
             mikroProv: @json($mikroProv),
             kecilProv: @json($kecilProv),
             menengahProv: @json($menengahProv),
             besarProv: @json($besarProv),
+<<<<<<< HEAD
             PPPKBValues: @json($rowsPPPKB),
         };
         window.kbliData = @json($rowsKodeTk);
@@ -273,6 +278,17 @@
         menengah: @json($menengahChart),
         besar: @json($besarChart),
         }
+=======
+            kbliLabels: @json($kbliLabels),
+            kbliValues: @json($kbliValues),
+            PPPKBValues: @json($rowsPPPKB),
+        };
+        window.kbliData = @json($rowsKodeTk);
+        window.chartData.kbliLabels = @json($kbliChart->pluck('nama_2_digit'));
+        window.chartData.kbliValues = @json($kbliChart->pluck('total'));
+        window.chartMasterData = @json($masterData);
+        window.listProvinsiLabel = @json($listProvinsi);
+>>>>>>> eae76cc (codingan jamsos dan upah minimum)
         window.chartJaminanData = {
             labels: @json($rowsBpjs->pluck('provinsi')),
             jkk: @json($rowsBpjs->pluck('jkk')),
@@ -291,6 +307,10 @@
      ================================ -->
 <script>
 document.addEventListener("DOMContentLoaded", function() {
+<<<<<<< HEAD
+=======
+    const labels = window.chartData?.kbliLabels || [];
+>>>>>>> eae76cc (codingan jamsos dan upah minimum)
     const values = window.chartData?.kbliValues || [];
 
     if (labels.length === 0) return;
