@@ -311,33 +311,42 @@
                 <tr>
                     <th rowspan="2">Provinsi</th>
 
-                    <th colspan="2">P2K3</th>
-                    <th colspan="2">Ahli K3</th>
-                    <th colspan="2">Disabilitas</th>
-                    <th colspan="2">Perencanaan TK</th>
-                    <th colspan="2">Serikat Pekerja</th>
-                    <th colspan="2">LKS Bipartit</th>
-                    <th colspan="2">Pemberian SUSU</th>
-                    <th colspan="2">Waktu Kerja</th>
+                    <th colspan="3">P2K3</th>
+                    <th colspan="3">Ahli K3</th>
+                    <th colspan="4">Disabilitas</th>
+                    <th colspan="3">Perencanaan TK</th>
+                    <th colspan="3">Serikat Pekerja</th>
+                    <th colspan="3">LKS Bipartit</th>
+                    <th colspan="3">Pemberian SUSU</th>
+                    <th colspan="3">Waktu Kerja</th>
                 </tr>
 
-                <tr>
+                    <tr>
                     <th>Sudah</th>
                     <th>Belum</th>
+                    <th>Total Perusahaan</th>
                     <th>Sudah</th>
                     <th>Belum</th>
+                    <th>Total Perusahaan</th>
                     <th>Sudah</th>
                     <th>Belum</th>
+                    <th>Total Perusahaan</th>
+                    <th>Total Total TK Disabilitas</th>
                     <th>Sudah</th>
                     <th>Belum</th>
+                    <th>Total Perusahaan</th>
                     <th>Sudah</th>
                     <th>Belum</th>
+                    <th>Total Perusahaan</th>
                     <th>Sudah</th>
                     <th>Belum</th>
+                    <th>Total Perusahaan</th>
                     <th>Sudah</th>
                     <th>Belum</th>
-                    <th>Sudah</th>
-                    <th>Belum</th>
+                    <th>Total Perusahaan</th>
+                    <th>Umum</th>
+                    <th>Sektor</th>
+                    <th>Total Perusahaan</th>
                 </tr>
             </thead>
 
@@ -363,32 +372,41 @@
                 <tr>
                     <th rowspan="2">Kabupaten / Kota</th>
 
-                    <th colspan="2">P2K3</th>
-                    <th colspan="2">Ahli K3</th>
-                    <th colspan="2">Disabilitas</th>
-                    <th colspan="2">Perencanaan TK</th>
-                    <th colspan="2">Serikat Pekerja</th>
-                    <th colspan="2">LKS Bipartit</th>
-                    <th colspan="2">Pemberian SUSU</th>
-                    <th colspan="2">Waktu Kerja</th>
+                    <th colspan="3">P2K3</th>
+                    <th colspan="3">Ahli K3</th>
+                    <th colspan="4">Disabilitas</th>
+                    <th colspan="3">Perencanaan TK</th>
+                    <th colspan="3">Serikat Pekerja</th>
+                    <th colspan="3">LKS Bipartit</th>
+                    <th colspan="3">Pemberian SUSU</th>
+                    <th colspan="3">Waktu Kerja</th>
                 </tr>
                 <tr>
                     <th>Sudah</th>
                     <th>Belum</th>
+                    <th>Total Perusahaan</th>
                     <th>Sudah</th>
                     <th>Belum</th>
+                    <th>Total Perusahaan</th>
                     <th>Sudah</th>
                     <th>Belum</th>
+                    <th>Total Perusahaan</th>
+                    <th>Total Total TK Disabilitas</th>
                     <th>Sudah</th>
                     <th>Belum</th>
+                    <th>Total Perusahaan</th>
                     <th>Sudah</th>
                     <th>Belum</th>
+                    <th>Total Perusahaan</th>
                     <th>Sudah</th>
                     <th>Belum</th>
+                    <th>Total Perusahaan</th>
                     <th>Sudah</th>
                     <th>Belum</th>
-                    <th>Sudah</th>
-                    <th>Belum</th>
+                    <th>Total Perusahaan</th>
+                    <th>Umum</th>
+                    <th>Sektor</th>
+                    <th>Total Perusahaan</th>
                 </tr>
             </thead>
 
@@ -403,6 +421,7 @@
                     <th>Provinsi</th>
                     <th>P2K3 Sudah</th>
                     <th>P2K3 Belum</th>
+                    <th>Perusahaan</th>
                 </tr>
             </thead>
             <tbody id="tbodyP2K3"></tbody>
@@ -415,6 +434,7 @@
                     <th>Provinsi</th>
                     <th>Serikat Sudah</th>
                     <th>Serikat Belum</th>
+                    <th>Perusahaan</th>
                 </tr>
             </thead>
             <tbody id="tbodySerikat"></tbody>
@@ -427,6 +447,7 @@
                     <th>Provinsi</th>
                     <th>SUSU Sudah</th>
                     <th>SUSU Belum</th>
+                    <th>Perusahaan</th>
                 </tr>
             </thead>
             <tbody id="tbodySusu"></tbody>
@@ -439,6 +460,7 @@
                     <th>Provinsi</th>
                     <th>Sudah</th>
                     <th>Belum</th>
+                    <th>Perusahaan</th>
                 </tr>
             </thead>
             <tbody id="tbodyBipartit"></tbody>
@@ -449,6 +471,7 @@
             <thead>
                 <tr>
                     <th>Provinsi</th>
+                    <th>Sudah</th>
                     <th>Perusahaan</th>
                 </tr>
             </thead>
@@ -460,8 +483,9 @@
             <thead>
                 <tr>
                     <th>Provinsi</th>
-                    <th>Perusahaan</th>
+                    <th>Sudah</th>
                     <th>Total Disabilitas</th>
+                    <th>Perusahaan</th>
                 </tr>
             </thead>
             <tbody id="tbodyDisabilitas"></tbody>
@@ -472,11 +496,24 @@
             <thead>
                 <tr>
                     <th>Provinsi</th>
-                    <th>Perusahaan</th>
+                    <th>Sudah</th>
                     <th>Total Ahli K3</th>
+                    <th>Perusahaan</th>
                 </tr>
             </thead>
             <tbody id="tbodyAhliK3"></tbody>
+        </table>
+    </div><div id="tableWkwiWrapper" style="display:none;">
+        <table>
+            <thead>
+                <tr>
+                    <th>Provinsi</th>
+                    <th>Umum</th>
+                    <th>Sektor</th>
+                    <th>Perusahaan</th>
+                </tr>
+            </thead>
+            <tbody id="tbodyWkwi"></tbody>
         </table>
     </div>
 

@@ -170,9 +170,7 @@ function getKBLIByProvinsi(provinsi) {
         const selectedProv = provinsi.trim().toLowerCase();
 
         filtered = filtered.filter((row) => {
-            const rowProv = (row.provinsi || "")
-                .trim()
-                .toLowerCase();
+            const rowProv = (row.provinsi || "").trim().toLowerCase();
 
             return rowProv === selectedProv;
         });
@@ -526,74 +524,74 @@ document.addEventListener("DOMContentLoaded", function () {
     // A. Filter Provinsi Dropdown
     const dropdownProvinsi = document.getElementById("provinsiSelect");
 
-if (dropdownProvinsi) {
-    dropdownProvinsi.addEventListener("change", async function () {
-        const provinsi = this.value;
+    if (dropdownProvinsi) {
+        dropdownProvinsi.addEventListener("change", async function () {
+            const provinsi = this.value;
 
-        // =========================
-        // UPDATE CHART KBLI
-        // =========================
-        try {
-            const res = await fetch(
-                `/kbli/filter?provinsi=${encodeURIComponent(provinsi)}`
-            );
+            // =========================
+            // UPDATE CHART KBLI
+            // =========================
+            try {
+                const res = await fetch(
+                    `/kbli/tenaga-kerja?provinsi=${encodeURIComponent(provinsi)}`,
+                );
 
-            if (!res.ok) {
-                throw new Error("Response API gagal");
+                if (!res.ok) {
+                    throw new Error("Response API gagal");
+                }
+
+               window.kbliTenagaKerjaData = await res.json();
+                renderKBLIChart();
+            } catch (err) {
+                console.error("Gagal load data KBLI:", err);
+                document.getElementById("barChartKbli").innerHTML =
+                    "<p>Gagal memuat data</p>";
             }
 
-            window.masterKBLIData = await res.json();
-            renderKBLIChart();
-        } catch (err) {
-            console.error("Gagal load data KBLI:", err);
-            document.getElementById("barChartKbli").innerHTML =
-                "<p>Gagal memuat data</p>";
-        }
+            // =========================
+            // LOGIC LAMA
+            // =========================
+            const tableFilter = document.getElementById("tableFilter");
+            if (tableFilter) tableFilter.dispatchEvent(new Event("change"));
 
-        // =========================
-        // LOGIC LAMA
-        // =========================
-        const tableFilter = document.getElementById("tableFilter");
-        if (tableFilter) tableFilter.dispatchEvent(new Event("change"));
+            updateKabupatenDropdown(provinsi);
 
-        updateKabupatenDropdown(provinsi);
+            window.kabChart.data.datasets[0].label = "Pilih Kab/Kota";
+            window.kabChart.data.datasets[0].data = [0, 0, 0, 0, 0];
+            window.kabChart.update();
+            updateKabChartSummary(null);
 
-        window.kabChart.data.datasets[0].label = "Pilih Kab/Kota";
-        window.kabChart.data.datasets[0].data = [0, 0, 0, 0, 0];
-        window.kabChart.update();
-        updateKabChartSummary(null);
+            if (!provinsi) {
+                const pMap = totalProvinsi();
+                const tAll = totalSemuaProvinsi();
 
-        if (!provinsi) {
-            const pMap = totalProvinsi();
-            const tAll = totalSemuaProvinsi();
+                window.mainChart.data.labels = Object.keys(pMap);
+                window.mainChart.data.datasets[0].label =
+                    "Total " +
+                    getLabelJenis() +
+                    " (Semua Provinsi: " +
+                    tAll.toLocaleString("id-ID") +
+                    " orang)";
+                window.mainChart.data.datasets[0].data = Object.values(pMap);
+            } else {
+                const kMap = totalKotaByProvinsi(provinsi);
+                const tTk = totalTenagaKerjaProvinsi(provinsi);
 
-            window.mainChart.data.labels = Object.keys(pMap);
-            window.mainChart.data.datasets[0].label =
-                "Total " +
-                getLabelJenis() +
-                " (Semua Provinsi: " +
-                tAll.toLocaleString("id-ID") +
-                " orang)";
-            window.mainChart.data.datasets[0].data = Object.values(pMap);
-        } else {
-            const kMap = totalKotaByProvinsi(provinsi);
-            const tTk = totalTenagaKerjaProvinsi(provinsi);
+                window.mainChart.data.labels = Object.keys(kMap);
+                window.mainChart.data.datasets[0].label =
+                    "Total " +
+                    getLabelJenis() +
+                    " - " +
+                    provinsi +
+                    " (" +
+                    tTk.toLocaleString("id-ID") +
+                    " orang)";
+                window.mainChart.data.datasets[0].data = Object.values(kMap);
+            }
 
-            window.mainChart.data.labels = Object.keys(kMap);
-            window.mainChart.data.datasets[0].label =
-                "Total " +
-                getLabelJenis() +
-                " - " +
-                provinsi +
-                " (" +
-                tTk.toLocaleString("id-ID") +
-                " orang)";
-            window.mainChart.data.datasets[0].data = Object.values(kMap);
-        }
-
-        window.mainChart.update();
-    });
-}
+            window.mainChart.update();
+        });
+    }
 
     // B. Filter Kabupaten Dropdown
     const dropdownKab = document.getElementById("kabupatenSelect");
@@ -1357,37 +1355,34 @@ function renderKBLIChart() {
     const provinsi = document.getElementById("provinsiSelect")?.value;
 
     if (!barChart || !title) return;
+
     barChart.innerHTML = "";
 
-    if (!provinsi) {
-        title.innerText =
-            "Laporan Sebaran Tenaga Kerja Berdasarkan KBLI (Semua Provinsi)";
-    } else {
-        title.innerText =
-            "Laporan Sebaran Tenaga Kerja Berdasarkan KBLI (" + provinsi + ")";
-    }
+    const data = window.kbliTenagaKerjaData || [];
 
-    // 🔥 langsung pakai data hasil fetch backend
-    const data = window.masterKBLIData || [];
+    title.innerText = `Jumlah Tenaga Kerja KBLI (${provinsi || "Semua Provinsi"})`;
 
     if (!data.length) {
         barChart.innerHTML = "<p>Tidak ada data</p>";
         return;
     }
 
-    const maxVal = Math.max(...data.map((d) => Number(d.total)), 1);
+    const maxVal = Math.max(
+        ...data.map((d) => Number(d.total_tenaga_kerja) || 0),
+        1
+    );
 
     data.forEach((row) => {
-        const height = (Number(row.total) / maxVal) * 100;
+        const value = Number(row.total_tenaga_kerja) || 0;
+        const height = Math.max((value / maxVal) * 100, 2);
 
         const bar = document.createElement("div");
         bar.className = "bar";
         bar.style.height = height + "%";
-        bar.title = row.nama_2_digit;
 
         bar.innerHTML = `
-            <span class="bar-value">${Number(row.total).toLocaleString("id-ID")}</span>
-            <span class="bar-label">${row.nama_2_digit}</span>
+            <span class="bar-value">${value.toLocaleString("id-ID")}</span>
+            <span class="bar-label">${row.nama_2_digit || "-"}</span>
         `;
 
         barChart.appendChild(bar);
@@ -1397,8 +1392,11 @@ function renderKBLIChart() {
 // 🔥 load pertama kali
 document.addEventListener("DOMContentLoaded", async function () {
     try {
-        const res = await fetch("/kbli/filter");
-        window.masterKBLIData = await res.json();
+        const res = await fetch(`/kbli/tenaga-kerja`);
+        const data = await res.json();
+
+        window.kbliTenagaKerjaData = data;
+
         renderKBLIChart();
     } catch (err) {
         console.error("Init KBLI gagal:", err);

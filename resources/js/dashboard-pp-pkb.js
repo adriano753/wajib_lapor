@@ -22,6 +22,9 @@ document.addEventListener("DOMContentLoaded", function () {
             const dataPKBTidak = rawData.map(
                 (item) => parseInt(item.pkb_tidak_ada) || 0,
             );
+            const dataPKBSerikat = rawData.map(
+                (item) => parseInt(item.pkb_serikat_lebih_10_tk) || 0,
+            );
 
             new Chart(ctx, {
                 type: "bar",
@@ -60,6 +63,14 @@ document.addEventListener("DOMContentLoaded", function () {
                             data: dataPKBTidak,
                             backgroundColor: "#ffc107", // Kuning
                             stack: "Stack 1", // KUNCI: Gabung dengan ID 1
+                            barPercentage: 0.8,
+                            categoryPercentage: 0.9,
+                        },
+                        {
+                            label: "PKB + SP + TK > 10",
+                            data: dataPKBSerikat,
+                            backgroundColor: "#6f42c1", // ungu biar beda
+                            stack: "Stack 2", // 🔥 beda stack biar jadi grup baru
                             barPercentage: 0.8,
                             categoryPercentage: 0.9,
                         },
@@ -126,7 +137,9 @@ document.addEventListener("DOMContentLoaded", function () {
         renderTablePPPKB("single");
     }
     document.getElementById("toggleTableBtn").onclick = function () {
-        const tableWrapper = document.getElementById("tableProvinsiPPPKBWrapper");
+        const tableWrapper = document.getElementById(
+            "tableProvinsiPPPKBWrapper",
+        );
 
         const isHidden = tableWrapper.style.display === "none";
 
@@ -139,7 +152,7 @@ document.addEventListener("DOMContentLoaded", function () {
 function renderTablePPPKB(mode = "single") {
     const tbody = document.getElementById("tablePPPKBBody");
     const header = document.getElementById("headerPPPKB");
-
+    console.log(window.chartData.PPPKBValues);
     if (!tbody || !header) return;
 
     const data = window.chartData?.PPPKBValues || [];
@@ -158,6 +171,7 @@ function renderTablePPPKB(mode = "single") {
             <th>PP - Belum Ada</th>
             <th>PKB - Ada</th>
             <th>PKB - Belum Ada</th>
+            <th>PKB + SP + TK > 10</th>
         `;
     } else {
         header.innerHTML = `
@@ -165,6 +179,7 @@ function renderTablePPPKB(mode = "single") {
             <th>Provinsi</th>
             <th>PP</th>
             <th>PKB</th>
+            <th>PKB + SP + TK > 10</th>
         `;
     }
 
@@ -177,6 +192,7 @@ function renderTablePPPKB(mode = "single") {
         const ppTidak = parseInt(item.pp_tidak_ada) || 0;
         const pkbAda = parseInt(item.pkb_ada) || 0;
         const pkbTidak = parseInt(item.pkb_tidak_ada) || 0;
+        const pkbSerikat = parseInt(item.pkb_serikat_lebih_10_tk) || 0;
 
         if (mode === "single") {
             tbody.innerHTML += `
@@ -187,6 +203,7 @@ function renderTablePPPKB(mode = "single") {
                     <td>${ppTidak.toLocaleString("id-ID")}</td>
                     <td>${pkbAda.toLocaleString("id-ID")}</td>
                     <td>${pkbTidak.toLocaleString("id-ID")}</td>
+                    <td>${pkbSerikat.toLocaleString("id-ID")}</td>
                 </tr>
             `;
         } else {
@@ -196,6 +213,7 @@ function renderTablePPPKB(mode = "single") {
                     <td>${item.provinsi ?? "-"}</td>
                     <td>${ppAda.toLocaleString("id-ID")}</td>
                     <td>${pkbAda.toLocaleString("id-ID")}</td>
+                    <td>${pkbSerikat.toLocaleString("id-ID")}</td>
                 </tr>
             `;
         }

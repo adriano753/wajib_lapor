@@ -14,7 +14,7 @@ const barOptions = {
 
     layout: {
         padding: {
-            top: 40,
+            top: 60,
         },
     },
 
@@ -37,8 +37,25 @@ const barOptions = {
             },
         },
     },
-    categoryPercentage: 0.8,
-    barPercentage: 0.9,
+
+    plugins: {
+        datalabels: {
+            anchor: "end",
+            align: "top",
+            offset: 2,
+            clamp: true, // 🔥 penting biar gak keluar canvas // warna angka (ubah kalau background terang)
+            font: {
+                weight: "bold",
+                size: 10,
+            },
+            formatter: function (value) {
+                return Number(value).toLocaleString("id-ID");
+            },
+        },
+    },
+
+    categoryPercentage: 0.5,
+    barPercentage: 0.7,
 };
 
 let charts = {};
@@ -47,18 +64,26 @@ let chartKabupaten = {};
 // ==========================
 // CREATE DOUGHNUT
 // ==========================
-function createDoughnutChart(canvasId) {
+function createDoughnutChart(canvasId, indikator = null) {
     const ctx = document.getElementById(canvasId);
     if (!ctx) return null;
+
+    let labels = ["Sudah", "Belum"];
+    let colors = ["#4CAF50", "#F44336"];
+
+    if (indikator === "waktu_kerja") {
+        labels = ["Umum", "Sektor"];
+        colors = ["#2196F3", "#FF9800"];
+    }
 
     return new Chart(ctx, {
         type: "doughnut",
         data: {
-            labels: ["Sudah", "Belum"],
+            labels: labels,
             datasets: [
                 {
                     data: [0, 0],
-                    backgroundColor: ["#4CAF50", "#F44336"],
+                    backgroundColor: colors,
                 },
             ],
         },
@@ -105,60 +130,67 @@ function createBarChart(canvasId, indikator = null) {
     const ctx = document.getElementById(canvasId);
     if (!ctx) return null;
 
+    let datasets = [
+        {
+            label: "Sudah",
+            data: [],
+            backgroundColor: "#4CAF50",
+            barThickness: 40,
+            categoryPercentage: 0.5,
+            barPercentage: 0.7,
+        },
+        {
+            label: "Belum",
+            data: [],
+            backgroundColor: "#F44336",
+            barThickness: 40,
+            categoryPercentage: 0.5,
+            barPercentage: 0.7,
+        },
+        {
+            label: "Total Perusahaan",
+            data: [],
+            backgroundColor: "#2196F3",
+            barThickness: 40,
+            categoryPercentage: 0.5,
+            barPercentage: 0.7,
+        },
+    ];
+
+    // 🔥 khusus disabilitas
+    if (indikator === "disabilitas") {
+        datasets.push({
+            label: "Total Disabilitas",
+            data: [],
+            backgroundColor: "#FFC107",
+            barThickness: 40,
+            categoryPercentage: 0.5,
+            barPercentage: 0.7,
+        });
+    }
+
     return new Chart(ctx, {
         type: "bar",
         data: {
             labels: [],
-            datasets: [
-                {
-                    label: "Sudah",
-                    data: [],
-                    backgroundColor: "#4CAF50",
-                    barThickness: 40,
-                    maxBarThickness: 40,
-                },
-                {
-                    label: "Belum",
-                    data: [],
-                    backgroundColor: "#F44336",
-                    barThickness: 40,
-                    maxBarThickness: 40,
-                },
-            ],
+            datasets: datasets,
         },
         plugins: [ChartDataLabels],
         options: {
             ...barOptions,
-
-            onClick: function (evt, elements) {
-                if (elements.length > 0 && indikator) {
-                    const index = elements[0].index;
-                    const provinsi = this.data.labels[index];
-
-                 
-
-                    loadChartKabupaten(indikator, provinsi);
-                }
-            },
-
             plugins: {
-                legend: {
-                    position: "top",
-                },
+                ...barOptions.plugins,
                 datalabels: {
                     anchor: "end",
                     align: "top",
-                    offset: 6,
-                    clamp: true,
-                    clip: false,
+                    offset: 8,
                     color: () => Chart.defaults.color,
                     font: {
                         weight: "bold",
-                        size: 12,
+                        size: 10,
                     },
-                    formatter: function (value) {
-                        return Number(value ?? 0).toLocaleString("id-ID");
-                    },
+                    formatter: (value) =>
+                        value > 0 ? value.toLocaleString("id-ID") : "",
                 },
             },
         },
@@ -168,59 +200,62 @@ function createBarChart(canvasId, indikator = null) {
 // ==========================
 // UPDATE DOUGHNUT
 // ==========================
-function updateDoughnut(chart, data) {
+function updateDoughnut(chart, data, indikator = null) {
     if (!chart || !data) return;
 
-    const sudah = data.sudah ?? [];
-    const belum = data.belum ?? [];
+    let total1 = 0;
+    let total2 = 0;
 
-    let totalSudah = sudah.reduce((a, b) => a + Number(b), 0);
-    let totalBelum = belum.reduce((a, b) => a + Number(b), 0);
+    // 🔥 waktu kerja
+    if (indikator === "waktu_kerja") {
+        total1 = (data.umum ?? []).reduce((a, b) => a + Number(b), 0);
+        total2 = (data.sektor ?? []).reduce((a, b) => a + Number(b), 0);
+    } else {
+        total1 = (data.sudah ?? []).reduce((a, b) => a + Number(b), 0);
+        total2 = (data.belum ?? []).reduce((a, b) => a + Number(b), 0);
+    }
 
-    chart.data.datasets[0].data = [totalSudah, totalBelum];
+    chart.data.datasets[0].data = [total1, total2];
     chart.update();
 }
 
 // ==========================
 // UPDATE BAR
 // ==========================
-function updateBar(chart, data) {
+function updateBar(chart, data, indikator = null) {
     if (!chart || !data) return;
 
-    let jenis = document.getElementById("jenisSelect")?.value;
+    // 🔥 BIARKAN INI (JANGAN DIHAPUS)
+    const jumlahData = data.labels?.length || 0;
 
-    // reset chart dulu
-    chart.data.labels = [];
-    chart.data.datasets[0].data = [];
-    chart.data.datasets[1].data = [];
+    const canvas = chart.canvas;
+    const minWidth = 500;
+    canvas.style.width = Math.max(jumlahData * 160, minWidth) + "px";
 
+    // label wilayah
     chart.data.labels = data.labels ?? [];
 
-    if (jenis === "sudah") {
-        chart.data.datasets[0].data = data.sudah ?? [];
-    } else if (jenis === "belum") {
-        chart.data.datasets[1].data = data.belum ?? [];
+    // 🔥 LOGIC KHUSUS
+    if (indikator === "waktu_kerja") {
+        chart.data.datasets[0].label = "Umum";
+        chart.data.datasets[0].data = data.umum ?? [];
+
+        chart.data.datasets[1].label = "Sektor";
+        chart.data.datasets[1].data = data.sektor ?? [];
     } else {
+        chart.data.datasets[0].label = "Sudah";
         chart.data.datasets[0].data = data.sudah ?? [];
+
+        chart.data.datasets[1].label = "Belum";
         chart.data.datasets[1].data = data.belum ?? [];
     }
 
-    const canvasTag = chart.canvas;
-    const container = canvasTag.closest(".chart-wide");
+    // total perusahaan (tetap)
+    chart.data.datasets[2].data = data.perusahaan ?? [];
 
-    if (container) {
-        const jumlahData = chart.data.labels.length;
-        const lebarPerBar = 120;
-        const minLebarContainer =
-            document.querySelector(".scroll-wrapper").offsetWidth;
-
-        const totalLebarYangDibutuhkan = jumlahData * lebarPerBar;
-
-        if (totalLebarYangDibutuhkan > minLebarContainer) {
-            container.style.width = totalLebarYangDibutuhkan + "px";
-        } else {
-            container.style.width = "100%";
-        }
+    // khusus disabilitas
+    if (indikator === "disabilitas") {
+        chart.data.datasets[3].data = data.total ?? [];
     }
 
     chart.update();
@@ -241,6 +276,7 @@ function loadChartKetenagakerjaan() {
     )
         .then((res) => res.json())
         .then((data) => {
+            console.log("DATA:", data);
             updateDoughnut(charts.p2k3?.doughnut, data.p2k3);
             updateBar(charts.p2k3?.bar, data.p2k3);
 
@@ -248,7 +284,7 @@ function loadChartKetenagakerjaan() {
             updateBar(charts.ahli_k3?.bar, data.ahli_k3);
 
             updateDoughnut(charts.disabilitas?.doughnut, data.disabilitas);
-            updateBar(charts.disabilitas?.bar, data.disabilitas);
+            updateBar(charts.disabilitas?.bar, data.disabilitas, "disabilitas");
 
             updateDoughnut(charts.susu?.doughnut, data.susu);
             updateBar(charts.susu?.bar, data.susu);
@@ -259,8 +295,12 @@ function loadChartKetenagakerjaan() {
             updateDoughnut(charts.bipartit?.doughnut, data.bipartit);
             updateBar(charts.bipartit?.bar, data.bipartit);
 
-            updateDoughnut(charts.waktu_kerja?.doughnut, data.waktu_kerja);
-            updateBar(charts.waktu_kerja?.bar, data.waktu_kerja);
+            updateDoughnut(
+                charts.waktu_kerja?.doughnut,
+                data.waktu_kerja,
+                "waktu_kerja",
+            );
+            updateBar(charts.waktu_kerja?.bar, data.waktu_kerja, "waktu_kerja");
 
             updateDoughnut(charts.rencana_tk?.doughnut, data.rencana_tk);
             updateBar(charts.rencana_tk?.bar, data.rencana_tk);
@@ -275,6 +315,7 @@ function loadChartKetenagakerjaan() {
             renderTableRencanaTKOnly(data);
             renderTableDisabilitasOnly(data);
             renderTableAhliK3Only(data);
+            renderTableWkwiOnly(data);
         })
         .catch((err) => console.error("Fetch error:", err));
 }
@@ -399,27 +440,36 @@ function renderTabelProvinsi(data) {
 
             <td>${get(data.p2k3, "sudah")}</td>
             <td>${get(data.p2k3, "belum")}</td>
+            <td>${get(data.p2k3, "perusahaan")}</td>
 
             <td>${get(data.ahli_k3, "sudah")}</td>
             <td>${get(data.ahli_k3, "belum")}</td>
+            <td>${get(data.ahli_k3, "perusahaan")}</td>
 
             <td>${get(data.disabilitas, "sudah")}</td>
             <td>${get(data.disabilitas, "belum")}</td>
+            <td>${get(data.disabilitas, "perusahaan")}</td>
+            <td>${get(data.disabilitas, "total")}</td>
 
             <td>${get(data.rencana_tk, "sudah")}</td>
             <td>${get(data.rencana_tk, "belum")}</td>
+            <td>${get(data.rencana_tk, "perusahaan")}</td>
 
             <td>${get(data.serikat, "sudah")}</td>
             <td>${get(data.serikat, "belum")}</td>
+            <td>${get(data.serikat, "perusahaan")}</td>
 
             <td>${get(data.bipartit, "sudah")}</td>
             <td>${get(data.bipartit, "belum")}</td>
+            <td>${get(data.bipartit, "perusahaan")}</td>
 
             <td>${get(data.susu, "sudah")}</td>
             <td>${get(data.susu, "belum")}</td>
+            <td>${get(data.susu, "perusahaan")}</td>
 
-            <td>${get(data.waktu_kerja, "sudah")}</td>
-            <td>${get(data.waktu_kerja, "belum")}</td>
+            <td>${get(data.waktu_kerja, "umum")}</td>
+            <td>${get(data.waktu_kerja, "sektor")}</td>
+            <td>${get(data.waktu_kerja, "perusahaan")}</td>
         </tr>
     `;
 
@@ -437,12 +487,14 @@ function renderTableP2K3Only(data) {
     labels.forEach((provinsi, i) => {
         const sudah = Number(data.p2k3?.sudah?.[i] ?? 0);
         const belum = Number(data.p2k3?.belum?.[i] ?? 0);
+        const perusahaan = Number(data.p2k3?.perusahaan?.[i] ?? 0);
 
         tbody.innerHTML += `
             <tr>
                 <td>${provinsi}</td>
                 <td>${sudah.toLocaleString("id-ID")}</td>
                 <td>${belum.toLocaleString("id-ID")}</td>
+                <td>${perusahaan.toLocaleString("id-ID")}</td>
             </tr>
         `;
     });
@@ -459,12 +511,14 @@ function renderTableSerikatOnly(data) {
     labels.forEach((provinsi, i) => {
         const sudah = Number(data.serikat?.sudah?.[i] ?? 0);
         const belum = Number(data.serikat?.belum?.[i] ?? 0);
+        const perusahaan = Number(data.serikat?.perusahaan?.[i] ?? 0);
 
         tbody.innerHTML += `
             <tr>
                 <td>${provinsi}</td>
                 <td>${sudah.toLocaleString("id-ID")}</td>
                 <td>${belum.toLocaleString("id-ID")}</td>
+                <td>${perusahaan.toLocaleString("id-ID")}</td>
             </tr>
         `;
     });
@@ -480,12 +534,14 @@ function renderTableSusuOnly(data) {
     labels.forEach((provinsi, i) => {
         const sudah = Number(data.susu?.sudah?.[i] ?? 0);
         const belum = Number(data.susu?.belum?.[i] ?? 0);
+        const perusahaan = Number(data.susu?.perusahaan?.[i] ?? 0);
 
         tbody.innerHTML += `
             <tr>
                 <td>${provinsi}</td>
                 <td>${sudah.toLocaleString("id-ID")}</td>
                 <td>${belum.toLocaleString("id-ID")}</td>
+                <td>${perusahaan.toLocaleString("id-ID")}</td>
             </tr>
         `;
     });
@@ -501,12 +557,14 @@ function renderTableBipartitOnly(data) {
     labels.forEach((provinsi, i) => {
         const sudah = Number(data.bipartit?.sudah?.[i] ?? 0);
         const belum = Number(data.bipartit?.belum?.[i] ?? 0);
+        const perusahaan = Number(data.bipartit?.perusahaan?.[i] ?? 0);
 
         tbody.innerHTML += `
             <tr>
                 <td>${provinsi}</td>
                 <td>${sudah.toLocaleString("id-ID")}</td>
                 <td>${belum.toLocaleString("id-ID")}</td>
+                <td>${perusahaan.toLocaleString("id-ID")}</td>
             </tr>
         `;
     });
@@ -521,11 +579,13 @@ function renderTableRencanaTKOnly(data) {
 
     labels.forEach((provinsi, i) => {
         const sudah = Number(data.rencana_tk?.sudah?.[i] ?? 0);
+        const perusahaan = Number(data.rencana_tk?.perusahaan?.[i] ?? 0);
 
         tbody.innerHTML += `
             <tr>
                 <td>${provinsi}</td>
                 <td>${sudah.toLocaleString("id-ID")}</td>
+                <td>${perusahaan.toLocaleString("id-ID")}</td>
             </tr>
         `;
     });
@@ -541,12 +601,14 @@ function renderTableDisabilitasOnly(data) {
     labels.forEach((provinsi, i) => {
         const sudah = Number(data.disabilitas?.sudah?.[i] ?? 0);
         const total = Number(data.disabilitas?.total?.[i] ?? 0);
+        const perusahaan = Number(data.disabilitas?.perusahaan?.[i] ?? 0);
 
         tbody.innerHTML += `
             <tr>
                 <td>${provinsi}</td>
                 <td>${sudah.toLocaleString("id-ID")}</td>
                 <td>${total.toLocaleString("id-ID")}</td>
+                <td>${perusahaan.toLocaleString("id-ID")}</td>
             </tr>
         `;
     });
@@ -562,12 +624,37 @@ function renderTableAhliK3Only(data) {
     labels.forEach((provinsi, i) => {
         const sudah = Number(data.ahli_k3?.sudah?.[i] ?? 0);
         const total = Number(data.ahli_k3?.total?.[i] ?? 0);
+        const perusahaan = Number(data.ahli_k3?.perusahaan?.[i] ?? 0);
 
         tbody.innerHTML += `
             <tr>
                 <td>${provinsi}</td>
                 <td>${sudah.toLocaleString("id-ID")}</td>
                 <td>${total.toLocaleString("id-ID")}</td>
+                <td>${perusahaan.toLocaleString("id-ID")}</td>
+            </tr>
+        `;
+    });
+}
+function renderTableWkwiOnly(data) {
+    const tbody = document.getElementById("tbodyWkwi");
+    if (!tbody) return;
+
+    tbody.innerHTML = "";
+
+    const labels = (data.waktu_kerja?.labels ?? []).filter((v) => v !== null);
+
+    labels.forEach((provinsi, i) => {
+        const umum = Number(data.waktu_kerja?.umum?.[i] ?? 0);
+        const sektor = Number(data.waktu_kerja?.sektor?.[i] ?? 0);
+        const perusahaan = Number(data.waktu_kerja?.perusahaan?.[i] ?? 0);
+
+        tbody.innerHTML += `
+            <tr>
+                <td>${provinsi}</td>
+                <td>${umum.toLocaleString("id-ID")}</td>
+                <td>${sektor.toLocaleString("id-ID")}</td>
+                <td>${perusahaan.toLocaleString("id-ID")}</td>
             </tr>
         `;
     });
@@ -600,27 +687,36 @@ function renderTabelKabupaten(data) {
             <td>${kab}</td>
             <td>${get(data.p2k3, "sudah")}</td>
             <td>${get(data.p2k3, "belum")}</td>
+            <td>${get(data.p2k3, "perusahaan")}</td>
 
             <td>${get(data.ahli_k3, "sudah")}</td>
             <td>${get(data.ahli_k3, "belum")}</td>
+            <td>${get(data.ahli_k3, "perusahaan")}</td>
 
             <td>${get(data.disabilitas, "sudah")}</td>
             <td>${get(data.disabilitas, "belum")}</td>
+            <td>${get(data.disabilitas, "perusahaan")}</td>
+            <td>${get(data.disabilitas, "total")}</td>
 
             <td>${get(data.rencana_tk, "sudah")}</td>
             <td>${get(data.rencana_tk, "belum")}</td>
+            <td>${get(data.rencana_tk, "perusahaan")}</td>
 
             <td>${get(data.serikat, "sudah")}</td>
             <td>${get(data.serikat, "belum")}</td>
+            <td>${get(data.serikat, "perusahaan")}</td>
 
             <td>${get(data.bipartit, "sudah")}</td>
             <td>${get(data.bipartit, "belum")}</td>
+            <td>${get(data.bipartit, "perusahaan")}</td>
 
             <td>${get(data.susu, "sudah")}</td>
             <td>${get(data.susu, "belum")}</td>
+            <td>${get(data.susu, "perusahaan")}</td>
 
-            <td>${get(data.waktu_kerja, "sudah")}</td>
-            <td>${get(data.waktu_kerja, "belum")}</td>
+            <td>${get(data.waktu_kerja, "umum")}</td>
+            <td>${get(data.waktu_kerja, "sektor")}</td>
+            <td>${get(data.waktu_kerja, "perusahaan")}</td>
         </tr>
         `;
     });
@@ -678,6 +774,18 @@ function updateJudulWilayah(provinsi, kabupaten) {
         }
     });
 }
+function updateChartTheme(isDark) {
+    Chart.defaults.color = isDark ? "#fff" : "#000";
+
+    Object.values(charts).forEach((c) => {
+        c.doughnut?.update();
+        c.bar?.update();
+    });
+
+    Object.values(chartKabupaten).forEach((c) => {
+        c?.update();
+    });
+}
 // ==========================
 // INIT
 // ==========================
@@ -715,7 +823,7 @@ document.addEventListener("DOMContentLoaded", function () {
         },
 
         waktu_kerja: {
-            doughnut: createDoughnutChart("doughnutWkwi"),
+            doughnut: createDoughnutChart("doughnutWkwi", "waktu_kerja"),
             bar: createBarChart("barWkwi", "waktu_kerja"),
         },
 
@@ -841,24 +949,102 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (!chart) continue;
 
                 // page baru untuk chart selain chart pertama
-                if (i > 0) {
-                    pdf.addPage();
+                const labels = chart.data.labels;
+                const values = chart.data.datasets[0].data;
+
+                const chunkSize = 20;
+
+                // canvas sementara biar HD
+                const tempCanvas = document.createElement("canvas");
+                tempCanvas.width = 2000;
+                tempCanvas.height = 800;
+
+                for (let j = 0; j < labels.length; j += chunkSize) {
+                    const chunkLabels = labels.slice(j, j + chunkSize);
+                    const chunkValues = values.slice(j, j + chunkSize);
+
+                    // destroy chart lama
+                    if (window.tempChart) {
+                        window.tempChart.destroy();
+                    }
+
+                    // render chart baru (per 20 data)
+                    window.tempChart = new Chart(tempCanvas, {
+                        type: chart.config.type,
+                        data: {
+                            labels: chunkLabels,
+                            datasets: chart.data.datasets.map((ds) => ({
+                                label: ds.label,
+                                data: ds.data.slice(j, j + chunkSize),
+                                backgroundColor: Array.isArray(
+                                    ds.backgroundColor,
+                                )
+                                    ? ds.backgroundColor.slice(j, j + chunkSize)
+                                    : ds.backgroundColor,
+                            })),
+                        },
+                        options: {
+                            responsive: false,
+                            animation: false,
+                            maintainAspectRatio: false,
+
+                            plugins: {
+                                datalabels: {
+                                    anchor: "end",
+                                    align: "top",
+                                    offset: 4,
+                                    color: "#000", // biar keliatan di PDF putih
+                                    font: {
+                                        weight: "bold",
+                                        size: 10,
+                                    },
+                                    formatter: (value) =>
+                                        value > 0
+                                            ? value.toLocaleString("id-ID")
+                                            : "",
+                                },
+                            },
+
+                            scales: {
+                                x: {
+                                    ticks: {
+                                        autoSkip: false,
+                                        maxRotation: 45,
+                                        minRotation: 45,
+                                        font: { size: 10 },
+                                    },
+                                },
+                            },
+                        },
+                        plugins: [ChartDataLabels],
+                    });
+
+                    const img = tempCanvas.toDataURL("image/png", 1.0);
+
+                    // halaman baru kecuali pertama
+                    if (j !== 0 || i !== 0) {
+                        pdf.addPage();
+                    }
+
+                    await addKop(pdf);
+                    addHeader();
+
+                    const chartTitle =
+                        chart.canvas
+                            .closest(".card")
+                            ?.querySelector(".card-title")?.innerText ||
+                        chartIds[i];
+
+                    pdf.setFontSize(12);
+                    pdf.setFont(undefined, "bold");
+
+                    const start = j + 1;
+                    const end = Math.min(j + chunkSize, labels.length);
+
+                    pdf.text(`${chartTitle} (${start}-${end})`, 10, KOP_Y + 8);
+
+                    pdf.addImage(img, "PNG", 10, KOP_Y + 20, 270, 105);
                 }
-
-                await addKop(pdf);
-                addHeader();
-
-                const img = chart.toBase64Image("image/png", 4);
-
-                const chartTitle =
-                    chart.canvas.closest(".card")?.querySelector(".card-title")
-                        ?.innerText || chartIds[i];
-
-                pdf.setFontSize(12);
-                pdf.setFont(undefined, "bold");
-                pdf.text(chartTitle, 10, KOP_Y + 8);
-
-                pdf.addImage(img, "PNG", 10, KOP_Y + 20, 270, 105);
             }
 
             // =========================

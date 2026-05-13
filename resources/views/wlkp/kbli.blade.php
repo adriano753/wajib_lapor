@@ -76,7 +76,7 @@
         const prov = document.getElementById("filterKbliProvinsi")?.value;
         const kota = document.getElementById("filterKbliKota")?.value;
 
-        fetch(`/kbli/filter?tahun=${tahun || ''}&bulan=${bulan || ''}&provinsi=${prov || ''}&kota=${kota || ''}`)
+        fetch(`/kbli/perusahaan?tahun=${tahun || ''}&bulan=${bulan || ''}&provinsi=${prov || ''}&kota=${kota || ''}`)
             .then(res => res.json())
             .then(data => {
 
@@ -87,11 +87,12 @@
                 const groupedChart = {};
 
                 data.forEach(item => {
+                    if (!item.nama_2_digit) return;
                     const key = item.nama_2_digit;
 
                     if (!groupedChart[key]) groupedChart[key] = 0;
 
-                    groupedChart[key] += Number(item.total) || 0;
+                    groupedChart[key] += Number(item.total_perusahaan) || 0;
                 });
 
                 const labels = Object.keys(groupedChart);
@@ -192,7 +193,7 @@
 
             .catch(err => console.error("ERROR KBLI:", err));
     }
-
+    
     document.addEventListener("DOMContentLoaded", () => {
 
         renderKbliLPChart();
@@ -237,16 +238,114 @@
             await addKop(pdf);
             addHeader();
 
-            const chart = Chart.getChart("kbliChartCanvas");
+            const originalChart = Chart.getChart("kbliChartCanvas");
 
-            if (!chart) {
+            if (!originalChart) {
                 alert("Chart tidak ditemukan");
                 return;
             }
 
-            const chartImg = chart.toBase64Image("image/png", 4);
+            const labels = originalChart.data.labels;
+            const values = originalChart.data.datasets[0].data;
 
-            pdf.addImage(chartImg, "PNG", 10, 55, 277, 120);
+            const pageWidth = pdf.internal.pageSize.getWidth();
+            const margin = 10;
+            const imgWidth = pageWidth - (margin * 2);
+            const imgHeight = imgWidth * 0.6;
+
+            // 🔥 20 data per halaman
+            const chunkSize = 20;
+
+            // canvas sementara (WAJIB kasih ukuran besar biar gak blur)
+            const tempCanvas = document.createElement("canvas");
+            tempCanvas.width = 2000;
+            tempCanvas.height = 800;
+
+            for (let i = 0; i < labels.length; i += chunkSize) {
+
+                const chunkLabels = labels.slice(i, i + chunkSize);
+                const chunkValues = values.slice(i, i + chunkSize);
+
+                // hapus chart lama
+                if (window.tempChart) {
+                    window.tempChart.destroy();
+                }
+
+                // render chart baru per halaman
+                window.tempChart = new Chart(tempCanvas, {
+                    type: originalChart.config.type,
+                    data: {
+                        labels: chunkLabels,
+                        datasets: [{
+                            label: "Data KBLI",
+                            data: chunkValues,
+                            backgroundColor: "#42a5f5"
+                        }]
+                    },
+                    options: {
+                        responsive: false,
+                        animation: false,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            datalabels: {
+                                anchor: 'end',
+                                align: 'top',
+                                clip: false,
+                                color: '#000',
+                                font: {
+                                    weight: 'bold',
+                                    size: 10
+                                },
+                                formatter: function(value) {
+                                    return value.toLocaleString("id-ID");
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                ticks: {
+                                    maxRotation: 45,
+                                    minRotation: 45,
+                                    autoSkip: false,
+                                    font: {
+                                        size: 10
+                                    }
+                                }
+                            }
+                        }
+                    },
+
+                    plugins: [ChartDataLabels]
+
+                });
+
+                // convert ke image HD
+                const chartImg = tempCanvas.toDataURL("image/png", 1.0);
+
+                // halaman baru kalau bukan pertama
+                if (i !== 0) {
+                    pdf.addPage();
+                    await addKop(pdf);
+                    addHeader();
+                }
+
+                pdf.setFontSize(14);
+                pdf.setFont(undefined, "bold");
+
+                // range data (biar keren: 1–20, 21–40, dst)
+                const start = i + 1;
+                const end = Math.min(i + chunkSize, labels.length);
+
+                pdf.text(
+                    `GRAFIK DATA KBLI (${start} - ${end})`,
+                    pageWidth / 2,
+                    45, {
+                        align: "center"
+                    }
+                );
+                // render ke PDF
+                pdf.addImage(chartImg, "PNG", margin, 55, imgWidth, imgHeight);
+            }
 
             // =========================
             // TABEL
@@ -305,6 +404,120 @@
             pdf.save("laporan-kbli.pdf");
         });
     });
+
+    // CODE UNTUK CHART FULL 1 HALAMAN
+    // document.addEventListener("DOMContentLoaded", () => {
+
+    //     renderKbliLPChart();
+
+    //     document.querySelectorAll(".filter-select")
+    //         .forEach(el => {
+    //             el.addEventListener("change", renderKbliLPChart);
+    //         });
+
+    //     const btnKbli = document.getElementById("downloadPdfKbli");
+
+    //     if (!btnKbli) return;
+
+    //     btnKbli.addEventListener("click", async function() {
+
+    //         const {
+    //             jsPDF
+    //         } = window.jspdf;
+    //         const pdf = new jsPDF("l", "mm", "a4");
+
+    //         const now = new Date();
+    //         const tanggal = now.toLocaleDateString("id-ID");
+    //         const jam = now.toLocaleTimeString("id-ID");
+
+    //         const timestamp = `Dicetak: ${tanggal} ${jam}`;
+
+    //         function addHeader() {
+    //             const pageWidth = pdf.internal.pageSize.getWidth();
+    //             pdf.setFontSize(9);
+    //             pdf.setTextColor(100);
+    //             pdf.text(timestamp, pageWidth - 10, 35, {
+    //                 align: "right"
+    //             });
+    //         }
+
+            // kasih delay biar chart settle
+            // await new Promise(resolve => setTimeout(resolve, 300));
+
+            // =========================
+            // CHART
+            // =========================
+            // await addKop(pdf);
+            // addHeader();
+
+            // const chart = Chart.getChart("kbliChartCanvas");
+
+            // if (!chart) {
+            //     alert("Chart tidak ditemukan");
+            //     return;
+            // }
+
+            // const chartImg = chart.toBase64Image("image/png", 4);
+
+            // pdf.addImage(chartImg, "PNG", 10, 55, 277, 120);
+
+            // =========================
+            // TABEL
+            // =========================
+    //         pdf.addPage();
+    //         await addKop(pdf);
+    //         addHeader();
+
+    //         const tableWrapper = document.getElementById("tableWrapperKbli");
+    //         const table = document.querySelector("#tableWrapperKbli > table");
+
+    //         if (!tableWrapper || !table) {
+    //             alert("Tabel tidak ditemukan");
+    //             return;
+    //         }
+
+    //         const originalDisplay = tableWrapper.style.display;
+
+    //         tableWrapper.style.display = "block";
+    //         tableWrapper.style.visibility = "visible";
+
+    //         const judulText =
+    //             document.getElementById("judulTabelKbli")?.innerText ||
+    //             "TABEL DATA LAPANGAN KERJA BERDASARKAN KBLI";
+
+    //         const lines = pdf.splitTextToSize(judulText, 250);
+
+    //         pdf.setFontSize(14);
+    //         pdf.setFont(undefined, "bold");
+
+    //         const judulY = 48;
+
+    //         pdf.text(lines, 148, judulY, {
+    //             align: "center"
+    //         });
+
+    //         const tableStartY = judulY + (lines.length * 6);
+
+    //         pdf.autoTable({
+    //             html: table,
+    //             startY: tableStartY + 8,
+    //             styles: {
+    //                 fontSize: 8
+    //             },
+    //             headStyles: {
+    //                 fillColor: [66, 165, 245],
+    //                 textColor: 255,
+    //             },
+    //             didDrawPage: async () => {
+    //                 await addKop(pdf);
+    //                 addHeader();
+    //             },
+    //         });
+    //         tableWrapper.style.display = originalDisplay;
+
+    //         pdf.save("laporan-kbli.pdf");
+    //     });
+    // });
 
     document.getElementById("filterKbliProvinsi")
         ?.addEventListener("change", function() {
@@ -419,7 +632,7 @@
         // =========================
         if (mode === "single") {
             data
-                .sort((a, b) => (parseInt(b.total) || 0) - (parseInt(a.total) || 0))
+                .sort((a, b) => (parseInt(b.total_perusahaan) || 0) - (parseInt(a.total_perusahaan) || 0))
                 .forEach((item) => {
                     tbody.innerHTML += `
                     <tr>
@@ -429,7 +642,7 @@
                         <td>${prov}</td>
                         <td>${kota}</td>
                         <td>${item.nama_2_digit ?? "-"}</td>
-                        <td><b>${parseInt(item.total || 0).toLocaleString("id-ID")}</b></td>
+                        <td><b>${parseInt(item.total_perusahaan || 0).toLocaleString("id-ID")}</b></td>
                     </tr>
                 `;
                 });

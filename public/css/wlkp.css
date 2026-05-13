@@ -2153,11 +2153,9 @@ body.light-mode .hero-text h1 {
 
 /* CANVAS AREA */
 .chart-wide {
-    min-width: 100%; /* area chart besar */
+    min-width: max-content; /* area chart besar */
     height: 300px;
-
     flex-shrink: 0;
-    min-width: 100%;
 }
 
 /* .chart-wide canvas{

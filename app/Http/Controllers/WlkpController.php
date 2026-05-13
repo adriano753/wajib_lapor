@@ -41,7 +41,8 @@ class WlkpController extends Controller
         $masterData   = $this->service->getMasterData();
         $dropdowns    = $this->service->getDropdowns();
         $dropdownKBLI = $this->service->getDropdownsKBLI();
-        $kbliChart = $this->service->getRekapKBLI($filters);
+        $kbliChart = $this->service->getRekapKBLI_Perusahaan($request);
+        $kbliChart = $this->service->getRekapKBLI_TenagaKerja($request);
         $kbliLabels = $kbliChart->pluck('nama_2_digit')->values();
         $kbliValues = $kbliChart->pluck('total')->values();
         $rowsPPPKB = $this->service->getRekapPPPKB();
@@ -382,4 +383,16 @@ class WlkpController extends Controller
 
         return $pdf->download('laporan-pppkb.pdf');
     }
+    public function getKbliTenagaKerja(Request $request)
+{
+    $data = $this->service->getRekapKBLI_TenagaKerja($request);
+
+    return response()->json($data);
+}
+public function getKbliPerusahaan(Request $request)
+{
+    $data = $this->service->getRekapKBLI_Perusahaan($request);
+
+    return response()->json($data);
+}
 }

@@ -60,3 +60,5 @@ Route::get('/wlkp/kbli', [KbliController::class, 'index'])
 Route::get('/kbli/filter', [KbliController::class, 'filter']);
 Route::get('/get-kabupaten', [KbliController::class, 'getKabupaten']);
 Route::get('/kbli/top-provinsi', [KbliController::class, 'filterTopProvinsi']);
+Route::get('/kbli/tenaga-kerja', [WlkpController::class, 'getKbliTenagaKerja']);
+Route::get('/kbli/perusahaan', [WlkpController::class, 'getKbliPerusahaan']);
