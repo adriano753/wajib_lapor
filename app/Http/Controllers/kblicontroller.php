@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+<<<<<<< HEAD
 dd($kbliChart);
 use App\Services\WlkpService;
 use Illuminate\Http\Request;
@@ -45,4 +46,12 @@ class KbliController extends Controller
             'optKBLI'    => $dropdowns['kbli'],
         ]);
     }
+=======
+
+use Illuminate\Http\Request;
+
+class kblicontroller extends Controller
+{
+    //
+>>>>>>> rayhan
 }

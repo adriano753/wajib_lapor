@@ -8,10 +8,23 @@ export default defineConfig({
         laravel({
             input: [
                 'resources/css/app.css',
+<<<<<<< HEAD
                 'resources/js/app.js',
                 'resources/js/templatemo-graph-script.js', 
                 'resources/js/dashboard-klasifikasi.js',   
                 'resources/js/dashboard-pp-pkb.js',        
+=======
+                'resources/css/login.css',
+                'resources/js/app.js',
+                'resources/js/templatemo-graph-script.js', 
+                'resources/js/dashboard-klasifikasi.js',   
+                'resources/js/dashboard-pp-pkb.js',
+                'resources/js/download-data.js',
+                'resources/js/ketenagakerjaan.js',    
+                'resources/js/loader.js', 
+                'resources/js/download-data-full.js', 
+                      
+>>>>>>> rayhan
             ],
             refresh: true,
         }),

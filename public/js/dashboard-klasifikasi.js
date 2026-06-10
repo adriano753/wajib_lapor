@@ -1,9 +1,5 @@
 /* ===============================
-<<<<<<< HEAD
-       1️⃣ CHART PROVINSI
-=======
-       1️CHART PROVINSI
->>>>>>> rayhan
+       CHART PROVINSI
     =============================== */
 
 const chartProvinsi = new Chart(document.getElementById("provinsiChart"), {
@@ -12,19 +8,11 @@ const chartProvinsi = new Chart(document.getElementById("provinsiChart"), {
         labels: window.chartData.provinsi,
         datasets: [
             {
-                data: window.chartData.totalProvinsiKlas,
+                data: window.chartData.totalProvinsi,
                 backgroundColor: "#42A5F5",
-<<<<<<< HEAD
-                // --- PENGATURAN LEBAR DAN MARGIN ---
-                barPercentage: 0.9, // Mengatur lebar bar (0.1 - 1.0). Semakin dekat ke 1, semakin lebar.
-                categoryPercentage: 0.8, // Mengatur jarak antar kategori. Semakin kecil, semakin renggang jaraknya.
-                maxBarThickness: 100,
-                // -----------------------------------
-=======
                 barPercentage: 0.9,
                 categoryPercentage: 0.8,
                 maxBarThickness: 100,
->>>>>>> rayhan
             },
         ],
     },
@@ -34,11 +22,7 @@ const chartProvinsi = new Chart(document.getElementById("provinsiChart"), {
         layout: {
             padding: {
                 top: 40,
-<<<<<<< HEAD
-                bottom: 30, // Tambah ruang di bawah agar tulisan tidak kepotong
-=======
                 bottom: 30,
->>>>>>> rayhan
             },
         },
         plugins: {
@@ -53,10 +37,6 @@ const chartProvinsi = new Chart(document.getElementById("provinsiChart"), {
                     weight: "bold",
                     size: 11,
                 },
-<<<<<<< HEAD
-                // color: "white",
-=======
->>>>>>> rayhan
             },
         },
         scales: {
@@ -64,12 +44,8 @@ const chartProvinsi = new Chart(document.getElementById("provinsiChart"), {
                 beginAtZero: true,
                 ticks: {
                     callback: (value) => value.toLocaleString("id-ID"),
-<<<<<<< HEAD
-                    // color: "white",
                 },
-                grid: {
-                    // color: "rgba(255, 255, 255, 0.1)", // Garis grid tipis transparan
-                },
+                grid: {},
             },
             x: {
                 ticks: {
@@ -79,20 +55,6 @@ const chartProvinsi = new Chart(document.getElementById("provinsiChart"), {
                     font: {
                         size: 10,
                     },
-                    // color: "white",
-=======
-                },
-                grid: {},
-            },
-            x: {
-                ticks: {
-                    autoSkip: false,
-                    maxRotation: 45,
-                    minRotation: 45,
-                    font: {
-                        size: 10,
-                    },
->>>>>>> rayhan
                 },
                 grid: {
                     display: false,
@@ -117,18 +79,6 @@ const chartKlasifikasi = new Chart(
             ],
             datasets: [
                 {
-<<<<<<< HEAD
-                    data: 
-                    window.chartData.klasifikasi,
-                    backgroundColor: [
-                        '#ab0728', // Mikro (Merah)
-                        '#FFA726', // Kecil (Orange)
-                        '#42A5F5', // Menengah (Biru)
-                        '#AB47BC', // Besar (Ungu)
-                        '#BDBDBD'  // Tidak Teridentifikasi (Abu)
-                    ],
-                    barPercentage: 0.6,         // Sedikit lebih kurus karena datanya dikit, biar rapi
-=======
                     data: window.chartData.klasifikasi,
                     backgroundColor: [
                         "#ab0728", // Mikro (Merah)
@@ -138,7 +88,6 @@ const chartKlasifikasi = new Chart(
                         "#BDBDBD", // Tidak Teridentifikasi (Abu)
                     ],
                     barPercentage: 0.6,
->>>>>>> rayhan
                     categoryPercentage: 0.8,
                 },
             ],
@@ -148,11 +97,7 @@ const chartKlasifikasi = new Chart(
             maintainAspectRatio: false,
             layout: {
                 padding: {
-<<<<<<< HEAD
-                    top: 30, // ✅ PADDING: Supaya angka di atas bar tidak kepotong
-=======
                     top: 30,
->>>>>>> rayhan
                 },
             },
             plugins: {
@@ -167,10 +112,6 @@ const chartKlasifikasi = new Chart(
                         weight: "bold",
                         size: 11,
                     },
-<<<<<<< HEAD
-                    // color: "white", // Atau sesuaikan dengan tema background (misal: black/white)
-=======
->>>>>>> rayhan
                 },
             },
             scales: {
@@ -178,45 +119,24 @@ const chartKlasifikasi = new Chart(
                     beginAtZero: true,
                     ticks: {
                         callback: (value) => value.toLocaleString("id-ID"),
-<<<<<<< HEAD
-                        // color: "#e0e0e0", // Warna teks sumbu Y
-                    },
-                    grid: {
-                        // color: "rgba(255, 255, 255, 0.1)", // Grid tipis transparan
-                    },
-=======
                     },
                     grid: {},
->>>>>>> rayhan
                 },
                 x: {
                     ticks: {
                         autoSkip: false,
-<<<<<<< HEAD
-                        // color: "#e0e0e0",
-=======
->>>>>>> rayhan
                         font: {
                             size: 11,
                         },
                     },
                     grid: {
-<<<<<<< HEAD
-                        display: false, // Grid vertikal hilang biar bersih
-=======
                         display: false,
->>>>>>> rayhan
                     },
                 },
             },
         },
-<<<<<<< HEAD
-        plugins: [ChartDataLabels], // Jangan lupa plugin ini harus sudah di-load
-    }
-=======
         plugins: [ChartDataLabels],
     },
->>>>>>> rayhan
 );
 
 const chartKota = new Chart(document.getElementById("kotaChart"), {
@@ -227,13 +147,8 @@ const chartKota = new Chart(document.getElementById("kotaChart"), {
             {
                 label: "Jumlah Perusahaan",
                 data: [],
-<<<<<<< HEAD
-                backgroundColor: "#66BB6A", // Warna Hijau (Biar beda dengan Provinsi)
-                maxBarThickness: 80, // Agar bar tidak raksasa saat cuma 1 kota
-=======
                 backgroundColor: "#66BB6A",
-                maxBarThickness: 80,
->>>>>>> rayhan
+                maxBarThickness: 80, 
             },
         ],
     },
@@ -247,35 +162,19 @@ const chartKota = new Chart(document.getElementById("kotaChart"), {
                 align: "top",
                 formatter: (value) => value.toLocaleString("id-ID"),
                 font: { weight: "bold", size: 10 },
-<<<<<<< HEAD
-                // color: "white",
-=======
->>>>>>> rayhan
             },
         },
         scales: {
             y: {
                 beginAtZero: true,
                 ticks: {
-<<<<<<< HEAD
-                    // color: "#e0e0e0",
                     callback: (v) => v.toLocaleString("id-ID"),
                 },
-                grid: { 
-                    // color: "rgba(255, 255, 255, 0.1)" 
+                grid: {
                 },
             },
             x: {
                 ticks: {
-                    // color: "#e0e0e0",
-=======
-                    callback: (v) => v.toLocaleString("id-ID"),
-                },
-                grid: {},
-            },
-            x: {
-                ticks: {
->>>>>>> rayhan
                     autoSkip: false,
                     maxRotation: 90,
                     minRotation: 45,
@@ -289,17 +188,6 @@ const chartKota = new Chart(document.getElementById("kotaChart"), {
 });
 
 // 1. AMBIL DATA DARI WINDOW (Global Variable dari Blade)
-<<<<<<< HEAD
-const masterData = window.chartMasterData; // Pastikan nama ini sama dengan di Blade
-const listProvinsiLabel = window.listProvinsiLabel;
-
-// 2. AMBIL ELEMENT DOM
-const filterTahun = document.getElementById('tahunSelect');
-const filterBulan = document.getElementById('bulanSelect');
-const filterProvinsi = document.getElementById('provinsiSelectKlasif');
-const filterKabupaten = document.getElementById('kabupatenSelectKlasif');
-const filterKlasifikasi = document.getElementById('klasifikasiSelect');
-=======
 const masterData = window.chartMasterData;
 const listProvinsiLabel = window.listProvinsiLabel;
 
@@ -309,7 +197,6 @@ const filterBulan = document.getElementById("bulanSelect");
 const filterProvinsi = document.getElementById("provinsiSelectKlasif");
 const filterKabupaten = document.getElementById("kabupatenSelectKlasif");
 const filterKlasifikasi = document.getElementById("klasifikasiSelect");
->>>>>>> rayhan
 
 // 3. FUNGSI UTAMA: UPDATE DASHBOARD
 function updateDashboard() {
@@ -319,16 +206,9 @@ function updateDashboard() {
     const valProv = filterProvinsi.value;
     const valKab = filterKabupaten.value;
     const valKlas = filterKlasifikasi.value;
-<<<<<<< HEAD
-
-// B. Filter Data
-    const filteredData = masterData.filter(row => {
-=======
-    filterBulan.disabled = !filterTahun.value;
 
     // B. Filter Data
     const filteredData = masterData.filter((row) => {
->>>>>>> rayhan
         // Normalisasi value klasifikasi dari row data (null jadi string kosong)
         const rowKlas = (row.skala_objek_pengawasan || "").toLowerCase();
         const searchKlas = valKlas.toLowerCase();
@@ -337,39 +217,21 @@ function updateDashboard() {
         let isKlasifikasiMatch = false;
 
         if (searchKlas === "") {
-            // Jika dropdown "Semua", ambil semua
-<<<<<<< HEAD
-            isKlasifikasiMatch = true; 
-        } else if (searchKlas === "tidak teridentifikasi") {
-            // Jika dropdown "Tidak Teridentifikasi", ambil yang kosong ATAU yang teksnya memang "tidak teridentifikasi"
-            isKlasifikasiMatch = (rowKlas === "" || rowKlas === "tidak teridentifikasi");
-=======
             isKlasifikasiMatch = true;
         } else if (searchKlas === "tidak teridentifikasi") {
-            // Jika dropdown "Tidak Teridentifikasi", ambil yang kosong ATAU yang teksnya memang "tidak teridentifikasi"
             isKlasifikasiMatch =
                 rowKlas === "" || rowKlas === "tidak teridentifikasi";
->>>>>>> rayhan
         } else {
-            // Selain itu, cocokkan teks biasa (Mikro, Kecil, Besar, dll)
             isKlasifikasiMatch = rowKlas === searchKlas;
         }
 
-<<<<<<< HEAD
-        return (valTahun === "" || String(row.tahun) === valTahun) &&
-               (valBulan === "" || String(row.bulan) === valBulan) &&
-               (valProv  === "" || row.provinsi === valProv) &&
-               (valKab   === "" || row.kota === valKab) &&
-               isKlasifikasiMatch; // <--- Gunakan logika baru di sini
-=======
         return (
             (valTahun === "" || String(row.tahun) === valTahun) &&
             (valBulan === "" || String(row.bulan) === valBulan) &&
             (valProv === "" || row.provinsi === valProv) &&
             (valKab === "" || row.kota === valKab) &&
             isKlasifikasiMatch
-        ); // <--- Gunakan logika baru di sini
->>>>>>> rayhan
+        );
     });
 
     // C. Hitung Ulang Data (SUM Total)
@@ -381,63 +243,24 @@ function updateDashboard() {
     let chartProvinsiData = [];
 
     if (valProv !== "") {
-        // === MODE 1 PROVINSI ===
-
-        // 1. Ubah Style Container: Hapus lebar 2000px, jadikan 100%
-<<<<<<< HEAD
-        // Ini otomatis MENGHILANGKAN Scrollbar & membuat chart ke tengah
-=======
->>>>>>> rayhan
         if (chartContainer) chartContainer.style.width = "100%";
 
         // 2. Set Data & Label Single
         chartProvinsiLabels = [valProv];
         const totalOneProv = filteredData.reduce(
             (sum, row) => sum + parseInt(row.total),
-<<<<<<< HEAD
-            0
-=======
             0,
->>>>>>> rayhan
         );
         chartProvinsiData = [totalOneProv];
     } else {
-        // === MODE SEMUA PROVINSI ===
-
-        // 1. Ubah Style Container: Kembalikan ke 2000px (atau lebih)
-<<<<<<< HEAD
-        // Ini memunculkan Scrollbar agar muat 38 provinsi
         if (chartContainer) chartContainer.style.width = "2000px";
 
-        // 1. Mengubah value 'null' dari Controller menjadi string 'TIDAK TERINDENTIFIKASI'
-        chartProvinsiLabels = listProvinsiLabel.map(label => {
-            return (label === null || label === "") ? "TIDAK TERINDENTIFIKASI" : label;
-        });
-
-        // 2. Mapping Data (Sekarang labelnya sudah string, jadi akan cocok dengan datanya)
-        chartProvinsiData = chartProvinsiLabels.map((namaProv) => {
-            const dataProv = filteredData.filter((r) => {
-                const rowProv = (r.provinsi === null || r.provinsi === "") ? "TIDAK TERINDENTIFIKASI" : r.provinsi;
-=======
-        if (chartContainer) chartContainer.style.width = "2000px";
-
-        // 1. Mengubah value 'null' dari Controller menjadi string 'TIDAK TERINDENTIFIKASI'
-        chartProvinsiLabels = listProvinsiLabel.map((label) => {
-            return label === null || label === ""
-                ? "TIDAK TERINDENTIFIKASI"
-                : label;
-        });
-
-        // 2. Mapping Data
-        chartProvinsiData = chartProvinsiLabels.map((namaProv) => {
-            const dataProv = filteredData.filter((r) => {
-                const rowProv =
-                    r.provinsi === null || r.provinsi === ""
-                        ? "TIDAK TERINDENTIFIKASI"
-                        : r.provinsi;
->>>>>>> rayhan
-                return rowProv === namaProv;
-            });
+        // 2. Set Data & Label Full
+        chartProvinsiLabels = listProvinsiLabel;
+        chartProvinsiData = listProvinsiLabel.map((namaProv) => {
+            const dataProv = filteredData.filter(
+                (r) => r.provinsi === namaProv,
+            );
             return dataProv.reduce((sum, row) => sum + parseInt(row.total), 0);
         });
     }
@@ -449,11 +272,7 @@ function updateDashboard() {
             .filter(
                 (r) =>
                     (r.skala_objek_pengawasan || "").toLowerCase() ===
-<<<<<<< HEAD
-                    namaKategori
-=======
                     namaKategori,
->>>>>>> rayhan
             )
             .reduce((sum, row) => sum + parseInt(row.total), 0);
     };
@@ -471,13 +290,8 @@ function updateDashboard() {
     ];
 
     // D. Update Chart
-<<<<<<< HEAD
-    chartProvinsi.data.labels = chartProvinsiLabels; // <--- Update Sumbu X
-    chartProvinsi.data.datasets[0].data = chartProvinsiData; // <--- Update Data Batang
-=======
-    chartProvinsi.data.labels = chartProvinsiLabels;
-    chartProvinsi.data.datasets[0].data = chartProvinsiData;
->>>>>>> rayhan
+    chartProvinsi.data.labels = chartProvinsiLabels; 
+    chartProvinsi.data.datasets[0].data = chartProvinsiData; 
     chartProvinsi.update();
 
     chartKlasifikasi.data.datasets[0].data = dataKlasifikasiBaru;
@@ -510,13 +324,8 @@ function updateDashboard() {
             ...new Set(
                 filteredData
                     .map((r) => r.kota)
-<<<<<<< HEAD
                     .filter((k) => k) // hapus null
-                    .sort()
-=======
-                    .filter((k) => k)
                     .sort(),
->>>>>>> rayhan
             ),
         ];
 
@@ -541,10 +350,6 @@ function updateDashboard() {
         chartKota.data.datasets[0].data = dataKota;
         chartKota.update();
     }
-<<<<<<< HEAD
-=======
-    renderTabelKlasifikasi(filteredData, "single");
->>>>>>> rayhan
 }
 
 // 4. FUNGSI BANTUAN: UPDATE DROPDOWN KOTA
@@ -564,11 +369,7 @@ function updateKabupatenOptions(selectedProv) {
             sourceData
                 .map((r) => r.kota)
                 .filter((k) => k) // Hapus null
-<<<<<<< HEAD
-                .sort()
-=======
                 .sort(),
->>>>>>> rayhan
         ),
     ];
 
@@ -590,172 +391,10 @@ function updateKabupatenOptions(selectedProv) {
         filterKabupaten.appendChild(option);
     });
 }
-<<<<<<< HEAD
 
 // 5. PASANG EVENT LISTENER (DI LUAR FUNGSI APAPUN)
 // A. Event Listener: TAHUN, BULAN, KLASIFIKASI (Standar)
 [filterTahun, filterBulan, filterKlasifikasi].forEach((f) => {
-=======
-function renderTabelKlasifikasi(filteredData, mode = "single") {
-    const tbody = document.getElementById("tbodyKlasifikasi");
-    const headerRow = document.getElementById("headerRow");
-
-    if (!tbody || !headerRow) return;
-
-    const valTahun = filterTahun.value || "Semua Tahun";
-    const valBulan = filterBulan.value || "Semua Bulan";
-
-    tbody.innerHTML = "";
-
-    // 🔥 HEADER DINAMIS
-    if (mode === "single") {
-        headerRow.innerHTML = `
-            <th>No</th>
-            <th>Tahun</th>
-            <th>Bulan</th>
-            <th>Provinsi</th>
-            <th>Kab/Kota</th>
-            <th>Mikro</th>
-            <th>Kecil</th>
-            <th>Menengah</th>
-            <th>Besar</th>
-            <th>Tidak Teridentifikasi</th>
-            <th>Total</th>
-        `;
-    } else {
-        headerRow.innerHTML = `
-            <th>No</th>
-            <th>Provinsi</th>
-            <th>Besar</th>
-            <th>Menengah</th>
-            <th>Kecil</th>
-            <th>Mikro</th>
-            <th>Tidak Teridentifikasi</th>
-            <th>Total</th>
-        `;
-    }
-
-    let no = 1;
-
-    // 🔥 GROUPING DINAMIS
-    const grouped = {};
-
-    filteredData.forEach((row) => {
-        const prov = row.provinsi || "Tidak Diketahui";
-        const kab = row.kota || "Tidak Diketahui";
-
-        const key = mode === "single"
-            ? `${prov}||${kab}` // detail
-            : prov;             // rekap provinsi
-
-        if (!grouped[key]) {
-            grouped[key] = {
-                provinsi: prov,
-                kabupaten: kab,
-                mikro: 0,
-                kecil: 0,
-                menengah: 0,
-                besar: 0,
-                tidak: 0,
-            };
-        }
-
-        const klas = (row.skala_objek_pengawasan || "").toLowerCase().trim();
-        const total = parseInt(row.total) || 0;
-
-        if (klas === "mikro") grouped[key].mikro += total;
-        else if (klas === "kecil") grouped[key].kecil += total;
-        else if (klas === "menengah") grouped[key].menengah += total;
-        else if (klas === "besar") grouped[key].besar += total;
-        else grouped[key].tidak += total;
-    });
-
-    // 🔥 SORTING
-    Object.values(grouped)
-        .sort((a, b) => {
-            const provA = (a.provinsi || "").toLowerCase();
-            const provB = (b.provinsi || "").toLowerCase();
-
-            if (provA.includes("tidak")) return 1;
-            if (provB.includes("tidak")) return -1;
-
-            const provCompare = provA.localeCompare(provB, "id");
-            if (provCompare !== 0) return provCompare;
-
-            // 🔥 sorting kabupaten hanya untuk mode single
-            if (mode === "single") {
-                const kabA = (a.kabupaten || "").toLowerCase();
-                const kabB = (b.kabupaten || "").toLowerCase();
-
-                if (kabA.includes("tidak")) return 1;
-                if (kabB.includes("tidak")) return -1;
-
-                return kabA.localeCompare(kabB, "id");
-            }
-
-            return 0;
-        })
-        .forEach((item) => {
-            const grandTotal =
-                item.mikro +
-                item.kecil +
-                item.menengah +
-                item.besar +
-                item.tidak;
-
-            // 🔥 RENDER ROW
-            if (mode === "single") {
-                tbody.innerHTML += `
-                    <tr>
-                        <td>${no++}</td>
-                        <td>${valTahun}</td>
-                        <td>${valBulan}</td>
-                        <td>${item.provinsi}</td>
-                        <td>${item.kabupaten}</td>
-                        <td>${item.mikro.toLocaleString("id-ID")}</td>
-                        <td>${item.kecil.toLocaleString("id-ID")}</td>
-                        <td>${item.menengah.toLocaleString("id-ID")}</td>
-                        <td>${item.besar.toLocaleString("id-ID")}</td>
-                        <td>${item.tidak.toLocaleString("id-ID")}</td>
-                        <td><b>${grandTotal.toLocaleString("id-ID")}</b></td>
-                    </tr>
-                `;
-            } else {
-                tbody.innerHTML += `
-                    <tr>
-                        <td>${no++}</td>
-                        <td>${item.provinsi}</td>
-                        <td>${item.besar.toLocaleString("id-ID")}</td>
-                        <td>${item.menengah.toLocaleString("id-ID")}</td>
-                        <td>${item.kecil.toLocaleString("id-ID")}</td>
-                        <td>${item.mikro.toLocaleString("id-ID")}</td>
-                        <td>${item.tidak.toLocaleString("id-ID")}</td>
-                        <td><b>${grandTotal.toLocaleString("id-ID")}</b></td>
-                    </tr>
-                `;
-            }
-        });
-}
-window.renderTabelKlasifikasi = renderTabelKlasifikasi;
-
-// 5. PASANG EVENT LISTENER (DI LUAR FUNGSI APAPUN)
-// A. Event Listener: TAHUN, BULAN, KLASIFIKASI (Standar)
-if (filterTahun) {
-    filterTahun.addEventListener("change", function () {
-        // aktif/nonaktif bulan berdasarkan tahun
-        filterBulan.disabled = this.value === "";
-
-        // kalau tahun dihapus, reset bulan juga
-        if (this.value === "") {
-            filterBulan.value = "";
-        }
-
-        updateDashboard();
-    });
-}
-
-[filterBulan, filterKlasifikasi].forEach((f) => {
->>>>>>> rayhan
     if (f) {
         f.addEventListener("change", updateDashboard);
     }
@@ -785,11 +424,7 @@ if (filterKabupaten) {
         if (selectedCity !== "") {
             // 1. Cari data baris pertama yang kotanya sama dengan yang dipilih
             const matchedRow = masterData.find(
-<<<<<<< HEAD
-                (row) => row.kota === selectedCity
-=======
                 (row) => row.kota === selectedCity,
->>>>>>> rayhan
             );
 
             // 2. Jika ketemu dan provinsinya beda dengan yang sekarang dipilih
@@ -813,24 +448,4 @@ if (filterKabupaten) {
     });
 }
 
-<<<<<<< HEAD
-=======
-const toggleTableBtnKlasifikasi = document.getElementById(
-    "toggleTableBtnKlasifikasi",
-);
-const tableWrapper = document.getElementById("tableWrapper");
-
-if (toggleTableBtnKlasifikasi && tableWrapper) {
-    toggleTableBtnKlasifikasi.addEventListener("click", function () {
-        if (tableWrapper.style.display === "none") {
-            tableWrapper.style.display = "block";
-            toggleTableBtnKlasifikasi.innerText = "Tutup Tabel";
-        } else {
-            tableWrapper.style.display = "none";
-            toggleTableBtnKlasifikasi.innerText = "Buka Tabel";
-        }
-    });
-}
-
->>>>>>> rayhan
 updateDashboard();

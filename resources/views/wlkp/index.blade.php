@@ -5,23 +5,52 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WLKP - Wajib Lapor Ketenagakerjaan Perusahaan</title>
+<<<<<<< HEAD
+=======
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/kemnaker_logo.png') }}">
+>>>>>>> rayhan
     <link rel="stylesheet" href="{{ asset('css/wlkp.css') }}">
     {{-- <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script> --}}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+<<<<<<< HEAD
 
 
+=======
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/exceljs/dist/exceljs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/file-saver/dist/FileSaver.min.js"></script>
+>>>>>>> rayhan
 </head>
 
 
 <body>
+<<<<<<< HEAD
+=======
+    <div id="loader">
+        <div class="loader-content">
+            <img src="{{ asset('images/logo_kemnaker.png') }}" class="loader-logo" alt="WLKP">
+
+            <div class="spinner"></div>
+
+            <p class="loading-text">Memuat Sistem WLKP...</p>
+        </div>
+    </div>
+>>>>>>> rayhan
 
     <nav id="navbar">
         <div class="nav-container">
             <a href="#beranda" class="logo">
                 <img src="{{ asset('images/img.png') }}" width="155">
             </a>
+<<<<<<< HEAD
             <ul class="nav-links">
+=======
+            <div class="menu-toggle" id="menuToggle">
+                ☰
+            </div>
+            <ul class="nav-links" id="navLinks">
+>>>>>>> rayhan
                 <li><a href="#beranda" class="active">Beranda</a></li>
                 <li><a href="#laporan">Laporan</a></li>
                 <!-- <li><a href="#layanan">Layanan</a></li> -->
@@ -46,16 +75,27 @@
             <div class="hero-text">
                 <h1>Wajib Lapor Ketenagakerjaan Perusahaan</h1>
                 <p>
+<<<<<<< HEAD
                     Wajib Lapor Ketenagakerjaan Perusahaan (WLKP) 
+=======
+                    Wajib Lapor Ketenagakerjaan Perusahaan (WLKP)
+>>>>>>> rayhan
                     merupakan sistem pelaporan resmi untuk mendukung
                     pengelolaan data ketenagakerjaan secara terintegrasi.
                 </p>
                 <a href="#laporan" class="cta-button">Mulai Sekarang</a>
             </div>
+<<<<<<< HEAD
         <div class="hero-visual">
             <div class="neon-line neon-line1"></div>
             <div class="neon-line neon-line2"></div>
         </div>
+=======
+            <div class="hero-visual">
+                <div class="neon-line neon-line1"></div>
+                <div class="neon-line neon-line2"></div>
+            </div>
+>>>>>>> rayhan
     </section>
 
     <!-- LAPORAN -->
@@ -95,16 +135,44 @@
                     <div class="metric-label">Tidak Teridentifikasi</div>
                 </div>
             </div>
+<<<<<<< HEAD
 
+=======
+            <br>
+            <h3 class="chart-title">Filter Laporan Provinsi</h3>
+            <div class="filter-panel mb-4">
+                <div class="filter-group">
+                    <button id="downloadBarPdf" class="form-select filter-select">
+                        Download PDF
+                    </button>
+                </div>
+                <div class="filter-group">
+                    <button id="downloadPdfAll" class="form-select filter-select">
+                        Download full
+                    </button>
+                </div>
+                <div class="filter-group">
+                    <button id="toggleTablelprBtn" class="form-select filter-select">
+                        Tampilkan Tabel
+                    </button>
+                </div>
+            </div>
+            <br>
+>>>>>>> rayhan
             <!-- GRAFIK PROVINSI -->
             <div class="chart-card full-width">
                 <div class="chart-header">
                     <h3 class="chart-title">Laporan Provinsi</h3>
+<<<<<<< HEAD
+=======
+
+>>>>>>> rayhan
                 </div>
 
                 <div class="chart-container">
                     <div class="bar-chart" id="barChart">
                         @forelse ($dataProvinsi as $row)
+<<<<<<< HEAD
                         @php
                         $height = $maxVal > 0 ? ($row->total / $maxVal) * 100 : 0;
                         @endphp
@@ -122,6 +190,51 @@
                         @endforelse
                     </div>
                 </div>
+=======
+                            @php
+                                $height = $maxVal > 0 ? ($row->total / $maxVal) * 100 : 0;
+                            @endphp
+
+                            <div class="bar" style="height: {{ $height }}%" title="{{ $row->provinsi }}">
+                                <span class="bar-value">
+                                    {{ number_format($row->total, 0, ',', '.') }}
+                                </span>
+                                <span class="bar-label">
+                                    {{ $row->provinsi }}
+                                </span>
+                            </div>
+                        @empty
+                            <p>Tidak ada data</p>
+                        @endforelse
+                    </div>
+                </div>
+                <div id="tableProvinsilprWrapper" style="display: none;">
+                    <div class="table-responsive mt-2">
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Provinsi</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($dataProvinsi as $index => $row)
+                                    <tr>
+                                        <td>{{ $index + 1 }}</td>
+                                        <td>{{ $row->provinsi }}</td>
+                                        <td>{{ number_format($row->total, 0, ',', '.') }}</td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="3" class="text-center">Tidak ada data</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+>>>>>>> rayhan
             </div>
             {{-- GRAFIK KLASIFIKASI --}}
             @include('wlkp.perusahaanklasifikasi')
@@ -133,10 +246,15 @@
             @include('wlkp.jaminansosial')
             @include('wlkp.pppkb')
             @include('wlkp.upahminimum')
+<<<<<<< HEAD
+=======
+            @include('wlkp.ketenagakerjaan')
+>>>>>>> rayhan
         </div>
 
     </section>
 
+<<<<<<< HEAD
 
     <!-- LAYANAN
     <section class="layanan-section" id="layanan">
@@ -181,6 +299,8 @@
         </div>
     </section> -->
 
+=======
+>>>>>>> rayhan
     <!-- TENTANG KAMI -->
     <!-- Contact Section -->
     <section class="contact-section" id="kontak">
@@ -191,11 +311,21 @@
                 <div class="contact-form">
                     <h3 style="margin-bottom: 30px; font-size: 24px;">Informasi Unit Kerja</h3>
                     <div class="mb-3 text-center">
+<<<<<<< HEAD
                         <img src="images/binwas.png" style="display: block; margin-left: auto; margin-right: auto; max-height: 225px; object-fit: contain;">
                     </div>
                     <h3>Ditjen Binwasnaker & K3</h3>
                     <p class="text-muted" style="text-align: justify;">
                         Merupakan unit kerja yang mempunyai tugas menyelenggarakan perumusan dan pelaksanaan kebijakan di bidang pembinaan pengawasan ketenagakerjaan serta keselamatan dan kesehatan kerja.
+=======
+                        <img src="images/binwas.png"
+                            style="display: block; margin-left: auto; margin-right: auto; max-height: 225px; object-fit: contain;">
+                    </div>
+                    <h3>Ditjen Binwasnaker & K3</h3>
+                    <p class="text-muted" style="text-align: justify;">
+                        Merupakan unit kerja yang mempunyai tugas menyelenggarakan perumusan dan pelaksanaan kebijakan
+                        di bidang pembinaan pengawasan ketenagakerjaan serta keselamatan dan kesehatan kerja.
+>>>>>>> rayhan
                     </p>
                 </div>
 
@@ -214,8 +344,22 @@
                     <div class="contact-item">
                         <div class="contact-icon">📞</div>
                         <div class="contact-details">
+<<<<<<< HEAD
                             <h4>Nomor Telp</h4>
                             021-5255733
+=======
+                            <div style="display: flex; gap: 20px; align-items: center;">
+                                <div>
+                                    <strong style="color: #000; font-size: 1.1em;">Telepon</strong>
+                                    <strong style="color: #000; font-size: 1.1em;">021-5255733</strong>
+                                </div>
+                                <div style="border-left: 2px solid #ddd; padding-left: 20px;">
+                                    <strong style="color: #000; font-size: 1.1em;">Call
+                                        Center</strong>
+                                    <strong style="color: #000; font-size: 1.1em;">1500630</strong>
+                                </div>
+                            </div>
+>>>>>>> rayhan
                         </div>
                     </div>
 
@@ -223,7 +367,12 @@
                         <div class="contact-icon">📍</div>
                         <div class="contact-details">
                             <h4>Lokasi</h4>
+<<<<<<< HEAD
                             Jl. Gatot Subroto No.Kav 51, RT.5/RW.4, Kuningan Tim., Kecamatan Setiabudi, Kota Jakarta Selatan, Daerah Khusus Ibukota Jakarta 12950
+=======
+                            Jl. Gatot Subroto No.Kav 51, RT.5/RW.4, Kuningan Tim., Kecamatan Setiabudi, Kota Jakarta
+                            Selatan, Daerah Khusus Ibukota Jakarta 12950
+>>>>>>> rayhan
                         </div>
                     </div>
 
@@ -243,7 +392,10 @@
     <footer>
         <p>© 2026 Kementerian Ketenagakerjaan Republik Indonesia</p>
     </footer>
+<<<<<<< HEAD
 
+=======
+>>>>>>> rayhan
     <script>
         window.kabData = @json($rows ?? []);
         window.provData = @json($rowsProvinsi ?? []);
@@ -275,7 +427,11 @@
             jkk: @json($rowsBpjs->pluck('jkk')),
             jht: @json($rowsBpjs->pluck('jht')),
             jkm: @json($rowsBpjs->pluck('jkm')),
+<<<<<<< HEAD
             jp:  @json($rowsBpjs->pluck('jp')),
+=======
+            jp: @json($rowsBpjs->pluck('jp')),
+>>>>>>> rayhan
         };
         window.chartUpahMinimumData = {
             labels: @json($listProvinsi),
@@ -284,6 +440,7 @@
     </script>
 
     <!-- ============================
+<<<<<<< HEAD
      Ini untuk memanggil data dan menampilkan data KBLI
      ================================ -->
 <script>
@@ -355,10 +512,174 @@ document.addEventListener("DOMContentLoaded", function() {
         'resources/js/dashboard-klasifikasi.js', 
         'resources/js/dashboard-pp-pkb.js'
     ])
+=======
+     memanggil data dan menampilkan data KBLI
+     ================================ -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const labels = window.chartData?.kbliLabels || [];
+            const values = window.chartData?.kbliValues || [];
+
+            if (labels.length === 0) return;
+
+            const canvas = document.getElementById("kbliList");
+            const chartStage = document.getElementById("chartStage");
+
+            // --- KUNCI KONSISTENSI UKURAN ---
+            const barWidth = 80;
+            const totalWidth = labels.length * barWidth;
+
+            chartStage.style.width = totalWidth > chartStage.parentElement.offsetWidth ?
+                totalWidth + "px" :
+                "100%";
+
+            new Chart(canvas, {
+                type: "bar",
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: "Jumlah Perusahaan",
+                        data: values,
+                        backgroundColor: '#42A5F5',
+                        barThickness: 40,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        datalabels: {
+                            anchor: 'end',
+                            align: 'top',
+                            font: {
+                                weight: 'bold'
+                            },
+                            formatter: (value) => value.toLocaleString('id-ID')
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                maxRotation: 45,
+                                minRotation: 45,
+                                autoSkip: false
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                        }
+                    }
+                },
+                plugins: [ChartDataLabels]
+            });
+        });
+        document.addEventListener("DOMContentLoaded", function() {
+            const btn = document.getElementById("toggleTablelprBtn");
+            const table = document.getElementById("tableProvinsilprWrapper");
+
+            if (!btn || !table) return;
+
+            btn.addEventListener("click", function() {
+                if (table.style.display === "none") {
+                    table.style.display = "block";
+                    btn.innerText = "Tutup Tabel";
+                } else {
+                    table.style.display = "none";
+                    btn.innerText = "Tampilkan Tabel";
+                }
+            });
+        });
+    </script>
+
+    @vite(['resources/js/templatemo-graph-script.js', 'resources/js/dashboard-klasifikasi.js', 'resources/js/dashboard-pp-pkb.js', 'resources/js/download-data.js', 'resources/js/ketenagakerjaan.js', 'resources/js/loader.js', 'resources/js/download-data-full.js'])
+>>>>>>> rayhan
 
     <script>
         const BPJS_FILTER_URL = "{{ route('filter.bpjs') }}";
     </script>
+<<<<<<< HEAD
 </body>
 
 </html>
+=======
+    <script>
+        const allKbliData = @json($kbliChart);
+    </script>
+
+    <script>
+        // document.getElementById("downloadBarPdf").addEventListener("click", function() {
+        //     const {
+        //         jsPDF
+        //     } = window.jspdf;
+        //     const doc = new jsPDF("landscape", "mm", "a4");
+
+        //     doc.setFontSize(16);
+        //     doc.text("Laporan Provinsi", 14, 15);
+
+        //     const chartElement = document.getElementById("barChart");
+
+        //     html2canvas(chartElement, {
+        //         scale: 2,
+        //         useCORS: true,
+        //         backgroundColor: "#ffffff",
+        //         width: chartElement.scrollWidth,
+        //         height: chartElement.scrollHeight,
+        //         windowWidth: chartElement.scrollWidth,
+        //         windowHeight: chartElement.scrollHeight
+        //     }).then((canvas) => {
+        //         const imgData = canvas.toDataURL("image/png");
+
+        //         const pageWidth = doc.internal.pageSize.getWidth();
+        //         const pageHeight = doc.internal.pageSize.getHeight();
+
+        //         const imgWidth = pageWidth - 20;
+        //         const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+        //         doc.addImage(imgData, "PNG", 10, 25, imgWidth, imgHeight);
+
+        //         const rows = [];
+        //         const tableRows = document.querySelectorAll("#tableProvinsilprWrapper tbody tr");
+
+        //         tableRows.forEach((tr) => {
+        //             const cells = tr.querySelectorAll("td");
+        //             rows.push([
+        //                 cells[0]?.innerText || "",
+        //                 cells[1]?.innerText || "",
+        //                 cells[2]?.innerText || ""
+        //             ]);
+        //         });
+
+        //         let tableStartY = imgHeight + 35;
+
+        //         if (tableStartY > pageHeight - 30) {
+        //             doc.addPage();
+        //             tableStartY = 20;
+        //         }
+
+        //         doc.autoTable({
+        //             head: [
+        //                 ["No", "Provinsi", "Total"]
+        //             ],
+        //             body: rows,
+        //             startY: tableStartY
+        //         });
+
+        //         doc.save("laporan-provinsi.pdf");
+        //     });
+        // });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+
+
+</body>
+
+</html>
+>>>>>>> rayhan

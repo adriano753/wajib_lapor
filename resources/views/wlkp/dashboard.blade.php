@@ -21,7 +21,14 @@
             <a href="#beranda" class="logo">
                 <img src="{{ asset('images/img.png') }}" width="155">
             </a>
+<<<<<<< HEAD
             <ul class="nav-links">
+=======
+            <div class="menu-toggle" id="menuToggle">
+            ☰
+        </div>
+            <ul class="nav-links" id="navLinks">
+>>>>>>> rayhan
                 <li><a href="#beranda" class="active">Beranda</a></li>
                 <li><a href="#laporan">Laporan</a></li>
                 <!-- <li><a href="#layanan">Layanan</a></li> -->
@@ -115,6 +122,7 @@
         </div>
     </section>
 
+<<<<<<< HEAD
     <!-- LAYANAN
     <section class="layanan-section" id="layanan">
         <h2 class="section-title">Layanan</h2>
@@ -158,6 +166,8 @@
         </div>
     </section> -->
 
+=======
+>>>>>>> rayhan
     <!-- TENTANG KAMI -->
     <section class="contact-section" id="kontak">
         <div class="beranda-container">

@@ -28,11 +28,19 @@ class SecureHeaders
          */
         $csp = 
             "default-src 'self' https: data: blob:; ".
+<<<<<<< HEAD
             "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; ".
             "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; ".
             "font-src 'self' https://fonts.gstatic.com data:; ".
             "img-src 'self' https: data: blob:; ".
             "connect-src 'self' https:; ".
+=======
+            "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com http://localhost:5173 http://127.0.0.1:5173 http://[::1]:5173; ".
+            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; ".
+            "font-src 'self' https://fonts.gstatic.com data:; ".
+            "img-src 'self' https: data: blob:; ".
+            "connect-src 'self' https: data: blob:; ".
+>>>>>>> rayhan
             "frame-ancestors 'self'; ".
             "object-src 'none'; ".
             "base-uri 'self'; ".
@@ -47,11 +55,19 @@ class SecureHeaders
 
             // Aman untuk instansi
             ->header('Cross-Origin-Opener-Policy', 'same-origin')
+<<<<<<< HEAD
             ->header('Cross-Origin-Resource-Policy', 'same-origin')
+=======
+            ->header('Cross-Origin-Resource-Policy', 'same-origin');
+>>>>>>> rayhan
 
             // JANGAN aktifkan ini dulu (bisa bikin layout rusak)
             // ->header('Cross-Origin-Embedder-Policy', 'require-corp')
 
+<<<<<<< HEAD
             ->header('Content-Security-Policy', $csp);
+=======
+            //->header('Content-Security-Policy', $csp);
+>>>>>>> rayhan
     }
 }

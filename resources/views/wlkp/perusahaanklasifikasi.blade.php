@@ -1,5 +1,9 @@
 <section class="container-provinsi-fluid py-4">
     <br>
+<<<<<<< HEAD
+=======
+
+>>>>>>> rayhan
     <h2 class="mb-3">DATA KLASIFIKASI PERUSAHAAN</h2>
 
     <div class="filter-panel mb-4">
@@ -12,16 +16,38 @@
                 @endforeach
             </select>
         </div>
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> rayhan
         <div class="filter-group">
             <label>Bulan</label>
             <select id="bulanSelect" class="form-select filter-select">
                 <option value="">-- Periode Bulan --</option>
+<<<<<<< HEAD
                 
                 @php
                     $bulanIndo = [
                         1 => 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
                         'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+=======
+
+                @php
+                    $bulanIndo = [
+                        1 => 'Januari',
+                        'Februari',
+                        'Maret',
+                        'April',
+                        'Mei',
+                        'Juni',
+                        'Juli',
+                        'Agustus',
+                        'September',
+                        'Oktober',
+                        'November',
+                        'Desember',
+>>>>>>> rayhan
                     ];
                 @endphp
 
@@ -30,7 +56,11 @@
                 @endforeach
             </select>
         </div>
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> rayhan
         <div class="filter-group">
             <label>Provinsi</label>
             <select id="provinsiSelectKlasif" class="form-select filter-select">
@@ -50,7 +80,11 @@
                 @endforeach
             </select>
         </div>
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> rayhan
         <div class="filter-group">
             <label>Klasifikasi</label>
             <select id="klasifikasiSelect" class="form-select filter-select">
@@ -60,6 +94,22 @@
                 @endforeach
             </select>
         </div>
+<<<<<<< HEAD
+=======
+
+        <div class="filter-group">
+            <label>Tabel</label>
+            <button id="toggleTableBtnKlasifikasi" class="form-select filter-select">
+                Buka Tabel
+            </button>
+        </div>
+        <div class="filter-group">
+            <label>Download Data</label>
+            <button type="button" id="downloadPdfKlasifikasi" class="form-select filter-select">
+                Download
+            </button>
+        </div>
+>>>>>>> rayhan
     </div>
 
     <h3 class="dashboard-title">Provinsi</h3>
@@ -76,11 +126,19 @@
             <canvas id="klasifikasiChart"></canvas>
         </div>
     </div>
+<<<<<<< HEAD
     </div> 
     <div id="kotaChartSection" class="row mt-4" style="display: none;"> 
         <div class="col-12">
             <h3 class="text-white text-center mb-3">Data Per Kabupaten/Kota</h3>
             
+=======
+    </div>
+    <div id="kotaChartSection" class="row mt-4" style="display: none;">
+        <div class="col-12">
+            <h3 class="text-white text-center mb-3">Data Per Kabupaten/Kota</h3>
+
+>>>>>>> rayhan
             <div style="width: 100%; overflow-x: auto; padding-bottom: 20px;">
                 <div id="kotaChartContainer" style="width: 100%; height: 400px;">
                     <canvas id="kotaChart"></canvas>
@@ -88,6 +146,7 @@
             </div>
         </div>
     </div>
+<<<<<<< HEAD
 
 </section>
     {{--
@@ -237,3 +296,29 @@
     </div> --}}
 
 
+=======
+    <div class="row mt-4">
+        <div class="col-12">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+
+
+            </div>
+
+            <div id="tableWrapper" style="overflow-x:auto; display:none;">
+                <h3 class="mb-0">Tabel Data Klasifikasi</h3>
+                <table class="table table-bordered table-striped" id="tableKlasifikasi">
+                    <thead id="theadKlasifikasi">
+                        <tr id="headerRow"></tr>
+                    </thead>
+                    <tbody id="tbodyKlasifikasi">
+                        <tr>
+                            <td colspan="11" style="text-align:center;">Memuat data...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</section>
+>>>>>>> rayhan

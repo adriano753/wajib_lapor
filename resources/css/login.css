@@ -1,0 +1,122 @@
+@import "tailwindcss";
+
+/* =============================== */
+/* 🌆 LAYOUT */
+/* =============================== */
+.login-page {
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+}
+
+/* LEFT SECTION */
+.login-left {
+    position: relative;
+}
+.login-left .overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 51, 77, 0.6);
+}
+
+/* RIGHT SECTION */
+.login-right {
+    background-color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 2rem;
+}
+
+/* =============================== */
+/* 💳 LOGIN CARD */
+/* =============================== */
+.login-card {
+    width: 100%;
+    max-width: 520px; /* 🔹 diperlebar dari default 380px → 520px */
+    background-color: #ffffff;
+    padding: 2.5rem 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e5e7eb;
+}
+
+/* =============================== */
+/* 🔵 TOMBOL LOGIN */
+/* =============================== */
+.login-btn {
+    display: block;
+    width: 100%; /* sama lebar dengan input */
+    background-color: #0e7490;
+    color: white;
+    font-weight: 600;
+    padding: 0.9rem;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(14, 116, 144, 0.3);
+    margin-top: 0.5rem;
+}
+.login-btn:hover {
+    background-color: #155e75;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(14, 116, 144, 0.4);
+}
+
+/* =============================== */
+/* ⚪ TOMBOL ODS (Google / ODS) */
+/* =============================== */
+.google-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    padding: 0.8rem;
+    transition: all 0.25s ease;
+    background: white;
+    font-weight: 500;
+    width: 100%;
+    margin-top: 0.75rem;
+}
+.google-btn:hover {
+    background-color: #f3f4f6;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+.google-btn img {
+    width: 20px;
+    margin-right: 10px;
+}
+
+/* =============================== */
+/* 🧩 CAPTCHA */
+/* =============================== */
+.captcha-box {
+    letter-spacing: 4px;
+    user-select: none;
+}
+
+/* =============================== */
+/* 📱 RESPONSIVE */
+/* =============================== */
+@media (max-width: 1024px) {
+    .login-card {
+        max-width: 460px; /* sedikit mengecil di tablet */
+    }
+}
+
+@media (max-width: 768px) {
+    .login-page {
+        flex-direction: column;
+    }
+    .login-left {
+        display: none;
+    }
+    .login-right {
+        width: 100%;
+        min-height: 100vh;
+        padding: 2rem 1.5rem;
+    }
+    .login-card {
+        max-width: 100%;
+        border-radius: 0.75rem;
+    }
+}
