@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 use App\Services\WlkpService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class WlkpController extends Controller
 {
@@ -23,13 +24,16 @@ class WlkpController extends Controller
     private function formatDetail($n)
     {
         return number_format((int) $n, 0, ',', '.');
-    }       
+    }
 
     // ===============================
     // HALAMAN UTAMA (INDEX)
     // ===============================
     public function index(Request $request)
     {
+        set_time_limit(0); // unlimited
+        ini_set('memory_limit', '1024M'); 
+        
         // 1. Definisikan Filters
         $filters = $request->only(['tahun', 'bulan', 'kota', 'provinsi', 'kbli']);
 
@@ -37,7 +41,8 @@ class WlkpController extends Controller
         $masterData   = $this->service->getMasterData();
         $dropdowns    = $this->service->getDropdowns();
         $dropdownKBLI = $this->service->getDropdownsKBLI();
-        $kbliChart = $this->service->getRekapKBLI($filters);
+        $kbliChart = $this->service->getRekapKBLI_Perusahaan($request);
+        $kbliChart = $this->service->getRekapKBLI_TenagaKerja($request);
         $kbliLabels = $kbliChart->pluck('nama_2_digit')->values();
         $kbliValues = $kbliChart->pluck('total')->values();
         $rowsPPPKB = $this->service->getRekapPPPKB();
@@ -171,8 +176,6 @@ class WlkpController extends Controller
                 ->sum('total_wni');
         }
 
-
-
         // Helper mapping data chart
         $mapData = function ($skala) use ($rows, $kota) {
             return $kota->map(function ($kot) use ($rows, $skala) {
@@ -227,13 +230,13 @@ class WlkpController extends Controller
         $dataProvinsi = DB::table('wajiblapor.report_detil_wlkp_binwas')
             ->select(
                 // PERBAIKAN: Gunakan NULLIF dan TRIM agar string kosong terbaca sebagai NULL lalu dicoalesce
-                DB::raw("COALESCE(NULLIF(TRIM(provinsi), ''), 'TIDAK TERINDENTIFIKASI') as provinsi"), 
+                DB::raw("COALESCE(NULLIF(TRIM(provinsi), ''), 'TIDAK TERINDENTIFIKASI') as provinsi"),
                 DB::raw('COUNT(*) as total')
             )
-            ->groupBy(DB::raw("COALESCE(NULLIF(TRIM(provinsi), ''), 'TIDAK TERINDENTIFIKASI')")) 
+            ->groupBy(DB::raw("COALESCE(NULLIF(TRIM(provinsi), ''), 'TIDAK TERINDENTIFIKASI')"))
             ->orderByDesc('total')
             ->get();
-        
+
         // 1. Ambil data mentah (Group By boleh, tapi JANGAN langsung dikirim ke view)
         $rawKlasifikasi = DB::table('wajiblapor.report_detil_wlkp_binwas')
             ->select('skala_objek_pengawasan', DB::raw('COUNT(*) as total'))
@@ -370,4 +373,26 @@ class WlkpController extends Controller
             'optKBLI'     => $dropdownKBLI['kbli'],
         ]);
     }
+    public function exportPPPKB(Request $request)
+    {
+        $charts = json_decode($request->charts);
+
+        $pdf = Pdf::loadView('pdf.pppkb-pdf', [
+            'charts' => $charts
+        ])->setPaper('a4', 'landscape');
+
+        return $pdf->download('laporan-pppkb.pdf');
+    }
+    public function getKbliTenagaKerja(Request $request)
+{
+    $data = $this->service->getRekapKBLI_TenagaKerja($request);
+
+    return response()->json($data);
+}
+public function getKbliPerusahaan(Request $request)
+{
+    $data = $this->service->getRekapKBLI_Perusahaan($request);
+
+    return response()->json($data);
+}
 }
